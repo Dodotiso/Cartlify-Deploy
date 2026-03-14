@@ -1,0 +1,483 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartlify | My Profile{% endblock %}
+
+{% block body %}
+<style>
+/* --- Sidebar & Header --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background-color: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+}
+.sidebar:hover { width: 220px; }
+.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
+.sidebar .logo img { height:48px; transition: height 0.3s; }
+.sidebar:hover .logo img { height:128px; }
+.sidebar a {
+    display:flex;
+    align-items:center;
+    padding:15px 10px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    border-left:4px solid transparent;
+    transition: all 0.3s;
+}
+.sidebar a i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+.sidebar a span { display:none; transition: opacity 0.3s; }
+.sidebar:hover a span { display:inline; margin-left:15px; }
+.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.header {
+    margin-left: 60px;
+    height: 80px;
+    background-color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .header { margin-left:220px; }
+.main-content {
+    margin-left: 60px;
+    padding:30px;
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .main-content { margin-left:220px; }
+
+/* --- Profile Styles --- */
+.profile-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0 auto 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.info-card h3 {
+    margin: 0 0 10px 0;
+    color: #343a40;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.info-card p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.info-card strong {
+    color: #343a40;
+    font-weight: 600;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.role-admin { background: #dc3545; color: white; }
+.role-staff { background: #007bff; color: white; }
+.role-user { background: #6c757d; color: white; }
+
+.profile-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+.btn-primary { background: #007bff; color: white; }
+.btn-primary:hover { background: #0056b3; }
+.btn-warning { background: #ffc107; color: #343a40; }
+.btn-warning:hover { background: #e0a800; }
+
+/* --- Responsive --- */
+@media (max-width:768px) {
+    .sidebar { width:60px; }
+    .sidebar a span { display:none; }
+    .header, .main-content { margin-left:60px; padding:20px; }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+    }
+    .profile-actions {
+        flex-direction: column;
+    }
+    .btn {
+        text-align: center;
+    }
+}
+</style>
+
+{% if is_granted('ROLE_ADMIN') %}
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    </a>
+    
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user-circle"></i>
+        <span>My Profile</span>
+    </a>
+    
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+<!-- Header -->
+<div class="header">
+    <h1>My Profile</h1>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            {% set bgColor = 
+                label == 'success' ? '#28a745' : 
+                label == 'error' ? '#dc3545' : 
+                label == 'warning' ? '#ffc107' : '#17a2b8' 
+            %}
+            {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+            <div style="
+                background-color: {{ bgColor }};
+                color: {{ textColor }};
+                padding: 12px 20px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            ">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.style.display='none'" 
+                        style="
+                            background: transparent;
+                            border: none;
+                            color: {{ textColor }};
+                            font-size: 16px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">&times;</button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="profile-container">
+        <div class="profile-header">
+            {% set avatarLetter = 
+                user.roles[0] == 'ROLE_ADMIN' ? 'A' :
+                (user.roles[0] == 'ROLE_STAFF' ? 'S' :
+                (user.roles[0] == 'ROLE_USER' ? 'U' :
+                user.username|first|upper))
+            %}
+            <div class="profile-avatar-large">{{ avatarLetter }}</div>
+            <h2 style="margin: 0 0 10px 0; color: #343a40;">{{ user.username }}</h2>
+            
+            {% set userRole = user.roles[0]|default('ROLE_USER') %}
+            {% set roleClass = 
+                userRole == 'ROLE_ADMIN' ? 'role-admin' :
+                (userRole == 'ROLE_STAFF' ? 'role-staff' : 'role-user')
+            %}
+            <div class="role-badge {{ roleClass }}">
+                {{ userRole|replace({'ROLE_': ''})|title }}
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-card">
+                <h3>Account Information</h3>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>User ID:</strong> #{{ user.id }}</p>
+                <p><strong>Account Created:</strong> {{ user.createdAt|date('F d, Y') }}</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Security</h3>
+                <p><strong>Account Status:</strong> <span style="color: #28a745;">Active</span></p>
+                <p><strong>Password Last Changed:</strong> {{ user.createdAt|date('F d, Y') }}</p>
+                <p><strong>Role:</strong> {{ user.roles[0]|replace({'ROLE_': ''})|title }}</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Permissions</h3>
+                <p><strong>Role:</strong> {{ user.roles[0]|replace({'ROLE_': ''})|title }}</p>
+                <p><strong>Access Level:</strong> 
+                    {% if 'ROLE_ADMIN' in user.roles %}
+                        <span style="color: #28a745;">Full System Access</span>
+                    {% elseif 'ROLE_STAFF' in user.roles %}
+                        <span style="color: #007bff;">Staff Access</span>
+                    {% else %}
+                        <span style="color: #6c757d;">Limited Access</span>
+                    {% endif %}
+                </p>
+                <p><strong>Dashboard Access:</strong> ✓ Available</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{{ path('app_profile_edit') }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Change Password
+            </a>
+            <a href="{{ path('app_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+{% elseif is_granted('ROLE_STAFF') %}
+<!-- Sidebar for Staff -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user-circle"></i>
+        <span>My Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+<!-- Header for Staff -->
+<div class="header">
+    <h1>My Profile</h1>
+</div>
+
+<!-- Main Content for Staff -->
+<div class="main-content">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            {% set bgColor = 
+                label == 'success' ? '#28a745' : 
+                label == 'error' ? '#dc3545' : 
+                label == 'warning' ? '#ffc107' : '#17a2b8' 
+            %}
+            {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+            <div style="
+                background-color: {{ bgColor }};
+                color: {{ textColor }};
+                padding: 12px 20px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            ">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.style.display='none'" 
+                        style="
+                            background: transparent;
+                            border: none;
+                            color: {{ textColor }};
+                            font-size: 16px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">&times;</button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="profile-container">
+        <div class="profile-header">
+            {% set avatarLetter = 
+                user.roles[0] == 'ROLE_ADMIN' ? 'A' :
+                (user.roles[0] == 'ROLE_STAFF' ? 'S' :
+                (user.roles[0] == 'ROLE_USER' ? 'U' :
+                user.username|first|upper))
+            %}
+            <div class="profile-avatar-large">{{ avatarLetter }}</div>
+            <h2 style="margin: 0 0 10px 0; color: #343a40;">{{ user.username }}</h2>
+            
+            {% set userRole = user.roles[0]|default('ROLE_USER') %}
+            {% set roleClass = 
+                userRole == 'ROLE_ADMIN' ? 'role-admin' :
+                (userRole == 'ROLE_STAFF' ? 'role-staff' : 'role-user')
+            %}
+            <div class="role-badge {{ roleClass }}">
+                {{ userRole|replace({'ROLE_': ''})|title }}
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-card">
+                <h3>Account Information</h3>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>User ID:</strong> #{{ user.id }}</p>
+                <p><strong>Account Created:</strong> {{ user.createdAt|date('F d, Y') }}</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Security</h3>
+                <p><strong>Account Status:</strong> <span style="color: #28a745;">Active</span></p>
+                <p><strong>Password Last Changed:</strong> {{ user.createdAt|date('F d, Y') }}</p>
+                <p><strong>Role:</strong> {{ user.roles[0]|replace({'ROLE_': ''})|title }}</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Permissions</h3>
+                <p><strong>Role:</strong> {{ user.roles[0]|replace({'ROLE_': ''})|title }}</p>
+                <p><strong>Access Level:</strong> 
+                    {% if 'ROLE_ADMIN' in user.roles %}
+                        <span style="color: #28a745;">Full System Access</span>
+                    {% elseif 'ROLE_STAFF' in user.roles %}
+                        <span style="color: #007bff;">Staff Access</span>
+                    {% else %}
+                        <span style="color: #6c757d;">Limited Access</span>
+                    {% endif %}
+                </p>
+                <p><strong>Dashboard Access:</strong> ✓ Available</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{{ path('app_profile_edit') }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Change Password
+            </a>
+            <a href="{{ path('app_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

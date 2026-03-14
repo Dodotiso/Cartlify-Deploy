@@ -1,0 +1,725 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartlify | Create Order{% endblock %}
+
+{% block body %}
+<style>
+/* --- Sidebar & Header --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background-color: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+}
+.sidebar:hover { width: 220px; }
+.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
+.sidebar .logo img { height:48px; transition: height 0.3s; }
+.sidebar:hover .logo img { height:128px; }
+.sidebar a {
+    display:flex;
+    align-items:center;
+    padding:15px 10px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    border-left:4px solid transparent;
+    transition: all 0.3s;
+}
+.sidebar a i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+.sidebar a span { display:none; transition: opacity 0.3s; }
+.sidebar:hover a span { display:inline; margin-left:15px; }
+.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.header {
+    margin-left: 60px;
+    height: 80px;
+    background-color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .header { margin-left:220px; }
+.main-content {
+    margin-left: 60px;
+    padding:30px;
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .main-content { margin-left:220px; }
+
+/* --- Grid for products --- */
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+.product-image-container {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+.product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+    max-height: 180px;
+}
+.card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.card-body h3 { 
+    margin: 0 0 10px; 
+    font-size: 18px; 
+    color: #343a40;
+    height: 50px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.card-body .description { 
+    margin: 0 0 10px; 
+    font-size: 14px; 
+    color: #6c757d;
+    flex-grow: 1;
+    height: 60px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.card-body .price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28a745;
+    margin: 10px 0;
+}
+.card-body .stock {
+    font-size: 14px;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+.qty {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+.qty:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.btn-buy, .btn-delete {
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    width: 100%;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+.btn-buy { 
+    background: #28a745; 
+    color: #fff; 
+}
+.btn-buy:hover { 
+    background: #218838; 
+}
+.btn-buy:disabled { 
+    background: #6c757d; 
+    cursor: not-allowed; 
+}
+.btn-delete { 
+    background: #dc3545; 
+    color: #fff; 
+}
+.btn-delete:hover { 
+    background: #c82333; 
+}
+
+/* --- Search Bar --- */
+.search-container {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    max-width: 500px;
+}
+
+.search-form input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    flex: 1;
+    font-size: 14px;
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.search-form button:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    padding: 10px 15px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    color: white;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.no-products {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    grid-column: 1 / -1;
+}
+
+.no-products h3 {
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+.no-products p {
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-primary { background: #007bff; color: white; }
+.btn-primary:hover { background: #0056b3; }
+.btn-success { background: #28a745; color: white; }
+.btn-success:hover { background: #218838; }
+
+/* --- Responsive --- */
+@media (max-width:992px) {
+    .products-container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+.profile-wrapper {
+    position: relative;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
+.profile-name {
+    font-weight: 500;
+    user-select: none;
+}
+
+@media (max-width:768px) {
+    .sidebar { width:60px; }
+    .sidebar a span { display:none; }
+    .header, .main-content { margin-left:60px; padding:20px; }
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-form {
+        max-width: 100%;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+    }
+    .products-container {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width:480px) {
+    .products-container {
+        grid-template-columns: 1fr;
+    }
+    .product-image-container {
+        height: 150px;
+    }
+}
+</style>
+
+{% if is_granted('ROLE_ADMIN') %}
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+<!-- Header -->
+<div class="header">
+    <h1>Marketplace</h1>
+     <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set bgColor = 
+            label == 'success' ? '#28a745' : 
+            label == 'error' ? '#dc3545' : 
+            label == 'warning' ? '#ffc107' : '#17a2b8' 
+        %}
+        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+        <div style="
+            background-color: {{ bgColor }};
+            color: {{ textColor }};
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none'" 
+                    style="
+                        background: transparent;
+                        border: none;
+                        color: {{ textColor }};
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    ">&times;</button>
+        </div>
+    {% endfor %}
+{% endfor %}
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form method="get" action="{{ path('app_order_new') }}" class="search-form">
+            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search products by name or description..." />
+            <button type="submit">Search</button>
+            {% if search %}
+                <a href="{{ path('app_order_new') }}" class="btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+        
+        <a href="{{ path('app_order_index') }}" class="btn btn-success">View Transactions</a>
+    </div>
+
+    <div class="products-container">
+        {% if stocks|length > 0 %}
+            {% for stock in stocks %}
+                <div class="product-card">
+                    <div class="product-image-container">
+    {% if stock.product.image %}
+        {% set imagePath = stock.product.image %}
+        {# Fix for image paths - prepend /uploads/ if needed #}
+        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
+            {% set imagePath = '/uploads/' ~ imagePath %}
+        {% endif %}
+        <img src="{{ imagePath }}" 
+             alt="{{ stock.product.name }}"
+             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+    {% else %}
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
+            No Image
+        </div>
+    {% endif %}
+</div>
+                    <div class="card-body">
+                        <h3>{{ stock.product.name }}</h3>
+                        <div class="description">{{ stock.product.description|length > 100 ? stock.product.description|slice(0, 100) ~ '...' : stock.product.description }}</div>
+                        <div class="price">₱{{ stock.product.price|number_format(2, '.', ',') }}</div>
+                        <div class="stock">Available: {{ stock.stock }}</div>
+
+                        {% set activeOrder = null %}
+                        {% if orders is defined %}
+                            {% for order in orders %}
+                                {% if order.stock.id == stock.id %}
+                                    {% set activeOrder = order %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" action="{{ path('app_order_new') }}">
+                            <input type="hidden" name="stock_id" value="{{ stock.id }}">
+                            <input type="number" name="quantity" class="qty" min="1" max="{{ stock.stock }}" value="1" required
+                                {% if activeOrder %} disabled {% endif %}>
+                            <button type="submit" class="btn-buy"
+                                {% if activeOrder %} disabled {% endif %}>
+                                {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
+                            </button>
+                        </form>
+
+                        {% if activeOrder %}
+                            <form method="post" action="{{ path('app_order_delete', {'id': activeOrder.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activeOrder.id) }}">
+                                <button type="submit" class="btn-delete">Cancel Order</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-products">
+                <h3>No Products Available</h3>
+                <p>
+                    {% if search %}
+                        No products found for "{{ search }}"
+                    {% else %}
+                        There are no products available in the marketplace at the moment.
+                    {% endif %}
+                </p>
+                {% if search %}
+                    <a href="{{ path('app_order_new') }}" class="btn btn-primary">View All Products</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% elseif is_granted('ROLE_STAFF') %}
+<!-- Sidebar for Staff -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+<!-- Header for Staff -->
+<div class="header">
+    <h1>Marketplace</h1>
+     <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content for Staff -->
+<div class="main-content">
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set bgColor = 
+            label == 'success' ? '#28a745' : 
+            label == 'error' ? '#dc3545' : 
+            label == 'warning' ? '#ffc107' : '#17a2b8' 
+        %}
+        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+        <div style="
+            background-color: {{ bgColor }};
+            color: {{ textColor }};
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none'" 
+                    style="
+                        background: transparent;
+                        border: none;
+                        color: {{ textColor }};
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    ">&times;</button>
+        </div>
+    {% endfor %}
+{% endfor %}
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form method="get" action="{{ path('app_order_new') }}" class="search-form">
+            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search products by name or description..." />
+            <button type="submit">Search</button>
+            {% if search %}
+                <a href="{{ path('app_order_new') }}" class="btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+        
+        <a href="{{ path('app_order_index') }}" class="btn btn-success">View Transactions</a>
+    </div>
+
+    <div class="products-container">
+        {% if stocks|length > 0 %}
+            {% for stock in stocks %}
+                <div class="product-card">
+                   <div class="product-image-container">
+    {% if stock.product.image %}
+        {% set imagePath = stock.product.image %}
+        {# Fix for image paths - prepend /uploads/ if needed #}
+        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
+            {% set imagePath = '/uploads/' ~ imagePath %}
+        {% endif %}
+        <img src="{{ imagePath }}" 
+             alt="{{ stock.product.name }}"
+             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+    {% else %}
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
+            No Image
+        </div>
+    {% endif %}
+</div>
+                    <div class="card-body">
+                        <h3>{{ stock.product.name }}</h3>
+                        <div class="description">{{ stock.product.description|length > 100 ? stock.product.description|slice(0, 100) ~ '...' : stock.product.description }}</div>
+                        <div class="price">₱{{ stock.product.price|number_format(2, '.', ',') }}</div>
+                        <div class="stock">Available: {{ stock.stock }}</div>
+
+                        {% set activeOrder = null %}
+                        {% if orders is defined %}
+                            {% for order in orders %}
+                                {% if order.stock.id == stock.id %}
+                                    {% set activeOrder = order %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" action="{{ path('app_order_new') }}">
+                            <input type="hidden" name="stock_id" value="{{ stock.id }}">
+                            <input type="number" name="quantity" class="qty" min="1" max="{{ stock.stock }}" value="1" required
+                                {% if activeOrder %} disabled {% endif %}>
+                            <button type="submit" class="btn-buy"
+                                {% if activeOrder %} disabled {% endif %}>
+                                {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
+                            </button>
+                        </form>
+
+                        {% if activeOrder %}
+                            <form method="post" action="{{ path('app_order_delete', {'id': activeOrder.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activeOrder.id) }}">
+                                <button type="submit" class="btn-delete">Cancel Order</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-products">
+                <h3>No Products Available</h3>
+                <p>
+                    {% if search %}
+                        No products found for "{{ search }}"
+                    {% else %}
+                        There are no products available in the marketplace at the moment.
+                    {% endif %}
+                </p>
+                {% if search %}
+                    <a href="{{ path('app_order_new') }}" class="btn btn-primary">View All Products</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

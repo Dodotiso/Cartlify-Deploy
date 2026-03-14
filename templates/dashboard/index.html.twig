@@ -3,13 +3,849 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<h1>Dashboard</h1>
+<style>
+body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; color:#343a40; }
+.sidebar { position:fixed; top:0; left:0; height:100%; width:60px; background:#1f2a44; padding-top:30px; display:flex; flex-direction:column; overflow:hidden; transition:width 0.3s; }
+.sidebar:hover { width:220px; }
+.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
+.sidebar .logo img { height:48px; transition:height 0.3s; }
+.sidebar:hover .logo img { height:128px; }
+.sidebar a { display:flex; align-items:center; padding:15px 10px; text-decoration:none; color:#fff; font-weight:500; border-left:4px solid transparent; transition: all 0.3s; }
+.sidebar a span { display:none; transition: opacity 0.3s; }
+.sidebar:hover a span { display:inline; margin-left:25px; }
+.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.header { margin-left:60px; height:80px; background:#fff; display:flex; align-items:center; padding:0 30px; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition:margin-left 0.3s; }
+.sidebar:hover ~ .header { margin-left:220px; }
+.main-content { margin-left:60px; padding:30px; transition: margin-left 0.3s; }
+.sidebar:hover ~ .main-content { margin-left:220px; }
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
 
-<p>Welcome, {{ app.user.userIdentifier }}!</p>
+.profile-wrapper {
+    position: relative;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.profile-name {
+    font-weight: 500;
+    user-select: none;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 150px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+}
+
+.profile-dropdown a {
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.profile-dropdown a:hover {
+    background: #f5f5f5;
+}
+
+.profile-header:hover .profile-dropdown {
+    display: flex;
+}
+
+.dashboard-cards { 
+    display:grid; 
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); 
+    gap:20px; 
+    margin-top:20px; 
+    margin-bottom: 30px;
+}
+.card { 
+    background:#fff; 
+    border-radius:8px; 
+    box-shadow:0 2px 8px rgba(0,0,0,0.1); 
+    padding:20px; 
+    text-align:center; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.card h2 { margin:0 0 10px; font-size:24px; color:#28a745; }
+.card p { margin:0; font-size:16px; color:#555; }
+.card a { text-decoration:none; color:#007bff; font-weight:bold; }
+
+/* New Chart Grid Layout */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.chart-container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container.large {
+    grid-column: span 2;
+    height: 400px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-title i {
+    color: #007bff;
+}
+
+.chart-body {
+    flex: 1;
+    position: relative;
+}
+
+/* Recent Orders Table */
+.recent-orders {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-top: 25px;
+}
+
+.recent-orders table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.recent-orders th {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.recent-orders td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+    color: #6c757d;
+}
+
+.recent-orders tr:hover {
+    background: #f8f9fa;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-completed { background: #d4edda; color: #155724; }
+.status-pending { background: #fff3cd; color: #856404; }
+
+@media (max-width:768px) { 
+    .sidebar { width:60px; } 
+    .sidebar a span { display:none; } 
+    .header, .main-content { margin-left:60px; padding:20px; } 
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+    .chart-container.large {
+        grid-column: span 1;
+    }
+}
+</style>
 
 {% if is_granted('ROLE_ADMIN') %}
-    <p>You are logged in as Admin. You have full access.</p>
-{% elseif is_granted('ROLE_USER') %}
-    <p>You are logged in as Regular User. Limited access granted.</p>
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+   <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <!-- Products -->
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <!-- Stocks -->
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <!-- Marketplace -->
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <!-- Transactions -->
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    
+    <!-- Staff Management -->
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    
+    <!-- Activity Logs -->
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <!-- Logout -->
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+
+<div class="header">
+    <h1>Admin Dashboard</h1>
+
+    <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Welcome Section -->
+    <div class="welcome-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">
+                    Welcome back, {{ app.user.username }}!
+                </h2>
+                <p style="margin: 0; opacity: 0.9; font-size: 16px;">
+                    Here's an overview of your store's performance and analytics.
+                </p>
+            </div>
+            <div style="font-size: 60px; opacity: 0.3;">
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #007bff; margin-bottom: 10px;">
+                <i class="fas fa-box"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalProducts }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Products</p>
+        </div>
+        
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #28a745; margin-bottom: 10px;">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalOrders }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Transactions</p>
+        </div>
+        
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #ffc107; margin-bottom: 10px;">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">₱{{ totalIncome|number_format(2) }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Income</p>
+        </div>
+        
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #17a2b8; margin-bottom: 10px;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalUsers }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Users</p>
+        </div>
+        
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #dc3545; margin-bottom: 10px;">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalAdmins }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Admin Users</p>
+        </div>
+        
+        <div class="card" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s;">
+            <div style="font-size: 32px; color: #6c757d; margin-bottom: 10px;">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalStaff }}</h3>
+            <p style="margin: 0; color: #6c757d; font-size: 14px;">Staff Users</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="chart-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
+        <!-- Sales Trend Chart -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; grid-column: span 2;">
+            <div style="padding: 20px; border-bottom: 1px solid #f1f1f1;">
+                <h3 style="margin: 0; color: #343a40; font-size: 18px;">
+                    <i class="fas fa-chart-line" style="color: #007bff; margin-right: 10px;"></i>
+                    Sales Trend (Last 6 Months)
+                </h3>
+            </div>
+            <div style="padding: 20px; height: 300px;">
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Product Distribution Chart -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+            <div style="padding: 20px; border-bottom: 1px solid #f1f1f1;">
+                <h3 style="margin: 0; color: #343a40; font-size: 18px;">
+                    <i class="fas fa-chart-pie" style="color: #ffc107; margin-right: 10px;"></i>
+                    Product Categories
+                </h3>
+            </div>
+            <div style="padding: 20px; height: 300px;">
+                <canvas id="productDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Stock Level Chart -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+            <div style="padding: 20px; border-bottom: 1px solid #f1f1f1;">
+                <h3 style="margin: 0; color: #343a40; font-size: 18px;">
+                    <i class="fas fa-boxes" style="color: #28a745; margin-right: 10px;"></i>
+                    Stock Level Overview
+                </h3>
+            </div>
+            <div style="padding: 20px; height: 300px;">
+                <canvas id="stockGaugeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions & Recent Orders Grid -->
+    <div class="activity-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
+        <!-- Quick Actions -->
+        <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <h3 style="margin: 0 0 20px 0; color: #343a40; font-size: 18px;">
+                <i class="fas fa-bolt" style="color: #ffc107; margin-right: 10px;"></i> Quick Actions
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <a href="{{ path('app_user_new') }}" style="background: #007bff; color: white; padding: 14px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.3s;">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Add New User</span>
+                </a>
+                
+                <a href="{{ path('app_product_new') }}" style="background: #28a745; color: white; padding: 14px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.3s;">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Product</span>
+                </a>
+                
+                <a href="{{ path('app_activity_log_index') }}" style="background: #6c757d; color: white; padding: 14px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.3s;">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>View Activity Logs</span>
+                </a>
+                
+                <a href="{{ path('app_order_index') }}" style="background: #17a2b8; color: white; padding: 14px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.3s;">
+                    <i class="fas fa-receipt"></i>
+                    <span>Manage Transactions</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); grid-column: span 2;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #343a40; font-size: 18px;">
+                    <i class="fas fa-history" style="color: #007bff; margin-right: 10px;"></i> Recent Transactions
+                </h3>
+                <a href="{{ path('app_order_index') }}" style="color: #007bff; text-decoration: none; font-size: 14px; font-weight: 500;">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #dee2e6;">
+                            <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Order ID</th>
+                            <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Product</th>
+                            <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Qty</th>
+                            <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Amount</th>
+                            <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recentOrders|default([]) %}
+                        <tr style="border-bottom: 1px solid #f1f1f1; transition: background 0.3s;">
+                            <td style="padding: 12px; font-weight: 500;">#{{ order.id }}</td>
+                            <td style="padding: 12px;">
+                                {% if order.stock and order.stock.product %}
+                                    {{ order.stock.product.name|length > 20 ? order.stock.product.name|slice(0, 20) ~ '...' : order.stock.product.name }}
+                                {% else %}
+                                    <span style="color: #dc3545;">Product Not Available</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px;">{{ order.quantity }}</td>
+                            <td style="padding: 12px; font-weight: 600; color: #28a745;">₱{{ order.totalAmount|number_format(2) }}</td>
+                            <td style="padding: 12px; color: #6c757d;">{{ order.createdAt|date('M d, H:i') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">
+                                <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                                <p style="margin: 0; font-size: 16px;">No recent transactions</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="performance-metrics" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="margin: 0 0 25px 0; color: #343a40; font-size: 18px;">
+            <i class="fas fa-chart-bar" style="color: #28a745; margin-right: 10px;"></i> Performance Metrics
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #28a745; margin-bottom: 5px;">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ todayOrders|default('0') }}</div>
+                <div style="color: #6c757d; font-size: 14px;">Orders Today</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #007bff; margin-bottom: 5px;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;">₱{{ todaySales|default('0')|number_format(2) }}</div>
+                <div style="color: #6c757d; font-size: 14px;">Sales Today</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #ffc107; margin-bottom: 5px;">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ avgOrderValue|default('0')|number_format(2) }}</div>
+                <div style="color: #6c757d; font-size: 14px;">Avg Order Value</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #dc3545; margin-bottom: 5px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ lowStockCount|default('0') }}</div>
+                <div style="color: #6c757d; font-size: 14px;">Low Stock Items</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Insights -->
+    <div class="insights-section" style="margin-top: 30px;">
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 600;">
+                        <i class="fas fa-lightbulb"></i> Admin Insights
+                    </h3>
+                    <p style="margin: 0; opacity: 0.9; font-size: 15px;">
+                        Store performance is up 15% this month. Consider adding more products to the marketplace to boost sales.
+                    </p>
+                </div>
+                <div style="font-size: 48px; opacity: 0.3;">
+                    <i class="fas fa-chart-network"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+// Dashboard Charts
+function renderCharts() {
+    // 1. Sales Trend Chart
+    const salesCtx = document.getElementById('salesTrendChart');
+    if (salesCtx) {
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Sales (₱)',
+                    data: [15000, 18000, 22000, 19000, 25000, 28000],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `₱${context.parsed.y.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 2. Product Distribution Chart
+    const distributionCtx = document.getElementById('productDistributionChart');
+    if (distributionCtx) {
+        new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Electronics', 'Clothing', 'Home', 'Books', 'Other'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#9966FF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 3. Stock Level Chart
+    const stockCtx = document.getElementById('stockGaugeChart');
+    if (stockCtx) {
+        new Chart(stockCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Low Stock (<10)', 'Medium Stock (10-50)', 'Good Stock (>50)'],
+                datasets: [{
+                    label: 'Stock Levels',
+                    data: [5, 12, 8],
+                    backgroundColor: [
+                        'rgba(220, 53, 69, 0.7)',
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(40, 167, 69, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y} products`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Products'
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Card hover effects
+document.addEventListener('DOMContentLoaded', function() {
+    // Card hover effects
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-5px)';
+            card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.12)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+        });
+    });
+
+    // Quick action hover effects
+    const quickActions = document.querySelectorAll('.quick-actions a');
+    quickActions.forEach(action => {
+        action.addEventListener('mouseenter', () => {
+            action.style.transform = 'translateY(-3px)';
+            action.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+        });
+        
+        action.addEventListener('mouseleave', () => {
+            action.style.transform = 'translateY(0)';
+            action.style.boxShadow = 'none';
+        });
+    });
+
+    // Render charts
+    renderCharts();
+});
+
+// Resize charts after sidebar transition
+const sidebar = document.querySelector('.sidebar');
+if (sidebar) {
+    sidebar.addEventListener('transitionend', () => {
+        setTimeout(() => {
+            const charts = ['salesTrendChart', 'productDistributionChart', 'stockGaugeChart'];
+            charts.forEach(chartId => {
+                const chart = Chart.getChart(chartId);
+                if (chart) chart.resize();
+            });
+        }, 100);
+    });
+}
+</script>
+
+{% elseif is_granted('ROLE_STAFF') %}
+<!-- Staff Dashboard (Simplified Version) -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <!-- Products -->
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <!-- Stocks -->
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <!-- Marketplace -->
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <!-- Transactions -->
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <!-- Logout -->
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+
+<div class="header">
+    <h1>Staff Dashboard</h1>
+
+    <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Welcome Section -->
+    <div class="welcome-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">
+                    Welcome back, {{ app.user.username }}!
+                </h2>
+                <p style="margin: 0; opacity: 0.9; font-size: 16px;">
+                    You can't access statistics. Ask permission to admin.
+                </p>
+            </div>
+            <div style="font-size: 60px; opacity: 0.3;">
+                <i class="fas fa-store"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Quick Actions -->
+    <div class="quick-actions" style="margin-bottom: 30px;">
+        <h3 style="color: #343a40; margin-bottom: 15px; font-size: 18px;">
+            <i class="fas fa-bolt" style="color: #ffc107;"></i> Quick Actions
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <a href="{{ path('app_order_new') }}" style="background: #28a745; color: white; padding: 15px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: all 0.3s;">
+                <i class="fas fa-plus-circle" style="font-size: 20px;"></i>
+                <span>Place New Order</span>
+            </a>
+            
+            <a href="{{ path('app_product_index') }}" style="background: #007bff; color: white; padding: 15px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: all 0.3s;">
+                <i class="fas fa-shopping-bag" style="font-size: 20px;"></i>
+                <span>Manage Products</span>
+            </a>
+            
+            <a href="{{ path('app_stock_index') }}" style="background: #6c757d; color: white; padding: 15px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: all 0.3s;">
+                <i class="fas fa-boxes" style="font-size: 20px;"></i>
+                <span>Check Stocks</span>
+            </a>
+            
+            <a href="{{ path('app_order_index') }}" style="background: #17a2b8; color: white; padding: 15px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: all 0.3s;">
+                <i class="fas fa-receipt" style="font-size: 20px;"></i>
+                <span>View Transactions</span>
+            </a>
+        </div>
+    </div>
+
 {% endif %}
 {% endblock %}

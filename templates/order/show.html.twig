@@ -1,0 +1,464 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartlify | Order Details{% endblock %}
+
+{% block body %}
+<style>
+/* --- Sidebar & Header --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background-color: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+}
+.sidebar:hover { width: 220px; }
+.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
+.sidebar .logo img { height:48px; transition: height 0.3s; }
+.sidebar:hover .logo img { height:128px; }
+.sidebar a {
+    display:flex;
+    align-items:center;
+    padding:15px 10px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    border-left:4px solid transparent;
+    transition: all 0.3s;
+}
+.sidebar a i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+.sidebar a span { display:none; transition: opacity 0.3s; }
+.sidebar:hover a span { display:inline; margin-left:15px; }
+.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.header {
+    margin-left: 60px;
+    height: 80px;
+    background-color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .header { margin-left:220px; }
+.main-content {
+    margin-left: 60px;
+    padding:30px;
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .main-content { margin-left:220px; }
+
+/* --- Order Details --- */
+.order-details-container {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.order-header {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.order-header h2 {
+    color: #343a40;
+    margin: 0 0 10px 0;
+}
+
+.order-number {
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.order-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-group {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.info-group h3 {
+    margin: 0 0 15px 0;
+    color: #343a40;
+    font-size: 18px;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.info-item span {
+    color: #343a40;
+}
+
+.order-image {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.thumbnail-large {
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    object-fit: contain;
+}
+
+.order-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #dee2e6;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+.btn-primary { background: #007bff; color: white; }
+.btn-primary:hover { background: #0056b3; }
+.btn-warning { background: #ffc107; color: #343a40; }
+.btn-warning:hover { background: #e0a800; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-danger:hover { background: #c82333; }
+
+/* --- Responsive --- */
+@media (max-width:768px) {
+    .sidebar { width:60px; }
+    .sidebar a span { display:none; }
+    .header, .main-content { margin-left:60px; padding:20px; }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+    }
+    .order-info {
+        grid-template-columns: 1fr;
+    }
+    .order-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn {
+        text-align: center;
+    }
+}
+</style>
+
+{% if is_granted('ROLE_ADMIN') %}
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+<!-- Header -->
+<div class="header">
+    <h1>Order Details</h1>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="order-details-container">
+        <div class="order-header">
+            <h2>Order Details</h2>
+            <div class="order-number">Order #{{ order.id }}</div>
+        </div>
+
+        <div class="order-info">
+            <div class="info-group">
+                <h3>Product Information</h3>
+                <div class="info-item">
+                    <label>Product Name:</label>
+                    <span>{{ order.stock.product.name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Description:</label>
+                    <span>{{ order.stock.product.description }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Category:</label>
+                    <span>{{ order.stock.product.category ? order.stock.product.category.category : 'N/A' }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>Order Information</h3>
+                <div class="info-item">
+                    <label>Quantity:</label>
+                    <span>{{ order.quantity }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Unit Price:</label>
+                    <span>₱{{ order.unitPrice|number_format(2, '.', ',') }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Total Amount:</label>
+                    <span>₱{{ order.totalAmount|number_format(2, '.', ',') }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Order Date:</label>
+                    <span>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-image">
+            {% if order.stock.product.image %}
+                <img src="{{ order.stock.product.image starts with 'http' ? order.stock.product.image : asset('uploads/' ~ order.stock.product.image) }}" 
+                     alt="{{ order.stock.product.name }}"
+                     class="thumbnail-large"
+                     onerror="this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+            {% else %}
+                <div style="background: #f8f9fa; padding: 40px; border-radius: 8px;">
+                    <p style="color: #6c757d; margin: 0;">No image available</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="info-group">
+            <h3>Stock Information</h3>
+            <div class="info-item">
+                <label>Stock ID:</label>
+                <span>{{ order.stock.id }}</span>
+            </div>
+            <div class="info-item">
+                <label>Current Stock:</label>
+                <span>{{ order.stock.stock }}</span>
+            </div>
+            <div class="info-item">
+                <label>Created At:</label>
+                <span>{{ order.stock.createdAt ? order.stock.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn btn-warning">Edit Order</a>
+            <a href="{{ path('app_order_index') }}" class="btn btn-primary">Back to Orders</a>
+            <form method="post" action="{{ path('app_order_delete', {'id': order.id}) }}" style="display: inline-block;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% elseif is_granted('ROLE_STAFF') %}
+<!-- Sidebar for Staff -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+<!-- Header for Staff -->
+<div class="header">
+    <h1>Order Details</h1>
+</div>
+
+<!-- Main Content for Staff -->
+<div class="main-content">
+    <div class="order-details-container">
+        <div class="order-header">
+            <h2>Order Details</h2>
+            <div class="order-number">Order #{{ order.id }}</div>
+        </div>
+
+        <div class="order-info">
+            <div class="info-group">
+                <h3>Product Information</h3>
+                <div class="info-item">
+                    <label>Product Name:</label>
+                    <span>{{ order.stock.product.name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Description:</label>
+                    <span>{{ order.stock.product.description }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Category:</label>
+                    <span>{{ order.stock.product.category ? order.stock.product.category.category : 'N/A' }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>Order Information</h3>
+                <div class="info-item">
+                    <label>Quantity:</label>
+                    <span>{{ order.quantity }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Unit Price:</label>
+                    <span>₱{{ order.unitPrice|number_format(2, '.', ',') }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Total Amount:</label>
+                    <span>₱{{ order.totalAmount|number_format(2, '.', ',') }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Order Date:</label>
+                    <span>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-image">
+            {% if order.stock.product.image %}
+                <img src="{{ order.stock.product.image starts with 'http' ? order.stock.product.image : asset('uploads/' ~ stock.product.image) }}" 
+                     alt="{{ order.stock.product.name }}"
+                     class="thumbnail-large"
+                     onerror="this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+            {% else %}
+                <div style="background: #f8f9fa; padding: 40px; border-radius: 8px;">
+                    <p style="color: #6c757d; margin: 0;">No image available</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="info-group">
+            <h3>Stock Information</h3>
+            <div class="info-item">
+                <label>Stock ID:</label>
+                <span>{{ order.stock.id }}</span>
+            </div>
+            <div class="info-item">
+                <label>Current Stock:</label>
+                <span>{{ order.stock.stock }}</span>
+            </div>
+            <div class="info-item">
+                <label>Created At:</label>
+                <span>{{ order.stock.createdAt ? order.stock.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="{{ path('app_order_index') }}" class="btn btn-primary">Back to Orders</a>
+            <form method="post" action="{{ path('app_order_delete', {'id': order.id}) }}" style="display: inline-block;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

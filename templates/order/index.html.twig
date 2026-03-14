@@ -1,0 +1,542 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartlify | Manage Orders{% endblock %}
+
+{% block body %}
+<style>
+/* --- Sidebar & Header --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background-color: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+}
+.sidebar:hover { width: 220px; }
+.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
+.sidebar .logo img { height:48px; transition: height 0.3s; }
+.sidebar:hover .logo img { height:128px; }
+.sidebar a {
+    display:flex;
+    align-items:center;
+    padding:15px 10px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    border-left:4px solid transparent;
+    transition: all 0.3s;
+}
+.sidebar a i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+.sidebar a span { display:none; transition: opacity 0.3s; }
+.sidebar:hover a span { display:inline; margin-left:15px; }
+.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.header {
+    margin-left: 60px;
+    height: 80px;
+    background-color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .header { margin-left:220px; }
+.main-content {
+    margin-left: 60px;
+    padding:30px;
+    transition: margin-left 0.3s;
+}
+.sidebar:hover ~ .main-content { margin-left:220px; }
+
+/* --- Table --- */
+table {
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    border-radius:8px;
+    overflow:hidden;
+}
+table th { background:#343a40; color:white; padding:12px; text-align:left; }
+table td { padding:12px; border-bottom:1px solid #ddd; vertical-align: middle; }
+tr:hover { background:#f1f1f1; }
+.btn {
+    padding:6px 12px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:14px;
+    text-decoration:none;
+    margin-right:5px;
+}
+.btn-primary { background:#007bff; color:white; }
+.btn-success { background:#28a745; color:white; }
+.btn-warning { background:#ffc107; color:black; }
+.btn-danger  { background:#dc3545; color:white; }
+.btn:hover { opacity:0.9; }
+.thumbnail { 
+    width:80px; 
+    height:80px; 
+    object-fit: cover; 
+    border-radius:4px; 
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
+/* --- Search Bar --- */
+.search-container {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.profile-name {
+    font-weight: 500;
+    user-select: none;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    max-width: 500px;
+}
+
+.search-form input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    flex: 1;
+    font-size: 14px;
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.search-form button:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    padding: 10px 15px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    color: white;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.text-center {
+    text-align: center;
+}
+
+
+/* --- Responsive --- */
+@media (max-width:768px) {
+    .sidebar { width:60px; }
+    .sidebar a span { display:none; }
+    .header, .main-content { margin-left:60px; padding:20px; }
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-form {
+        max-width: 100%;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+    }
+}
+</style>
+
+{% if is_granted('ROLE_ADMIN') %}
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+<!-- Header -->
+<div class="header">
+    <h1>Transactions</h1>
+     <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set bgColor = 
+            label == 'success' ? '#28a745' : 
+            label == 'error' ? '#dc3545' : 
+            label == 'warning' ? '#ffc107' : '#17a2b8' 
+        %}
+        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+        <div style="
+            background-color: {{ bgColor }};
+            color: {{ textColor }};
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none'" 
+                    style="
+                        background: transparent;
+                        border: none;
+                        color: {{ textColor }};
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    ">&times;</button>
+        </div>
+    {% endfor %}
+{% endfor %}
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form method="get" action="{{ path('app_order_index') }}" class="search-form">
+            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by product name, description, or order ID..." />
+            <button type="submit">Search</button>
+            {% if search %}
+                <a href="{{ path('app_order_index') }}" class="btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+        
+        <a href="{{ path('app_order_new') }}" class="btn btn-success">Place New Order</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Ordered At</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.stock.product.name }}</td>
+               <td>
+    {% if order.stock.product.image %}
+        {% set imagePath = order.stock.product.image %}
+        {# Fix for image paths - prepend /uploads/ if needed #}
+        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
+            {% set imagePath = '/uploads/' ~ imagePath %}
+        {% endif %}
+        <img src="{{ imagePath }}" 
+             class="thumbnail" 
+             alt="{{ order.stock.product.name }}"
+             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+    {% else %}
+        <span class="text-muted">No Image</span>
+    {% endif %}
+</td>
+                <td>{{ order.quantity }}</td>
+                <td>₱{{ order.totalAmount|number_format(2, '.', ',') }}</td>
+                <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    {% if search %}
+                        No transactions found for "{{ search }}"
+                    {% else %}
+                        No orders found
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% elseif is_granted('ROLE_STAFF') %}
+<!-- Sidebar for Staff -->
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+<!-- Header for Staff -->
+<div class="header">
+    <h1>Transactions</h1>
+     <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content for Staff -->
+<div class="main-content">
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set bgColor = 
+            label == 'success' ? '#28a745' : 
+            label == 'error' ? '#dc3545' : 
+            label == 'warning' ? '#ffc107' : '#17a2b8' 
+        %}
+        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
+        <div style="
+            background-color: {{ bgColor }};
+            color: {{ textColor }};
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none'" 
+                    style="
+                        background: transparent;
+                        border: none;
+                        color: {{ textColor }};
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    ">&times;</button>
+        </div>
+    {% endfor %}
+{% endfor %}
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form method="get" action="{{ path('app_order_index') }}" class="search-form">
+            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by product name, description, or order ID..." />
+            <button type="submit">Search</button>
+            {% if search %}
+                <a href="{{ path('app_order_index') }}" class="btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+        
+        <a href="{{ path('app_order_new') }}" class="btn btn-success">Place New Order</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Ordered At</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.stock.product.name }}</td>
+               <td>
+    {% if order.stock.product.image %}
+        {% set imagePath = order.stock.product.image %}
+        {# Fix for image paths - prepend /uploads/ if needed #}
+        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
+            {% set imagePath = '/uploads/' ~ imagePath %}
+        {% endif %}
+        <img src="{{ imagePath }}" 
+             class="thumbnail" 
+             alt="{{ order.stock.product.name }}"
+             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+    {% else %}
+        <span class="text-muted">No Image</span>
+    {% endif %}
+</td>
+                <td>{{ order.quantity }}</td>
+                <td>₱{{ order.totalAmount|number_format(2, '.', ',') }}</td>
+                <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    {% if search %}
+                        No transactions found for "{{ search }}"
+                    {% else %}
+                        No orders found
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

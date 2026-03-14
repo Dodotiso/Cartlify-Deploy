@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title %}User Details{% endblock %}
+
+{% block body %}
+<style>
+.detail-box{
+    max-width:500px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 2px 12px rgba(0,0,0,.08)
+}
+.back-btn{
+    display:inline-block;
+    margin-top:15px;
+    text-decoration:none;
+    color:#007bff;
+    font-weight:600
+}
+</style>
+
+{% if is_granted('ROLE_ADMIN') %}
+<div class="detail-box">
+    {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+
+{% set avatarLetter = 
+    role == 'ROLE_ADMIN' ? 'A' :
+    (role == 'ROLE_STAFF' ? 'S' :
+    (role == 'ROLE_USER' ? 'U' :
+    app.user.username|first|upper))
+%}
+
+<div class="header">
+     <h1>User Details</h1>
+
+    <div class="profile-wrapper">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ avatarLetter }}</div>
+            <span class="profile-name">{{ app.user.username }}</span>
+        </div>
+    </div>
+</div>
+
+    <p><b>ID:</b> {{ user.id }}</p>
+    <p><b>Username:</b> {{ user.username }}</p>
+    <p><b>Roles:</b> {{ user.roles|join(', ') }}</p>
+    <p><b>Created At:</b> {{ user.createdAt|date('Y-m-d H:i') }}</p>
+
+    <a href="{{ path('app_user_index') }}" class="back-btn">← Back to list</a>
+</div>
+{# {% elseif is_granted('ROLE_USER') %}
+<div class="detail-box">
+    <h2>User Details</h2>
+
+    <p><b>ID:</b> {{ user.id }}</p>
+    <p><b>Username:</b> {{ user.username }}</p>
+    <p><b>Roles:</b> {{ user.roles|join(', ') }}</p>
+    <p><b>Created At:</b> {{ user.createdAt|date('Y-m-d H:i') }}</p>
+
+    <a href="{{ path('app_user_index') }}" class="back-btn">← Back to list</a>
+</div>       #}
+{% endif %}
+{% endblock %}

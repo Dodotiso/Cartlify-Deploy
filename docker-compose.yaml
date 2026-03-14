@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: Cartlify
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Cartlify_root
+      MYSQL_DATABASE: Cartlify_db
+      MYSQL_USER: Cartlify_user
+      MYSQL_PASSWORD: Cartlify_password
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - Cartlify_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: Cartlify_php
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: Cartlify_user
+      PMA_PASSWORD: Cartlify_password
+    ports:
+      - "8083:80"
+    depends_on:
+      - mysql
+    networks:
+      - Cartlify_network
+
+volumes:
+  mysql_data:
+
+networks:
+  Cartlify_network:
+    driver: bridge

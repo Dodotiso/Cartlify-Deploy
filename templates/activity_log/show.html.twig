@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ActivityLog{% endblock %}
+
+{% block body %}
+    <h1>ActivityLog</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ activity_log.id }}</td>
+            </tr>
+            <tr>
+                <th>UserId</th>
+                <td>{{ activity_log.userId }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ activity_log.username }}</td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td>{{ activity_log.role }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>{{ activity_log.action }}</td>
+            </tr>
+            <tr>
+                <th>Target</th>
+                <td>{{ activity_log.target }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ activity_log.createdAt ? activity_log.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_activity_log_index') }}">back to list</a>
+
+    <a href="{{ path('app_activity_log_edit', {'id': activity_log.id}) }}">edit</a>
+
+    {{ include('activity_log/_delete_form.html.twig') }}
+{% endblock %}
