@@ -37,7 +37,7 @@ security:
          - { path: ^/activity/log, roles: 'ROLE_ADMIN' }
          - { path: ^/order, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
          - { path: ^/user, roles: ROLE_ADMIN }
-         - { path: ^/buyer, roles: ROLE_USER }
+         - { path: ^/shop, roles: ROLE_USER }
 
 when@test:
     security:

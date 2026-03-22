@@ -11,9 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ProductType extends AbstractType
 {
@@ -21,51 +21,69 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Product Name'
+                'label' => '📦 Product Name',
+                'attr' => [
+                    'placeholder' => 'Enter product name',
+                    'class' => 'form-control'
+                ]
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description'
+                'label' => '📝 Description',
+                'attr' => [
+                    'placeholder' => 'Enter product description',
+                    'rows' => 5,
+                    'class' => 'form-control'
+                ]
             ])
             ->add('price', MoneyType::class, [
-                'label' => 'Price',
-                'currency' => 'USD'
+                'label' => '💰 Price',
+                'currency' => 'PHP',
+                'attr' => [
+                    'placeholder' => '0.00',
+                    'class' => 'form-control'
+                ]
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'category', // assumes your Category entity has 'category' property
-                'placeholder' => 'Select a category',
-                'label' => 'Category',
+                'choice_label' => 'category',
+                'placeholder' => '📂 Select a category',
+                'label' => '📁 Category',
                 'required' => false,
+                'attr' => ['class' => 'form-control']
             ])
-
-            // ✅ Image URL option
             ->add('image', TextType::class, [
-                'label' => 'Image URL',
+                'label' => '🔗 Image URL',
                 'required' => false,
+                'attr' => [
+                    'placeholder' => 'https://example.com/image.jpg',
+                    'class' => 'form-control'
+                ],
+                'help' => 'Or provide an image URL'
             ])
-
-            // ✅ Image file upload option
             ->add('imageFile', FileType::class, [
-                'label' => 'Upload Image File',
-                'mapped' => false,   // important: not mapped to entity
+                'label' => '📁 Upload Image File',
+                'mapped' => false,
                 'required' => false,
                 'constraints' => [
-                    new File([
+                    new Image([
                         'maxSize' => '5M',
                         'mimeTypes' => [
                             'image/png',
                             'image/jpeg',
                             'image/jpg',
                             'image/gif',
+                            'image/webp',
+                            'image/avif',
                         ],
+                        'mimeTypesMessage' => 'Please upload a valid image file (PNG, JPEG, JPG, GIF, WEBP, AVIF)',
+                        'maxSizeMessage' => 'The image file is too large ({{ size }} {{ suffix }}). Maximum allowed size is {{ limit }} {{ suffix }}.',
                     ])
                 ],
-            ])
-
-            ->add('createdAt', DateTimeType::class, [
-                'label' => 'Created At',
-                'widget' => 'single_text',
-                'required' => false,
+                'attr' => [
+                    'accept' => 'image/png,image/jpeg,image/jpg,image/gif,image/webp,image/avif',
+                    'class' => 'form-control-file'
+                ],
+                'help' => 'Supported formats: PNG, JPEG, JPG, GIF, WEBP, AVIF (Max: 5MB)'
             ]);
     }
 

@@ -25,16 +25,16 @@ class StockType extends AbstractType
                 'choice_label' => 'name',
                 'placeholder' => 'Select a product',
                 'label' => 'Product',
-            ])
+            ]);
             // ->add('image', TextType::class, [
             //     'label' => 'Image URL',
             //     'required' => false,
             // ])
-            ->add('createdAt', DateTimeType::class, [
-                'label' => 'Created At',
-                'widget' => 'single_text',
-                'required' => false,
-            ]);
+            // ->add('createdAt', DateTimeType::class, [
+            //     'label' => 'Created At',
+            //     'widget' => 'single_text',
+            //     'required' => false,
+            // ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

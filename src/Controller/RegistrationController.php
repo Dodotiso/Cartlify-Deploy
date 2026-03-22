@@ -16,29 +16,48 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
-    {   
-         if ($this->getUser()) {
-             return $this->redirectToRoute('app_buyer');
-         }
-        
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        Security $security,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        // If user already logged in redirect to shop
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_shop');
+        }
+
         $user = new User();
+        
+        // Set the created date - THIS FIXES THE ERROR
+        $user->setCreatedAt(new \DateTimeImmutable());
+
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
+
+            // get plain password
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // hash password
+            $user->setPassword(
+                $userPasswordHasher->hashPassword($user, $plainPassword)
+            );
 
+            // ✅ SET DEFAULT ROLE
+            $user->setRoles(['ROLE_USER']);
+
+            // save user
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // auto login after registration
+            $security->login($user, LoginAuthenticator::class, 'main');
 
-            return $security->login($user, LoginAuthenticator::class, 'main');
+            // redirect to shop after registration
+            return $this->redirectToRoute('app_shop');
         }
 
         return $this->render('registration/register.html.twig', [

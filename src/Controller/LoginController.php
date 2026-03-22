@@ -12,16 +12,28 @@ class LoginController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // If already logged in, redirect based on role
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_dashboard');
+
+            if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
+                return $this->redirectToRoute('app_dashboard');
+            }
+
+            if ($this->isGranted('ROLE_USER')) {
+                return $this->redirectToRoute('app_shop'); // Changed to app_shop
+            }
         }
 
-        // get the login error if there is one
+        // get login error  
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
+
+        // last username entered
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error
+        ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

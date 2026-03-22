@@ -1,45 +1,122 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cartlify | Show Stock{% endblock %}
+{% block title %}Cartlify | Stock Details{% endblock %}
 
 {% block body %}
 <style>
-/* --- Sidebar & Header --- */
-body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; color:#343a40; }
-.sidebar { position:fixed; top:0; left:0; height:100%; width:60px; background:#1f2a44; padding-top:30px; display:flex; flex-direction:column; overflow:hidden; transition:width 0.3s; }
-.sidebar:hover { width:220px; }
-.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
-.sidebar .logo img { height:48px; transition:height 0.3s; }
-.sidebar:hover .logo img { height:128px; }
-.sidebar a { display:flex; align-items:center; padding:15px 10px; text-decoration:none; color:#fff; font-weight:500; border-left:4px solid transparent; transition: all 0.3s; }
-.sidebar a span { display:none; transition: opacity 0.3s; }
-.sidebar:hover a span { display:inline; margin-left:25px; }
-.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
-.header { margin-left:60px; height:80px; background:#fff; display:flex; align-items:center; padding:0 30px; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition:margin-left 0.3s; }
-.sidebar:hover ~ .header { margin-left:220px; }
-.main-content { margin-left:60px; padding:30px; transition: margin-left 0.3s; display:flex; justify-content:center; }
-.sidebar:hover ~ .main-content { margin-left:220px; }
+/* --- Body & Sidebar --- */
+body { 
+    margin:0; 
+    font-family:Arial,sans-serif; 
+    background:#f4f6f9; 
+    color:#343a40;
+    padding-top: 80px;
+}
 
-/* --- Stock Card --- */
-.card { background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); max-width:700px; width:100%; }
-.card h2 { margin-top:0; margin-bottom:20px; color:#1f2a44; text-align:center; }
-.card img { display:block; margin:0 auto 20px; width:150px; height:150px; object-fit:cover; border-radius:8px; }
-.card p { font-size:16px; margin-bottom:12px; }
-.card .buttons { display:flex; justify-content:center; gap:10px; margin-top:20px; }
-.btn { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600; text-decoration:none; text-align:center; display:inline-block; }
-.btn-primary { background:#007bff; color:white; }
-.btn-primary:hover { background:#0056b3; }
-.btn-secondary { background:#1f2a44; color:white; }
-.btn-secondary:hover { background:#273659; }
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+    z-index: 100;
+}
+
+.sidebar:hover {
+    width: 220px;
+}
+
+.sidebar .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+    height: 48px;
+    transition: height 0.3s;
+}
+
+.sidebar:hover .logo img {
+    height: 128px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+}
+
+.sidebar a i {
+    min-width: 24px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.sidebar a span {
+    display: none;
+    margin-left: 20px;
+    white-space: nowrap;
+    transition: opacity 0.3s;
+}
+
+.sidebar:hover a span {
+    display: inline;
+    opacity: 1;
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+    border-left: 4px solid #E64C3C;
+}
+
+/* --- Sticky Header --- */
 .header {
+    position: fixed;
+    top: 0;
+    left: 60px;
+    right: 0;
+    height: 80px;
+    background: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 25px;
-    background: #ffffff;
-    border-bottom: 1px solid #ddd;
+    padding: 0 30px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: left 0.3s;
+    z-index: 99;
 }
 
+.sidebar:hover ~ .header {
+    left: 220px;
+}
+
+/* --- Main Content --- */
+.main-content {
+    margin-left: 60px;
+    padding: 30px;
+    transition: margin-left 0.3s;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar:hover ~ .main-content {
+    margin-left: 220px;
+}
+
+/* --- Profile Dropdown --- */
 .profile-wrapper {
     position: relative;
 }
@@ -49,7 +126,17 @@ body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; color:#343a40
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    position: relative;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.profile-header:hover {
+    background-color: #f0f0f0;
+}
+
+.profile-header.active {
+    background-color: #e9ecef;
 }
 
 .profile-avatar {
@@ -63,229 +150,1004 @@ body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; color:#343a40
     justify-content: center;
     font-weight: bold;
     font-size: 18px;
+    overflow: hidden;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .profile-name {
     font-weight: 500;
+    color: #333;
     user-select: none;
+}
+
+.dropdown-icon {
+    font-size: 12px;
+    color: #6c757d;
+    transition: transform 0.3s;
+}
+
+.profile-header.active .dropdown-icon {
+    transform: rotate(180deg);
 }
 
 .profile-dropdown {
     position: absolute;
     top: 50px;
     right: 0;
-    width: 150px;
+    width: 200px;
     background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     display: none;
     flex-direction: column;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow: hidden;
 }
 
-.profile-dropdown a {
-    padding: 10px 12px;
-    text-decoration: none;
-    color: #333;
-    display: block;
-}
-
-.profile-dropdown a:hover {
-    background: #f5f5f5;
-}
-
-.profile-header:hover .profile-dropdown {
+.profile-dropdown.show {
     display: flex;
 }
 
+.dropdown-role-header {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.dropdown-role-header i {
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 4px 0;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item i {
+    width: 18px;
+    color: #6c757d;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.logout-item {
+    color: #dc3545;
+    border-top: 1px solid #eee;
+}
+
+.dropdown-item.logout-item i {
+    color: #dc3545;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+    border-left: 4px solid;
+}
+
+.toast-success {
+    border-left-color: #28a745;
+    background: #f0f9f0;
+}
+
+.toast-error {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+}
+
+.toast-warning {
+    border-left-color: #ffc107;
+    background: #fffbf0;
+}
+
+.toast-info {
+    border-left-color: #17a2b8;
+    background: #f0f9ff;
+}
+
+.toast-icon {
+    font-size: 20px;
+}
+
+.toast-success .toast-icon { color: #28a745; }
+.toast-error .toast-icon { color: #dc3545; }
+.toast-warning .toast-icon { color: #ffc107; }
+.toast-info .toast-icon { color: #17a2b8; }
+
+.toast-content {
+    flex: 1;
+    color: #333;
+    font-size: 14px;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    width: 100%;
+    animation: progress 3s linear forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Upload Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #343a40;
+    font-size: 18px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.upload-area {
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #007bff;
+}
+
+.upload-area i {
+    font-size: 48px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.upload-area p {
+    margin: 0;
+    color: #6c757d;
+}
+
+.upload-area small {
+    color: #adb5bd;
+    font-size: 12px;
+}
+
+.image-preview {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+.upload-progress {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007bff;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+#progressText {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-primary-modal {
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-primary-modal:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.btn-primary-modal:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary-modal {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-secondary-modal:hover {
+    opacity: 0.9;
+}
+
+/* --- Stock Card --- */
+.card { 
+    background:#fff; 
+    padding:30px; 
+    border-radius:12px; 
+    box-shadow:0 4px 20px rgba(0,0,0,0.08); 
+    max-width:700px; 
+    width:100%; 
+}
+
+.card h2 { 
+    margin-top:0; 
+    margin-bottom:20px; 
+    color:#1f2a44; 
+    text-align:center; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card img { 
+    display:block; 
+    margin:0 auto 20px; 
+    width:200px; 
+    height:200px; 
+    object-fit:cover; 
+    border-radius:12px; 
+    border: 3px solid #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card p { 
+    font-size:16px; 
+    margin-bottom:12px; 
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card p i {
+    width: 24px;
+    color: #007bff;
+}
+
+.card .buttons { 
+    display:flex; 
+    justify-content:center; 
+    gap:10px; 
+    margin-top:20px; 
+}
+
+.btn { 
+    padding:10px 20px; 
+    border:none; 
+    border-radius:6px; 
+    cursor:pointer; 
+    font-weight:600; 
+    text-decoration:none; 
+    text-align:center; 
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-primary { 
+    background:#007bff; 
+    color:white; 
+}
+
+.btn-primary:hover { 
+    background:#0056b3; 
+}
+
+.btn-secondary { 
+    background:#6c757d; 
+    color:white; 
+}
+
+.btn-secondary:hover { 
+    background:#5a6268; 
+}
+
+.stock-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.stock-low {
+    background: #dc3545;
+    color: white;
+}
+
+.stock-medium {
+    background: #ffc107;
+    color: #212529;
+}
+
+.stock-high {
+    background: #28a745;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding-top: 120px;
+    }
+    
+    .sidebar { width: 60px; }
+    .sidebar a span { display: none; }
+    
+    .header {
+        left: 60px;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .sidebar:hover ~ .header {
+        left: 220px;
+    }
+    
+    .main-content { 
+        margin-left: 60px; 
+        padding: 15px;
+    }
+    
+    .profile-name, .dropdown-icon {
+        display: none;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .card img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .toast-container {
+        top: 140px;
+    }
+}
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Sidebar -->
 <div class="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
     <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
-    <!-- Products -->
     <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
-    <!-- Stocks -->
     <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
-    <!-- Marketplace -->
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
-    <!-- Transactions -->
     <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
-    
-    <!-- Staff Management -->
     <a href="{{ path('app_user_index') }}">
-        <i class="fas fa-user-tie" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-user-tie"></i>
         <span>Staff Management</span>
     </a>
-    
-    <!-- Activity Logs -->
     <a href="{{ path('app_activity_log_index') }}">
-        <i class="fas fa-clipboard-list" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
     </a>
     <a href="{{ path('app_profile_index') }}">
         <i class="fas fa-user"></i>
         <span>Profile</span>
     </a>
-    <!-- Logout -->
     <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-power-off"></i>
         <span>Logout</span>
     </a>
 </div>
 
-<!-- Header -->
-{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
-%}
-
-<div class="header">
-     <h1>Stock Details</h1>
-
-    <div class="profile-wrapper">
-        <div class="profile-header">
-            <div class="profile-avatar">{{ avatarLetter }}</div>
-            <span class="profile-name">{{ app.user.username }}</span>
-        </div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <div class="card">
-        <h2>{{ stock.product.name }}</h2>
-
-        {% if stock.product.image %}
-            <img src="{{ asset(stock.product.image) }}" alt="{{ stock.product.name }}">
-        {% endif %}
-
-        <p><strong>Stock Quantity:</strong> {{ stock.stock }}</p>
-        <p><strong>Product Created At:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
-        <p><strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}</p>
-
-        <div class="buttons">
-            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="btn btn-primary">Edit Stock</a>
-            <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">Back to Stocks</a>
-        </div>
-    </div>
-</div>
 {% elseif is_granted('ROLE_STAFF') %}
-<!-- Sidebar -->
 <div class="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
     <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
-    <!-- Products -->
     <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
-    <!-- Stocks -->
     <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
-    <!-- Marketplace -->
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
-    <!-- Transactions -->
     <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
     <a href="{{ path('app_profile_index') }}">
         <i class="fas fa-user"></i>
         <span>Profile</span>
     </a>
-    
-    <!-- Logout -->
     <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off" style="font-size: 18px; width: 24px; text-align: center;"></i>
+        <i class="fas fa-power-off"></i>
         <span>Logout</span>
     </a>
 </div>
+{% endif %}
 
-<!-- Header -->
+{# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
+{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
+{% set userRoleName = 
+    role == 'ROLE_ADMIN' ? 'Administrator' :
+    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
+%}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
+<!-- Sticky Header -->
 <div class="header">
-     <h1>Stock Details</h1>
+    <h1><i class="fas fa-boxes"></i> Stock Details</h1>
 
     <div class="profile-wrapper">
-        <div class="profile-header">
-            <div class="profile-avatar">{{ avatarLetter }}</div>
+        <div class="profile-header" id="profileHeader">
+            <div class="profile-avatar">
+                {% if hasProfilePic %}
+                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                {% else %}
+                    {{ app.user.username|first|upper }}
+                {% endif %}
+            </div>
             <span class="profile-name">{{ app.user.username }}</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+        
+        <div class="profile-dropdown" id="profileDropdown">
+            <div class="dropdown-role-header">
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+            </div>
+            <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                <i class="fas fa-camera"></i>
+                <span>Change Picture</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </div>
     </div>
 </div>
+
+<!-- Hidden File Upload Form -->
+<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
+    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
+</form>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- Main Content -->
 <div class="main-content">
     <div class="card">
-        <h2>{{ stock.product.name }}</h2>
+        <h2>
+            <i class="fas fa-box"></i> {{ stock.product.name }}
+        </h2>
 
         {% if stock.product.image %}
-            <img src="{{ asset(stock.product.image) }}" alt="{{ stock.product.name }}">
+            {% set imagePath = stock.product.image %}
+            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                {% set imagePath = '/uploads/' ~ imagePath %}
+            {% endif %}
+            <img src="{{ imagePath }}" alt="{{ stock.product.name }}"
+                 onerror="this.onerror=null; this.src='{{ asset('images/no-image.png') }}'; this.alt='Image not available';">
+        {% else %}
+            <img src="{{ asset('images/no-image.png') }}" alt="No Image">
         {% endif %}
 
-        <p><strong>Stock Quantity:</strong> {{ stock.stock }}</p>
-        <p><strong>Product Created At:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
-        <p><strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}</p>
+        <p>
+            <i class="fas fa-chart-line"></i>
+            <strong>Stock Quantity:</strong> 
+            {% if stock.stock < 10 %}
+                <span class="stock-badge stock-low"><i class="fas fa-exclamation-triangle"></i> {{ stock.stock }} (Low Stock)</span>
+            {% elseif stock.stock < 20 %}
+                <span class="stock-badge stock-medium"><i class="fas fa-chart-line"></i> {{ stock.stock }}</span>
+            {% else %}
+                <span class="stock-badge stock-high"><i class="fas fa-check-circle"></i> {{ stock.stock }}</span>
+            {% endif %}
+        </p>
+        
+        <p>
+            <i class="fas fa-calendar-alt"></i>
+            <strong>Product Created:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}
+        </p>
+        
+        <p>
+            <i class="fas fa-tag"></i>
+            <strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}
+        </p>
+        
+        <p>
+            <i class="fas fa-dollar-sign"></i>
+            <strong>Price:</strong> ₱{{ stock.product.price|number_format(2, '.', ',') }}
+        </p>
+        
+        <p>
+            <i class="fas fa-align-left"></i>
+            <strong>Description:</strong> {{ stock.product.description }}
+        </p>
 
         <div class="buttons">
-            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="btn btn-primary">Edit Stock</a>
-            <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">Back to Stocks</a>
+            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Stock
+            </a>
+            <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stocks
+            </a>
         </div>
     </div>
 </div>
 
-{% endif %}
-{% endblock %}
+<!-- Add Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
- 
+<script>
+// Toast Notification System
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = '';
+    if (type === 'success') icon = '✓';
+    if (type === 'error') icon = '✗';
+    if (type === 'warning') icon = '⚠';
+    if (type === 'info') icon = 'ℹ';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">${message}</div>
+        <div class="toast-progress"></div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Display flash messages
+document.addEventListener('DOMContentLoaded', function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            showToast('{{ message|escape('js') }}', '{{ label }}');
+        {% endfor %}
+    {% endfor %}
+});
+
+// Profile dropdown
+let dropdownInitialized = false;
+
+function initializeDropdown() {
+    if (dropdownInitialized) return;
+    
+    const profileHeader = document.getElementById('profileHeader');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const changePicBtn = document.getElementById('changeProfilePicBtn');
+    
+    if (profileHeader && profileDropdown) {
+        profileHeader.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            profileDropdown.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileHeader.classList.remove('active');
+                profileDropdown.classList.remove('show');
+            }
+        });
+        
+        dropdownInitialized = true;
+    }
+    
+    if (changePicBtn) {
+        changePicBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showUploadModal();
+        });
+    }
+}
+
+function showUploadModal() {
+    const existingModal = document.getElementById('uploadModal');
+    if (existingModal) existingModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'uploadModal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Profile Picture</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload or drag and drop</p>
+                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
+                </div>
+                <div class="image-preview" id="imagePreview" style="display: none;">
+                    <img src="" alt="Preview">
+                </div>
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
+                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 10);
+    
+    const uploadArea = document.getElementById('uploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = imagePreview.querySelector('img');
+    const saveBtn = document.getElementById('saveUpload');
+    const cancelBtn = document.getElementById('cancelUpload');
+    const closeBtn = modal.querySelector('.close-modal');
+    const progressContainer = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
+    fileInput.style.display = 'none';
+    modal.appendChild(fileInput);
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size must be less than 2MB', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadArea.style.display = 'none';
+                saveBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#007bff';
+        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#ced4da';
+        uploadArea.style.backgroundColor = 'transparent';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ced4da';
+        uploadArea.style.backgroundColor = 'transparent';
+        
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size must be less than 2MB', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadArea.style.display = 'none';
+                saveBtn.disabled = false;
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    saveBtn.addEventListener('click', function() {
+        if (fileInput.files.length > 0) {
+            uploadProfilePicture(fileInput.files[0]);
+        }
+    });
+    
+    function uploadProfilePicture(file) {
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+        
+        progressContainer.style.display = 'block';
+        saveBtn.disabled = true;
+        
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                progressFill.style.width = percentComplete + '%';
+                progressText.textContent = percentComplete + '%';
+            }
+        });
+        
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        updateProfilePicture(response.imageUrl);
+                        showToast('Profile picture updated successfully!', 'success');
+                        modal.classList.remove('show');
+                        setTimeout(() => modal.remove(), 300);
+                    } else {
+                        showToast(response.message || 'Upload failed', 'error');
+                        resetUpload();
+                    }
+                } catch (e) {
+                    showToast('Invalid server response', 'error');
+                    resetUpload();
+                }
+            } else {
+                showToast('Upload failed. Please try again.', 'error');
+                resetUpload();
+            }
+        });
+        
+        xhr.addEventListener('error', function() {
+            showToast('Network error. Please try again.', 'error');
+            resetUpload();
+        });
+        
+        xhr.open('POST', '/dashboard/upload-profile-picture', true);
+        xhr.send(formData);
+    }
+    
+    function resetUpload() {
+        progressContainer.style.display = 'none';
+        progressFill.style.width = '0%';
+        progressText.textContent = '0%';
+        saveBtn.disabled = false;
+    }
+    
+    function updateProfilePicture(imageUrl) {
+        const avatar = document.querySelector('.profile-avatar');
+        const url = imageUrl + '?t=' + new Date().getTime();
+        avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
+    }
+    
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    }
+    
+    cancelBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initializeDropdown, 100);
+});
+</script>
+{% endblock %}

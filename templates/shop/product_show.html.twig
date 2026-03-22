@@ -1,0 +1,422 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} - Cartlify{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .product-detail {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+
+    .product-nav {
+        margin-bottom: 30px;
+    }
+
+    .product-nav a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+    .product-nav a:hover {
+        color: var(--secondary-color);
+    }
+
+    .product-nav span {
+        color: #6c757d;
+        margin: 0 10px;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--box-shadow);
+    }
+
+    .product-gallery {
+        position: relative;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 15px;
+        background: var(--light-bg);
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 2;
+    }
+
+    .badge {
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: white;
+    }
+
+    .badge.new {
+        background: var(--accent-color);
+    }
+
+    .product-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-category {
+        display: inline-block;
+        padding: 8px 16px;
+        background: rgba(230, 76, 60, 0.1);
+        color: var(--secondary-color);
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+        align-self: flex-start;
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .product-price {
+        margin-bottom: 25px;
+    }
+
+    .current-price {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--secondary-color);
+    }
+
+    .currency {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    .product-description {
+        color: #495057;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+    }
+
+    .stock-info {
+        background: var(--light-bg);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .stock-info h4 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .stock-bar {
+        width: 100%;
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .stock-fill {
+        height: 100%;
+        background: var(--accent-color);
+        border-radius: 5px;
+        transition: width 0.3s ease;
+    }
+
+    .stock-fill.low {
+        background: #ffc107;
+    }
+
+    .stock-fill.out {
+        background: #dc3545;
+    }
+
+    .stock-text {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .stock-text.in-stock {
+        color: var(--accent-color);
+    }
+
+    .stock-text.low-stock {
+        color: #ffc107;
+    }
+
+    .stock-text.out-of-stock {
+        color: #dc3545;
+    }
+
+    .variants-section {
+        margin-bottom: 30px;
+    }
+
+    .variants-section h4 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .variant-badge {
+        display: inline-block;
+        padding: 10px 20px;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .variant-badge.in-stock {
+        border-color: var(--accent-color);
+        background: rgba(40, 167, 69, 0.05);
+    }
+
+    .variant-badge.low-stock {
+        border-color: #ffc107;
+        background: rgba(255, 193, 7, 0.05);
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .quantity-selector label {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .quantity-selector input {
+        width: 80px;
+        padding: 10px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-add-cart {
+        flex: 2;
+        padding: 15px 30px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-add-cart:hover:not(:disabled) {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .btn-add-cart:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .btn-wishlist {
+        flex: 1;
+        padding: 15px;
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-wishlist:hover {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+    }
+
+    @media (max-width: 768px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+            padding: 20px;
+        }
+
+        .main-image {
+            height: 300px;
+        }
+
+        .product-title {
+            font-size: 2rem;
+        }
+
+        .current-price {
+            font-size: 2.2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="product-detail">
+    <!-- Navigation -->
+    <div class="product-nav">
+        <a href="{{ path('app_shop') }}">Shop</a>
+        <span>></span>
+        {% if product.category %}
+            <a href="{{ path('app_shop', {'category': product.category.id}) }}">{{ product.category.category }}</a>
+            <span>></span>
+        {% endif %}
+        <span>{{ product.name }}</span>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid">
+        <!-- Image Gallery -->
+        <div class="product-gallery">
+            {% if product.image %}
+                <img src="{{ product.image starts with 'http' ? product.image : asset('uploads/' ~ product.image) }}" 
+                     alt="{{ product.name }}" 
+                     class="main-image"
+                     onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
+            {% else %}
+                <img src="{{ asset('images/placeholder.jpg') }}" alt="No Image" class="main-image">
+            {% endif %}
+
+            <!-- Badges -->
+            <div class="product-badge">
+                {% if date(product.createdAt) > date('-30days') %}
+                    <span class="badge new">New Arrival</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            {% if product.category %}
+                <span class="product-category">{{ product.category.category }}</span>
+            {% endif %}
+
+            <h1 class="product-title">{{ product.name }}</h1>
+
+            <div class="product-price">
+                <span class="current-price">
+                    <span class="currency">₱</span>{{ product.price|number_format(2, '.', ',') }}
+                </span>
+            </div>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <!-- Stock Info -->
+            <div class="stock-info">
+                <h4>Availability</h4>
+                {% set stockPercentage = totalStock > 50 ? 100 : (totalStock / 50 * 100) %}
+                {% set stockClass = totalStock == 0 ? 'out' : (totalStock < 10 ? 'low' : '') %}
+                
+                <div class="stock-bar">
+                    <div class="stock-fill {{ stockClass }}" style="width: {{ stockPercentage }}%"></div>
+                </div>
+                <span class="stock-text {{ totalStock == 0 ? 'out-of-stock' : (totalStock < 10 ? 'low-stock' : 'in-stock') }}">
+                    {% if totalStock == 0 %}
+                        <i class="fas fa-times-circle"></i> Out of Stock
+                    {% elseif totalStock < 10 %}
+                        <i class="fas fa-exclamation-triangle"></i> Only {{ totalStock }} units left in stock - order soon!
+                    {% else %}
+                        <i class="fas fa-check-circle"></i> In Stock ({{ totalStock }} units available)
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Stock Variants -->
+            {% if stocks|length > 1 %}
+                <div class="variants-section">
+                    <h4>Available Variants</h4>
+                    <div>
+                        {% for stock in stocks %}
+                            <span class="variant-badge {% if stock.stock > 0 %}in-stock{% elseif stock.stock > 0 and stock.stock < 5 %}low-stock{% endif %}">
+                                {{ stock.stock }} units
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Add to Cart Form -->
+            <form method="post" action="{{ path('app_cart_add', {'id': product.id}) }}">
+                <div class="quantity-selector">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" 
+                           id="quantity" 
+                           name="quantity" 
+                           value="1" 
+                           min="1" 
+                           max="{{ totalStock }}"
+                           {% if totalStock == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn-add-cart" {% if totalStock == 0 %}disabled{% endif %}>
+                        <i class="fas fa-shopping-cart"></i> 
+                        {% if totalStock == 0 %}
+                            Out of Stock
+                        {% else %}
+                            Add to Cart
+                        {% endif %}
+                    </button>
+                    <button type="button" class="btn-wishlist">
+                        <i class="far fa-heart"></i> Wishlist
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

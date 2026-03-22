@@ -32,14 +32,23 @@ class ActivityLogSubscriber implements EventSubscriberInterface
     public function onControllerEvent(ControllerEvent $event): void
     {
         $request = $event->getRequest();
+        $route = $request->attributes->get('_route');
+        $method = $request->getMethod();
         
-        // Only track POST, PUT, PATCH, DELETE requests (actions that modify data)
-        if (!in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+        // DEBUG - Log all POST requests to see what's happening
+        if ($method === 'POST') {
+            file_put_contents(__DIR__ . '/../../debug.log', date('Y-m-d H:i:s') . " - POST Route: " . $route . "\n", FILE_APPEND);
+            file_put_contents(__DIR__ . '/../../debug.log', "POST Data: " . print_r($request->request->all(), true) . "\n", FILE_APPEND);
+            file_put_contents(__DIR__ . '/../../debug.log', "Route attributes: " . print_r($request->attributes->get('_route_params', []), true) . "\n", FILE_APPEND);
+            file_put_contents(__DIR__ . '/../../debug.log', "----------------------------------------\n", FILE_APPEND);
+        }
+        
+        // Only track POST requests
+        if ($method !== 'POST') {
             return;
         }
 
-        // Check if this is one of our monitored routes/controllers
-        $route = $request->attributes->get('_route');
+        // Check if this is one of our monitored routes
         if (!$this->isMonitoredRoute($route)) {
             return;
         }
@@ -49,12 +58,11 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Store log data for later processing in TerminateEvent
+        // Store log data
         $this->pendingLogs[] = [
             'user' => $user,
             'request' => $request,
             'route' => $route,
-            'method' => $request->getMethod(),
         ];
     }
 
@@ -68,21 +76,23 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             $this->createActivityLog(
                 $logData['user'],
                 $logData['request'],
-                $logData['route'],
-                $logData['method']
+                $logData['route']
             );
         }
         
         $this->pendingLogs = [];
     }
 
-    private function createActivityLog($user, Request $request, string $route, string $method): void
+    private function createActivityLog($user, Request $request, string $route): void
     {
-        $action = $this->determineAction($route, $method, $user);
-        $target = $this->determineTarget($request, $route, $action);
+        $action = $this->determineAction($route, $user);
+        $target = $this->determineTarget($request, $route, $action, $user);
+        
+        file_put_contents(__DIR__ . '/../../debug.log', "Creating log - Action: " . ($action ?? 'NULL') . " Target: " . ($target ?? 'NULL') . "\n", FILE_APPEND);
         
         if (!$action || !$target) {
-            return; // Skip if not a required event
+            file_put_contents(__DIR__ . '/../../debug.log', "SKIPPED - No action or target\n", FILE_APPEND);
+            return;
         }
 
         $log = new ActivityLog();
@@ -92,212 +102,185 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             ->setAction($action)
             ->setTarget($target);
 
-        $this->em->persist($log);
-        $this->em->flush();
+        try {
+            $this->em->persist($log);
+            $this->em->flush();
+            file_put_contents(__DIR__ . '/../../debug.log', "✅ Log saved successfully: {$action}\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            file_put_contents(__DIR__ . '/../../debug.log', "❌ Error saving log: " . $e->getMessage() . "\n", FILE_APPEND);
+        }
     }
 
     private function isMonitoredRoute(string $route): bool
     {
         $monitoredRoutes = [
-            'app_user_new', 'app_user_delete', 'app_user_edit',
-            'app_product_new', 'app_product_edit', 'app_product_delete',
-            'app_stock_new', 'app_stock_edit', 'app_stock_delete',
-            'app_order_new', 'app_order_delete',
+            'app_user_new', 
+            'app_user_delete', 
+            'app_user_edit',
+            'app_product_new', 
+            'app_product_edit', 
+            'app_product_delete',
+            'app_stock_new', 
+            'app_stock_edit', 
+            'app_stock_delete',
+            'app_order_new', 
+            'app_order_delete',
+            'app_profile_edit',
         ];
         
-        return in_array($route, $monitoredRoutes);
+        $isMonitored = in_array($route, $monitoredRoutes);
+        
+        if (str_contains($route, 'delete')) {
+            file_put_contents(__DIR__ . '/../../debug.log', "Delete route detected: {$route} - Monitored: " . ($isMonitored ? 'YES' : 'NO') . "\n", FILE_APPEND);
+        }
+        
+        return $isMonitored;
     }
 
-    private function determineAction(string $route, string $method, $user): ?string
+    private function determineAction(string $route, $user): ?string
     {
         $userRoles = $user->getRoles();
         $isAdmin = in_array('ROLE_ADMIN', $userRoles);
-        $isStaff = in_array('ROLE_STAFF', $userRoles);
         
-        // User management (Admin only)
-        if (str_contains($route, 'app_user')) {
-            if (str_contains($route, 'new')) return 'CREATE';
-            if (str_contains($route, 'delete')) return 'DELETE';
-            if (str_contains($route, 'edit')) {
-                if ($isAdmin) {
-                    return 'ADMIN_UPDATE';
-                } elseif ($isStaff) {
-                    return 'STAFF_UPDATE';
-                }
-                return 'UPDATE';
-            }
-        }
+        file_put_contents(__DIR__ . '/../../debug.log', "Determining action for route: {$route}, isAdmin: " . ($isAdmin ? 'YES' : 'NO') . "\n", FILE_APPEND);
         
-        // Product management
-        if (str_contains($route, 'app_product')) {
-            if ($method === 'POST' && str_contains($route, 'new')) {
-                return 'CREATE';
-            }
-            
-            if ($method === 'POST' && str_contains($route, 'delete')) {
-                return 'DELETE';
-            }
-            
-            if (in_array($method, ['POST', 'PUT', 'PATCH']) && str_contains($route, 'edit')) {
-                if ($isAdmin) {
-                    return 'ADMIN_UPDATE';
-                } elseif ($isStaff) {
-                    return 'STAFF_UPDATE';
-                }
-                return 'UPDATE';
-            }
-        }
+        // User management
+        if ($route === 'app_user_new') return 'ADMIN_CREATES_USER';
+        if ($route === 'app_user_delete') return 'ADMIN_DELETES_USER';
+        if ($route === 'app_user_edit') return 'ADMIN_UPDATES_USER';
         
-        // Stock management
-        if (str_contains($route, 'app_stock')) {
-            if ($method === 'POST' && str_contains($route, 'new')) {
-                return 'CREATE';
-            }
-            
-            if ($method === 'POST' && str_contains($route, 'delete')) {
-                return 'DELETE';
-            }
-            
-            if (in_array($method, ['POST', 'PUT', 'PATCH']) && str_contains($route, 'edit')) {
-                if ($isAdmin) {
-                    return 'ADMIN_UPDATE';
-                } elseif ($isStaff) {
-                    return 'STAFF_UPDATE';
-                }
-                return 'UPDATE';
-            }
-        }
+        // Profile edit
+        if ($route === 'app_profile_edit') return 'USER_UPDATES_PROFILE';
         
-        // Order management
-        if (str_contains($route, 'app_order')) {
-            if ($method === 'POST' && str_contains($route, 'new')) {
-                return 'CREATE';
-            }
-            
-            if ($method === 'POST' && str_contains($route, 'delete')) {
-                return 'DELETE';
-            }
-            
-            // Note: OrderController doesn't have edit method, only new and delete
-        }
+        // Product actions
+        if ($route === 'app_product_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
+        if ($route === 'app_product_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
+        if ($route === 'app_product_edit') return $isAdmin ? 'ADMIN_UPDATES_RECORD' : 'STAFF_EDITS_RECORD';
+        
+        // Stock actions
+        if ($route === 'app_stock_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
+        if ($route === 'app_stock_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
+        if ($route === 'app_stock_edit') return $isAdmin ? 'ADMIN_UPDATES_RECORD' : 'STAFF_EDITS_RECORD';
+        
+        // Order actions
+        if ($route === 'app_order_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
+        if ($route === 'app_order_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
         
         return null;
     }
 
-    private function determineTarget(Request $request, string $route, string $action): ?string
+    private function determineTarget(Request $request, string $route, string $action, $user): ?string
     {
         $id = $request->attributes->get('id');
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles());
+        $roleLabel = $isAdmin ? 'Admin' : 'Staff';
         
-        // Handle USER actions
-        if (str_contains($route, 'app_user')) {
-            if ($action === 'CREATE') {
-                $formData = $request->request->get('user');
-                $username = $formData['username'] ?? 'New User';
-                $email = $formData['email'] ?? '';
-                $role = $formData['roles'] ?? 'ROLE_USER';
-                return "Created User: {$username} ({$email}) with role: {$role}";
+        file_put_contents(__DIR__ . '/../../debug.log', "Determining target for route: {$route}, id: " . ($id ?? 'null') . "\n", FILE_APPEND);
+        
+        // USER delete
+        if ($route === 'app_user_delete' && $id) {
+            $targetUser = $this->em->getRepository(User::class)->find($id);
+            if ($targetUser) {
+                return "Admin deleted user: {$targetUser->getUsername()} (ID: {$id})";
             }
-            
-            if ($id) {
-                $user = $this->em->getRepository(User::class)->find($id);
-                if ($user) {
-                    if ($action === 'DELETE') {
-                        return "Deleted User: {$user->getUsername()} ({$user->getEmail()})";
-                    } else {
-                        // For UPDATE/EDIT actions
-                        return "Updated User: {$user->getUsername()} ({$user->getEmail()})";
-                    }
-                }
-            }
-            return "User (ID: {$id})";
+            return "Admin deleted user (ID: {$id})";
         }
         
-        // Handle PRODUCT actions - using 'product' as form prefix
-        if (str_contains($route, 'app_product')) {
-            if ($action === 'CREATE') {
-                $formData = $request->request->get('product');
-                $name = $formData['name'] ?? 'New Product';
-                $price = $formData['price'] ?? '0.00';
-                return "Created Product: {$name} (Price: \${$price})";
+        // USER create
+        if ($route === 'app_user_new') {
+            $formData = $request->request->all('user');
+            $username = $formData['username'] ?? 'Unknown';
+            $role = $formData['roles'] ?? 'ROLE_USER';
+            $roleName = $role == 'ROLE_ADMIN' ? 'Admin' : ($role == 'ROLE_STAFF' ? 'Staff' : 'User');
+            return "Admin created user: {$username} (Role: {$roleName})";
+        }
+        
+        // USER edit
+        if ($route === 'app_user_edit' && $id) {
+            $targetUser = $this->em->getRepository(User::class)->find($id);
+            if ($targetUser) {
+                $formData = $request->request->all('user');
+                $newRole = $formData['roles'] ?? null;
+                $passwordChanged = !empty($formData['password']) ? ' (Password changed)' : '';
+                if ($newRole) {
+                    $newRoleName = $newRole == 'ROLE_ADMIN' ? 'Admin' : ($newRole == 'ROLE_STAFF' ? 'Staff' : 'User');
+                    $oldRole = $targetUser->getRoles()[0] ?? 'ROLE_USER';
+                    $oldRoleName = $oldRole == 'ROLE_ADMIN' ? 'Admin' : ($oldRole == 'ROLE_STAFF' ? 'Staff' : 'User');
+                    return "Admin updated user: {$targetUser->getUsername()} → Role changed from {$oldRoleName} to {$newRoleName}{$passwordChanged}";
+                }
+                return "Admin updated user: {$targetUser->getUsername()}{$passwordChanged}";
             }
-            
-            if ($id) {
-                $product = $this->em->getRepository(Product::class)->find($id);
+        }
+        
+        // PRODUCT delete
+        if ($route === 'app_product_delete' && $id) {
+            $product = $this->em->getRepository(Product::class)->find($id);
+            if ($product) {
+                return "{$roleLabel} deleted product: {$product->getName()} (ID: {$id})";
+            }
+            return "{$roleLabel} deleted product (ID: {$id})";
+        }
+        
+        // PRODUCT create
+        if ($route === 'app_product_new') {
+            $formData = $request->request->all('product');
+            $name = $formData['name'] ?? 'New Product';
+            $price = $formData['price'] ?? '0';
+            return "{$roleLabel} created product: {$name} (Price: \${$price})";
+        }
+        
+        // PRODUCT edit
+        if ($route === 'app_product_edit' && $id) {
+            $product = $this->em->getRepository(Product::class)->find($id);
+            if ($product) {
+                $formData = $request->request->all('product');
+                $newName = $formData['name'] ?? $product->getName();
+                $newPrice = $formData['price'] ?? $product->getPrice();
+                return "{$roleLabel} edited product: {$newName} (Price: \${$newPrice})";
+            }
+        }
+        
+        // STOCK delete
+        if ($route === 'app_stock_delete' && $id) {
+            $stock = $this->em->getRepository(Stock::class)->find($id);
+            if ($stock) {
+                $productName = $stock->getProduct() ? $stock->getProduct()->getName() : 'Unknown Product';
+                return "{$roleLabel} deleted stock: {$productName} (Stock ID: {$id})";
+            }
+            return "{$roleLabel} deleted stock (ID: {$id})";
+        }
+        
+        // STOCK create
+        if ($route === 'app_stock_new') {
+            $formData = $request->request->all('stock');
+            $productId = $formData['product'] ?? null;
+            $quantity = $formData['stock'] ?? 0;
+            if ($productId) {
+                $product = $this->em->getRepository(Product::class)->find($productId);
                 if ($product) {
-                    if ($action === 'DELETE') {
-                        return "Deleted Product: {$product->getName()} (ID: {$id})";
-                    } else {
-                        // For UPDATE/EDIT actions
-                        $formData = $request->request->get('product');
-                        $newName = $formData['name'] ?? $product->getName();
-                        $newPrice = $formData['price'] ?? $product->getPrice();
-                        return "Updated Product: {$newName} (Price: \${$newPrice})";
-                    }
+                    return "{$roleLabel} created stock: {$product->getName()} x {$quantity} units";
                 }
             }
-            return "Product (ID: {$id})";
+            return "{$roleLabel} created stock (Quantity: {$quantity})";
         }
         
-        // Handle STOCK actions - using 'stock' as form prefix
-        if (str_contains($route, 'app_stock')) {
-            if ($action === 'CREATE') {
-                $formData = $request->request->get('stock');
-                $productId = $formData['product'] ?? null;
-                $quantity = $formData['stock'] ?? 0; // Note: field is named 'stock' not 'quantity'
-                
-                if ($productId) {
-                    $product = $this->em->getRepository(Product::class)->find($productId);
-                    if ($product) {
-                        return "Created Stock: {$product->getName()} x {$quantity} units";
-                    }
-                }
-                return "Created Stock (Quantity: {$quantity})";
+        // STOCK edit
+        if ($route === 'app_stock_edit' && $id) {
+            $stock = $this->em->getRepository(Stock::class)->find($id);
+            if ($stock) {
+                $productName = $stock->getProduct() ? $stock->getProduct()->getName() : 'Unknown Product';
+                $formData = $request->request->all('stock');
+                $newQuantity = $formData['stock'] ?? $stock->getStock();
+                return "{$roleLabel} edited stock: {$productName} → {$newQuantity} units";
             }
-            
-            if ($id) {
-                $stock = $this->em->getRepository(Stock::class)->find($id);
-                if ($stock) {
-                    $productName = $stock->getProduct() ? $stock->getProduct()->getName() : 'Unknown Product';
-                    
-                    if ($action === 'DELETE') {
-                        return "Deleted Stock: {$productName} (Stock ID: {$id})";
-                    } else {
-                        // For UPDATE/EDIT actions
-                        $formData = $request->request->get('stock');
-                        $newQuantity = $formData['stock'] ?? $stock->getStock();
-                        return "Updated Stock: {$productName} → {$newQuantity} units";
-                    }
-                }
-            }
-            return "Stock (ID: {$id})";
         }
         
-        // Handle ORDER actions
-        if (str_contains($route, 'app_order')) {
-            if ($action === 'CREATE') {
-                $stockId = $request->request->get('stock_id');
-                $quantity = $request->request->get('quantity') ?? 1;
-                
-                if ($stockId) {
-                    $stock = $this->em->getRepository(Stock::class)->find($stockId);
-                    if ($stock && $stock->getProduct()) {
-                        return "Created Order: {$stock->getProduct()->getName()} x {$quantity} units";
-                    }
-                    return "Created Order: Stock ID {$stockId} x {$quantity} units";
-                }
-                return "Created Order";
-            }
-            
-            if ($id && $action === 'DELETE') {
-                $order = $this->em->getRepository(Order::class)->find($id);
-                if ($order) {
-                    $productName = $order->getStock() && $order->getStock()->getProduct() 
-                        ? $order->getStock()->getProduct()->getName() 
-                        : 'Unknown Product';
-                    return "Deleted Order: {$productName} (Order ID: {$id})";
-                }
-                return "Deleted Order (ID: {$id})";
-            }
+        // Profile edit
+        if ($route === 'app_profile_edit') {
+            $username = $user->getUsername();
+            $formData = $request->request->all('profile');
+            $passwordChanged = !empty($formData['plainPassword']['first']) ? ' (Password changed)' : '';
+            return "User updated their profile: {$username}{$passwordChanged}";
         }
         
         return null;
@@ -312,29 +295,39 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             ->setUsername($user->getUsername())
             ->setRole($this->getUserRole($user))
             ->setAction('LOGIN')
-            ->setTarget('User: ' . $user->getUsername() . ' (ID: ' . $user->getId() . ')');
+            ->setTarget('User login: ' . $user->getUsername() . ' (ID: ' . $user->getId() . ')');
 
-        $this->em->persist($log);
-        $this->em->flush();
+        try {
+            $this->em->persist($log);
+            $this->em->flush();
+            file_put_contents(__DIR__ . '/../../debug.log', "✅ Login log saved\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            file_put_contents(__DIR__ . '/../../debug.log', "❌ Login error: " . $e->getMessage() . "\n", FILE_APPEND);
+        }
     }
 
     public function onLogout(LogoutEvent $event): void
     {
-        $user = $event->getToken() ? $event->getToken()->getUser() : null;
+        $token = $event->getToken();
+        if (!$token) return;
         
-        if (!$user || !$user instanceof User) {
-            return;
-        }
+        $user = $token->getUser();
+        if (!$user || !$user instanceof User) return;
 
         $log = new ActivityLog();
         $log->setUserId($user->getId())
             ->setUsername($user->getUsername())
             ->setRole($this->getUserRole($user))
             ->setAction('LOGOUT')
-            ->setTarget('User: ' . $user->getUsername() . ' (ID: ' . $user->getId() . ')');
+            ->setTarget('User logout: ' . $user->getUsername() . ' (ID: ' . $user->getId() . ')');
 
-        $this->em->persist($log);
-        $this->em->flush();
+        try {
+            $this->em->persist($log);
+            $this->em->flush();
+            file_put_contents(__DIR__ . '/../../debug.log', "✅ Logout log saved\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            file_put_contents(__DIR__ . '/../../debug.log', "❌ Logout error: " . $e->getMessage() . "\n", FILE_APPEND);
+        }
     }
 
     private function getUserRole($user): string

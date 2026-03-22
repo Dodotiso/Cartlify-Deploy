@@ -23,7 +23,7 @@ class ActivityLog
     #[ORM\Column(length: 60)]
     private string $role = 'ANONYMOUS';
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 50)]  // Changed from 20 to 50
     private string $action;
 
     #[ORM\Column(type: 'text')]

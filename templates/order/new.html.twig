@@ -10,6 +10,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f6f9;
     color: #343a40;
+    padding-top: 80px;
 }
 .sidebar {
     position: fixed;
@@ -23,15 +24,27 @@ body {
     flex-direction: column;
     overflow: hidden;
     transition: width 0.3s;
+    z-index: 100;
 }
-.sidebar:hover { width: 220px; }
-.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
-.sidebar .logo img { height:48px; transition: height 0.3s; }
-.sidebar:hover .logo img { height:128px; }
+.sidebar:hover { 
+    width: 220px; 
+}
+.sidebar .logo { 
+    display:flex; 
+    justify-content:center; 
+    margin-bottom:40px; 
+}
+.sidebar .logo img { 
+    height:48px; 
+    transition: height 0.3s; 
+}
+.sidebar:hover .logo img { 
+    height:128px; 
+}
 .sidebar a {
     display:flex;
     align-items:center;
-    padding:15px 10px;
+    padding:15px 15px;
     text-decoration:none;
     color:#fff;
     font-weight:500;
@@ -43,37 +56,438 @@ body {
     width: 24px;
     text-align: center;
 }
-.sidebar a span { display:none; transition: opacity 0.3s; }
-.sidebar:hover a span { display:inline; margin-left:15px; }
-.sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
+.sidebar a span { 
+    display:none; 
+    margin-left: 20px;
+    white-space: nowrap;
+}
+.sidebar:hover a span { 
+    display:inline; 
+    opacity:1;
+}
+.sidebar a:hover { 
+    background-color:#34495e; 
+    border-left:4px solid #E64C3C; 
+}
+
+/* --- Sticky Header --- */
 .header {
-    margin-left: 60px;
+    position: fixed;
+    top: 0;
+    left: 60px;
+    right: 0;
     height: 80px;
     background-color:#fff;
     display:flex;
     align-items:center;
+    justify-content: space-between;
     padding:0 30px;
     box-shadow:0 2px 6px rgba(0,0,0,0.1);
-    transition: margin-left 0.3s;
+    transition: left 0.3s;
+    z-index: 99;
 }
-.sidebar:hover ~ .header { margin-left:220px; }
+.sidebar:hover ~ .header { 
+    left: 220px; 
+}
+
+/* --- Main Content --- */
 .main-content {
     margin-left: 60px;
     padding:30px;
     transition: margin-left 0.3s;
+    min-height: calc(100vh - 80px);
 }
-.sidebar:hover ~ .main-content { margin-left:220px; }
+.sidebar:hover ~ .main-content { 
+    margin-left:220px; 
+}
+
+/* --- Profile Dropdown --- */
+.profile-wrapper {
+    position: relative;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.profile-header:hover {
+    background-color: #f0f0f0;
+}
+
+.profile-header.active {
+    background-color: #e9ecef;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-name {
+    font-weight: 500;
+    color: #333;
+    user-select: none;
+}
+
+.dropdown-icon {
+    font-size: 12px;
+    color: #6c757d;
+    transition: transform 0.3s;
+}
+
+.profile-header.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 200px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.profile-dropdown.show {
+    display: flex;
+}
+
+.dropdown-role-header {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.dropdown-role-header i {
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 4px 0;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item i {
+    width: 18px;
+    color: #6c757d;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.logout-item {
+    color: #dc3545;
+    border-top: 1px solid #eee;
+}
+
+.dropdown-item.logout-item i {
+    color: #dc3545;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+    border-left: 4px solid;
+}
+
+.toast-success {
+    border-left-color: #28a745;
+    background: #f0f9f0;
+}
+
+.toast-error {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+}
+
+.toast-warning {
+    border-left-color: #ffc107;
+    background: #fffbf0;
+}
+
+.toast-info {
+    border-left-color: #17a2b8;
+    background: #f0f9ff;
+}
+
+.toast-icon {
+    font-size: 20px;
+}
+
+.toast-success .toast-icon { color: #28a745; }
+.toast-error .toast-icon { color: #dc3545; }
+.toast-warning .toast-icon { color: #ffc107; }
+.toast-info .toast-icon { color: #17a2b8; }
+
+.toast-content {
+    flex: 1;
+    color: #333;
+    font-size: 14px;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    width: 100%;
+    animation: progress 3s linear forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Upload Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #343a40;
+    font-size: 18px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.upload-area {
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #007bff;
+}
+
+.upload-area i {
+    font-size: 48px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.upload-area p {
+    margin: 0;
+    color: #6c757d;
+}
+
+.upload-area small {
+    color: #adb5bd;
+    font-size: 12px;
+}
+
+.image-preview {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+.upload-progress {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007bff;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+#progressText {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-primary-modal {
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-primary-modal:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.btn-primary-modal:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary-modal {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-secondary-modal:hover {
+    opacity: 0.9;
+}
 
 /* --- Grid for products --- */
 .products-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
     margin-top: 20px;
 }
 .product-card {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     overflow: hidden;
     display: flex;
@@ -86,7 +500,7 @@ body {
 }
 .product-image-container {
     width: 100%;
-    height: 180px;
+    height: 200px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -98,7 +512,7 @@ body {
     height: 100%;
     object-fit: contain;
     padding: 10px;
-    max-height: 180px;
+    max-height: 200px;
 }
 .card-body {
     padding: 20px;
@@ -110,33 +524,27 @@ body {
     margin: 0 0 10px; 
     font-size: 18px; 
     color: #343a40;
-    height: 50px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-weight: 600;
 }
 .card-body .description { 
     margin: 0 0 10px; 
     font-size: 14px; 
     color: #6c757d;
     flex-grow: 1;
-    height: 60px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    line-height: 1.4;
 }
 .card-body .price {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: #28a745;
     margin: 10px 0;
 }
 .card-body .stock {
     font-size: 14px;
-    color: #007bff;
     margin-bottom: 15px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
 }
 .qty {
     width: 100%;
@@ -152,20 +560,21 @@ body {
     box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
 }
 
-.btn-buy, .btn-delete {
+.btn-buy {
+    background: #28a745;
+    color: white;
     border: none;
     border-radius: 6px;
     padding: 12px;
     font-size: 14px;
     cursor: pointer;
-    margin-bottom: 8px;
     width: 100%;
     font-weight: 500;
-    transition: opacity 0.3s;
-}
-.btn-buy { 
-    background: #28a745; 
-    color: #fff; 
+    transition: background 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 .btn-buy:hover { 
     background: #218838; 
@@ -174,9 +583,23 @@ body {
     background: #6c757d; 
     cursor: not-allowed; 
 }
-.btn-delete { 
-    background: #dc3545; 
-    color: #fff; 
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 500;
+    transition: background 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
 }
 .btn-delete:hover { 
     background: #c82333; 
@@ -219,24 +642,13 @@ body {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .search-form button:hover {
     background: #0056b3;
-}
-
-.btn-secondary {
-    padding: 10px 15px;
-    background: #6c757d;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-    color: white;
 }
 
 .text-muted {
@@ -267,67 +679,53 @@ body {
 }
 
 .btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
 }
 .btn-primary { background: #007bff; color: white; }
 .btn-primary:hover { background: #0056b3; }
 .btn-success { background: #28a745; color: white; }
 .btn-success:hover { background: #218838; }
 
-/* --- Responsive --- */
-@media (max-width:992px) {
-    .products-container {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-    }
-}
-.profile-wrapper {
-    position: relative;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    position: relative;
-}
-
-.profile-avatar {
-    width: 38px;
-    height: 38px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background: #ffffff;
-    border-bottom: 1px solid #ddd;
-}
-.profile-name {
-    font-weight: 500;
-    user-select: none;
-}
-
+/* Responsive */
 @media (max-width:768px) {
+    body {
+        padding-top: 120px;
+    }
+    
     .sidebar { width:60px; }
     .sidebar a span { display:none; }
-    .header, .main-content { margin-left:60px; padding:20px; }
+    
+    .header {
+        left: 60px;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .sidebar:hover ~ .header {
+        left: 220px;
+    }
+    
+    .main-content { 
+        margin-left: 60px; 
+        padding: 15px;
+    }
+    
+    .profile-name, .dropdown-icon {
+        display: none;
+    }
+    
     .search-container {
         flex-direction: column;
         align-items: stretch;
@@ -335,24 +733,12 @@ body {
     .search-form {
         max-width: 100%;
     }
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-    }
-    .products-container {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 15px;
-    }
-}
-
-@media (max-width:480px) {
     .products-container {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
-    .product-image-container {
-        height: 150px;
+    .toast-container {
+        top: 140px;
     }
 }
 </style>
@@ -361,38 +747,32 @@ body {
 <!-- Sidebar -->
 <div class="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
     <a href="{{ path('app_dashboard') }}">
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
     <a href="{{ path('app_product_index') }}">
         <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
     <a href="{{ path('app_stock_index') }}">
         <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
     <a href="{{ path('app_order_new') }}">
         <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
-    
     <a href="{{ path('app_user_index') }}">
         <i class="fas fa-user-tie"></i>
         <span>Staff Management</span>
     </a>
-    
     <a href="{{ path('app_activity_log_index') }}">
         <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
@@ -406,151 +786,11 @@ body {
         <span>Logout</span>
     </a>
 </div>
-{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
-%}
-<!-- Header -->
-<div class="header">
-    <h1>Marketplace</h1>
-     <div class="profile-wrapper">
-        <div class="profile-header">
-            <div class="profile-avatar">{{ avatarLetter }}</div>
-            <span class="profile-name">{{ app.user.username }}</span>
-        </div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        {% set bgColor = 
-            label == 'success' ? '#28a745' : 
-            label == 'error' ? '#dc3545' : 
-            label == 'warning' ? '#ffc107' : '#17a2b8' 
-        %}
-        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
-        <div style="
-            background-color: {{ bgColor }};
-            color: {{ textColor }};
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        ">
-            <span>{{ message }}</span>
-            <button onclick="this.parentElement.style.display='none'" 
-                    style="
-                        background: transparent;
-                        border: none;
-                        color: {{ textColor }};
-                        font-size: 16px;
-                        cursor: pointer;
-                        font-weight: bold;
-                    ">&times;</button>
-        </div>
-    {% endfor %}
-{% endfor %}
-    
-    <!-- Search Bar -->
-    <div class="search-container">
-        <form method="get" action="{{ path('app_order_new') }}" class="search-form">
-            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search products by name or description..." />
-            <button type="submit">Search</button>
-            {% if search %}
-                <a href="{{ path('app_order_new') }}" class="btn-secondary">Clear</a>
-            {% endif %}
-        </form>
-        
-        <a href="{{ path('app_order_index') }}" class="btn btn-success">View Transactions</a>
-    </div>
-
-    <div class="products-container">
-        {% if stocks|length > 0 %}
-            {% for stock in stocks %}
-                <div class="product-card">
-                    <div class="product-image-container">
-    {% if stock.product.image %}
-        {% set imagePath = stock.product.image %}
-        {# Fix for image paths - prepend /uploads/ if needed #}
-        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
-            {% set imagePath = '/uploads/' ~ imagePath %}
-        {% endif %}
-        <img src="{{ imagePath }}" 
-             alt="{{ stock.product.name }}"
-             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
-    {% else %}
-        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
-            No Image
-        </div>
-    {% endif %}
-</div>
-                    <div class="card-body">
-                        <h3>{{ stock.product.name }}</h3>
-                        <div class="description">{{ stock.product.description|length > 100 ? stock.product.description|slice(0, 100) ~ '...' : stock.product.description }}</div>
-                        <div class="price">₱{{ stock.product.price|number_format(2, '.', ',') }}</div>
-                        <div class="stock">Available: {{ stock.stock }}</div>
-
-                        {% set activeOrder = null %}
-                        {% if orders is defined %}
-                            {% for order in orders %}
-                                {% if order.stock.id == stock.id %}
-                                    {% set activeOrder = order %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-
-                        <form method="post" action="{{ path('app_order_new') }}">
-                            <input type="hidden" name="stock_id" value="{{ stock.id }}">
-                            <input type="number" name="quantity" class="qty" min="1" max="{{ stock.stock }}" value="1" required
-                                {% if activeOrder %} disabled {% endif %}>
-                            <button type="submit" class="btn-buy"
-                                {% if activeOrder %} disabled {% endif %}>
-                                {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
-                            </button>
-                        </form>
-
-                        {% if activeOrder %}
-                            <form method="post" action="{{ path('app_order_delete', {'id': activeOrder.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activeOrder.id) }}">
-                                <button type="submit" class="btn-delete">Cancel Order</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="no-products">
-                <h3>No Products Available</h3>
-                <p>
-                    {% if search %}
-                        No products found for "{{ search }}"
-                    {% else %}
-                        There are no products available in the marketplace at the moment.
-                    {% endif %}
-                </p>
-                {% if search %}
-                    <a href="{{ path('app_order_new') }}" class="btn btn-primary">View All Products</a>
-                {% endif %}
-            </div>
-        {% endif %}
-    </div>
-</div>
 
 {% elseif is_granted('ROLE_STAFF') %}
-<!-- Sidebar for Staff -->
 <div class="sidebar">
     <div class="logo">
-        <img src="{{ asset('images/Cart-2.png') }}" alt="Cartlify Logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
     <a href="{{ path('app_dashboard') }}">
         <i class="fas fa-home"></i>
@@ -581,99 +821,120 @@ body {
         <span>Logout</span>
     </a>
 </div>
-{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+{% endif %}
 
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
+{# Profile Section #}
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
+{% set userRoleName = 
+    role == 'ROLE_ADMIN' ? 'Administrator' :
+    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
 %}
-<!-- Header for Staff -->
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
+%}
+
+<!-- Sticky Header -->
 <div class="header">
-    <h1>Marketplace</h1>
-     <div class="profile-wrapper">
-        <div class="profile-header">
-            <div class="profile-avatar">{{ avatarLetter }}</div>
+    <h1><i class="fas fa-shopping-cart"></i> Marketplace</h1>
+    
+    <div class="profile-wrapper">
+        <div class="profile-header" id="profileHeader">
+            <div class="profile-avatar">
+                {% if hasProfilePic %}
+                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                {% else %}
+                    {{ app.user.username|first|upper }}
+                {% endif %}
+            </div>
             <span class="profile-name">{{ app.user.username }}</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+        
+        <div class="profile-dropdown" id="profileDropdown">
+            <div class="dropdown-role-header">
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+            </div>
+            <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                <i class="fas fa-camera"></i>
+                <span>Change Picture</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </div>
     </div>
 </div>
 
-<!-- Main Content for Staff -->
+<!-- Hidden File Upload Form -->
+<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
+    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
+</form>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Main Content -->
 <div class="main-content">
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        {% set bgColor = 
-            label == 'success' ? '#28a745' : 
-            label == 'error' ? '#dc3545' : 
-            label == 'warning' ? '#ffc107' : '#17a2b8' 
-        %}
-        {% set textColor = (label == 'warning' or label == 'info') ? '#343a40' : '#fff' %}
-        <div style="
-            background-color: {{ bgColor }};
-            color: {{ textColor }};
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        ">
-            <span>{{ message }}</span>
-            <button onclick="this.parentElement.style.display='none'" 
-                    style="
-                        background: transparent;
-                        border: none;
-                        color: {{ textColor }};
-                        font-size: 16px;
-                        cursor: pointer;
-                        font-weight: bold;
-                    ">&times;</button>
-        </div>
-    {% endfor %}
-{% endfor %}
-    
     <!-- Search Bar -->
     <div class="search-container">
         <form method="get" action="{{ path('app_order_new') }}" class="search-form">
             <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search products by name or description..." />
-            <button type="submit">Search</button>
+            <button type="submit">
+                <i class="fas fa-search"></i> Search
+            </button>
             {% if search %}
-                <a href="{{ path('app_order_new') }}" class="btn-secondary">Clear</a>
+                <a href="{{ path('app_order_new') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Clear
+                </a>
             {% endif %}
         </form>
         
-        <a href="{{ path('app_order_index') }}" class="btn btn-success">View Transactions</a>
+        <a href="{{ path('app_order_index') }}" class="btn btn-success">
+            <i class="fas fa-receipt"></i> View Transactions
+        </a>
     </div>
 
     <div class="products-container">
         {% if stocks|length > 0 %}
             {% for stock in stocks %}
                 <div class="product-card">
-                   <div class="product-image-container">
-    {% if stock.product.image %}
-        {% set imagePath = stock.product.image %}
-        {# Fix for image paths - prepend /uploads/ if needed #}
-        {% if not (imagePath starts with 'http' or imagePath starts with '/' or imagePath starts with asset('')) %}
-            {% set imagePath = '/uploads/' ~ imagePath %}
-        {% endif %}
-        <img src="{{ imagePath }}" 
-             alt="{{ stock.product.name }}"
-             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
-    {% else %}
-        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
-            No Image
-        </div>
-    {% endif %}
-</div>
+                    <div class="product-image-container">
+                        {% if stock.product.image %}
+                            {% set imagePath = stock.product.image %}
+                            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                                {% set imagePath = '/uploads/' ~ imagePath %}
+                            {% endif %}
+                            <img src="{{ imagePath }}" 
+                                 alt="{{ stock.product.name }}"
+                                 onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+                        {% else %}
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
+                                <i class="fas fa-image" style="font-size: 48px; opacity: 0.5;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
                         <h3>{{ stock.product.name }}</h3>
                         <div class="description">{{ stock.product.description|length > 100 ? stock.product.description|slice(0, 100) ~ '...' : stock.product.description }}</div>
                         <div class="price">₱{{ stock.product.price|number_format(2, '.', ',') }}</div>
-                        <div class="stock">Available: {{ stock.stock }}</div>
+                        <div class="stock">
+                            <i class="fas fa-boxes"></i> Available: 
+                            {% if stock.stock < 10 %}
+                                <span style="color: #dc3545; font-weight: bold;">{{ stock.stock }} (Low Stock)</span>
+                            {% elseif stock.stock < 20 %}
+                                <span style="color: #ffc107; font-weight: bold;">{{ stock.stock }}</span>
+                            {% else %}
+                                <span style="color: #28a745; font-weight: bold;">{{ stock.stock }}</span>
+                            {% endif %}
+                        </div>
 
                         {% set activeOrder = null %}
                         {% if orders is defined %}
@@ -690,14 +951,16 @@ body {
                                 {% if activeOrder %} disabled {% endif %}>
                             <button type="submit" class="btn-buy"
                                 {% if activeOrder %} disabled {% endif %}>
-                                {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
+                                <i class="fas fa-shopping-cart"></i> {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
                             </button>
                         </form>
 
                         {% if activeOrder %}
                             <form method="post" action="{{ path('app_order_delete', {'id': activeOrder.id}) }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activeOrder.id) }}">
-                                <button type="submit" class="btn-delete">Cancel Order</button>
+                                <button type="submit" class="btn-delete">
+                                    <i class="fas fa-times"></i> Cancel Order
+                                </button>
                             </form>
                         {% endif %}
                     </div>
@@ -705,6 +968,7 @@ body {
             {% endfor %}
         {% else %}
             <div class="no-products">
+                <i class="fas fa-shopping-bag" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
                 <h3>No Products Available</h3>
                 <p>
                     {% if search %}
@@ -720,6 +984,288 @@ body {
         {% endif %}
     </div>
 </div>
-{% endif %}
 
+<!-- Add Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+// Toast Notification System
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = '';
+    if (type === 'success') icon = '✓';
+    if (type === 'error') icon = '✗';
+    if (type === 'warning') icon = '⚠';
+    if (type === 'info') icon = 'ℹ';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">${message}</div>
+        <div class="toast-progress"></div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Display flash messages
+document.addEventListener('DOMContentLoaded', function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            showToast('{{ message|escape('js') }}', '{{ label }}');
+        {% endfor %}
+    {% endfor %}
+});
+
+// Profile dropdown
+let dropdownInitialized = false;
+
+function initializeDropdown() {
+    if (dropdownInitialized) return;
+    
+    const profileHeader = document.getElementById('profileHeader');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const changePicBtn = document.getElementById('changeProfilePicBtn');
+    
+    if (profileHeader && profileDropdown) {
+        profileHeader.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            profileDropdown.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileHeader.classList.remove('active');
+                profileDropdown.classList.remove('show');
+            }
+        });
+        
+        dropdownInitialized = true;
+    }
+    
+    if (changePicBtn) {
+        changePicBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showUploadModal();
+        });
+    }
+}
+
+function showUploadModal() {
+    const existingModal = document.getElementById('uploadModal');
+    if (existingModal) existingModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'uploadModal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Profile Picture</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload or drag and drop</p>
+                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
+                </div>
+                <div class="image-preview" id="imagePreview" style="display: none;">
+                    <img src="" alt="Preview">
+                </div>
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
+                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 10);
+    
+    const uploadArea = document.getElementById('uploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = imagePreview.querySelector('img');
+    const saveBtn = document.getElementById('saveUpload');
+    const cancelBtn = document.getElementById('cancelUpload');
+    const closeBtn = modal.querySelector('.close-modal');
+    const progressContainer = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
+    fileInput.style.display = 'none';
+    modal.appendChild(fileInput);
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size must be less than 2MB', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadArea.style.display = 'none';
+                saveBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#007bff';
+        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#ced4da';
+        uploadArea.style.backgroundColor = 'transparent';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ced4da';
+        uploadArea.style.backgroundColor = 'transparent';
+        
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size must be less than 2MB', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadArea.style.display = 'none';
+                saveBtn.disabled = false;
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    saveBtn.addEventListener('click', function() {
+        if (fileInput.files.length > 0) {
+            uploadProfilePicture(fileInput.files[0]);
+        }
+    });
+    
+    function uploadProfilePicture(file) {
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+        
+        progressContainer.style.display = 'block';
+        saveBtn.disabled = true;
+        
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                progressFill.style.width = percentComplete + '%';
+                progressText.textContent = percentComplete + '%';
+            }
+        });
+        
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        updateProfilePicture(response.imageUrl);
+                        showToast('Profile picture updated successfully!', 'success');
+                        modal.classList.remove('show');
+                        setTimeout(() => modal.remove(), 300);
+                    } else {
+                        showToast(response.message || 'Upload failed', 'error');
+                        resetUpload();
+                    }
+                } catch (e) {
+                    showToast('Invalid server response', 'error');
+                    resetUpload();
+                }
+            } else {
+                showToast('Upload failed. Please try again.', 'error');
+                resetUpload();
+            }
+        });
+        
+        xhr.addEventListener('error', function() {
+            showToast('Network error. Please try again.', 'error');
+            resetUpload();
+        });
+        
+        xhr.open('POST', '/dashboard/upload-profile-picture', true);
+        xhr.send(formData);
+    }
+    
+    function resetUpload() {
+        progressContainer.style.display = 'none';
+        progressFill.style.width = '0%';
+        progressText.textContent = '0%';
+        saveBtn.disabled = false;
+    }
+    
+    function updateProfilePicture(imageUrl) {
+        const avatar = document.querySelector('.profile-avatar');
+        const url = imageUrl + '?t=' + new Date().getTime();
+        avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
+    }
+    
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    }
+    
+    cancelBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initializeDropdown, 100);
+});
+</script>
 {% endblock %}

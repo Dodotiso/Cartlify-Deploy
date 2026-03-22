@@ -30,14 +30,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    public function getId(): ?int { return $this->id; }
+    // Add profile picture field
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $profilePicture = null;
 
-    public function getUsername(): ?string { return $this->username; }
-    public function setUsername(string $username): static { $this->username = $username; return $this; }
+    public function getId(): ?int 
+    { 
+        return $this->id; 
+    }
 
-    public function getUserIdentifier(): string { return (string) $this->username; }
+    public function getUsername(): ?string 
+    { 
+        return $this->username; 
+    }
+    
+    public function setUsername(string $username): static 
+    { 
+        $this->username = $username; 
+        return $this; 
+    }
 
-    // <-- UPDATED getRoles method
+    public function getUserIdentifier(): string 
+    { 
+        return (string) $this->username; 
+    }
+
     public function getRoles(): array
     {
         return array_unique($this->roles);
@@ -49,8 +66,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): ?string { return $this->password; }
-    public function setPassword(string $password): static { $this->password = $password; return $this; }
+    public function getPassword(): ?string 
+    { 
+        return $this->password; 
+    }
+    
+    public function setPassword(string $password): static 
+    { 
+        $this->password = $password; 
+        return $this; 
+    }
+
+    // Profile picture getter and setter
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): static
+    {
+        $this->profilePicture = $profilePicture;
+        return $this;
+    }
 
     public function __serialize(): array
     {
@@ -62,6 +99,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[\Deprecated]
     public function eraseCredentials(): void { }
 
-    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static { $this->createdAt = $createdAt; return $this; }
+    public function getCreatedAt(): ?\DateTimeImmutable 
+    { 
+        return $this->createdAt; 
+    }
+    
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static 
+    { 
+        $this->createdAt = $createdAt; 
+        return $this; 
+    }
 }
