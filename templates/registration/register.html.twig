@@ -1,19 +1,764 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Create Account | Cartlify{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+<style>
+:root {
+    --primary: #1f2a44;
+    --primary-dark: #16203a;
+    --primary-light: #2a3a60;
+    --accent: #f72585;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+    --light-gray: #e9ecef;
+    --success: #28a745;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+}
 
-    {{ form_errors(registrationForm) }}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+.register-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+/* Left side - Illustration/Brand */
+.register-illustration {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 40px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-illustration::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.illustration-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.logo-wrapper {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.logo-wrapper img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    transition: transform 0.3s ease;
+}
+
+.logo-wrapper:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.logo-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+.illustration-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.illustration-content p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.5;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+/* Right side - Form */
+.register-form-section {
+    padding: 40px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-form-section h1 {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+    color: var(--dark);
+    font-weight: 700;
+}
+
+.subtitle {
+    color: var(--gray);
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+}
+
+.form-group {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--dark);
+    font-size: 0.85rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--light-gray);
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background: #fafbfc;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(31, 42, 68, 0.1);
+    background: white;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-control.is-valid {
+    border-color: var(--success);
+}
+
+.form-control.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    top: 34px;
+    color: var(--gray);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.valid-feedback {
+    color: var(--success);
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.form-check-label {
+    font-size: 0.85rem;
+    color: var(--gray);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.form-check-label a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-check-label a:hover {
+    text-decoration: underline;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 20px;
+}
+
+.btn-register:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(31, 42, 68, 0.3);
+}
+
+.btn-register:active {
+    transform: translateY(0);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--light-gray);
+}
+
+.divider span {
+    padding: 0 12px;
+}
+
+.social-register {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--light-gray);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+}
+
+.social-btn:hover {
+    border-color: var(--primary);
+    background: var(--light);
+    transform: translateY(-1px);
+}
+
+.social-btn.google {
+    color: #db4437;
+}
+
+.social-btn.github {
+    color: #333;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+.login-link a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #ffeaea;
+    color: #d32f2f;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    border-left: 3px solid #f44336;
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left-color: #4caf50;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+    .register-container {
+        flex-direction: row;
+        min-height: auto;
+        max-width: 900px;
+    }
+    
+    .register-illustration {
+        flex: 0.8;
+        padding: 45px 30px;
+    }
+    
+    .illustration-content {
+        text-align: left;
+    }
+    
+    .brand-logo {
+        justify-content: flex-start;
+    }
+    
+    .illustration-content h2 {
+        text-align: left;
+    }
+    
+    .illustration-content p {
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .register-form-section {
+        flex: 1.2;
+        padding: 45px 35px;
+    }
+    
+    .register-form-section h1 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+    .register-container {
+        max-width: 1000px;
+    }
+    
+    .register-illustration {
+        padding: 50px 35px;
+    }
+    
+    .logo-wrapper {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .logo-wrapper img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .illustration-content h2 {
+        font-size: 2rem;
+    }
+    
+    .illustration-content p {
+        font-size: 0.95rem;
+    }
+    
+    .register-form-section {
+        padding: 50px 40px;
+    }
+    
+    .register-form-section h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    body {
+        padding: 16px;
+    }
+    
+    .register-illustration {
+        padding: 30px 25px;
+    }
+    
+    .logo-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .logo-wrapper img {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .illustration-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .illustration-content p {
+        font-size: 0.85rem;
+    }
+    
+    .register-form-section {
+        padding: 30px 25px;
+    }
+    
+    .register-form-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-control {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .input-icon {
+        top: 31px;
+        font-size: 0.85rem;
+    }
+    
+    .btn-register {
+        padding: 10px;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+    }
+    
+    .social-btn {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+    
+    .form-check {
+        margin: 16px 0;
+    }
+    
+    .divider {
+        margin: 16px 0;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+    .social-register {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .register-illustration {
+        padding: 25px 20px;
+    }
+    
+    .logo-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .logo-wrapper img {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .register-form-section {
+        padding: 25px 20px;
+    }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .btn-register,
+    .social-btn {
+        min-height: 44px;
+    }
+    
+    .form-control {
+        font-size: 16px;
+    }
+    
+    .form-check-input {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+</style>
+
+<div class="register-container">
+    <div class="register-illustration">
+        <div class="illustration-content">
+            <div class="brand-logo">
+                <div class="logo-wrapper">
+                    <img src="{{ asset('images/cart1.png') }}" alt="Cartlify">
+                </div>
+            </div>
+            <h2>Join Cartlify!</h2>
+            <p>Create your account to start managing your inventory, tracking orders, and growing your business.</p>
+        </div>
+    </div>
+    
+    <div class="register-form-section">
+        <h1>Create Account</h1>
+        <p class="subtitle">Fill in your details to get started</p>
+
+        {# Display form errors if any #}
+        {% if form_errors(registrationForm) %}
+            <div class="alert" role="alert">
+                {{ form_errors(registrationForm) }}
+            </div>
+        {% endif %}
+
+        {{ form_start(registrationForm, {'attr': {'id': 'registerForm', 'novalidate': 'novalidate'}}) }}
+            
+            <div class="form-group">
+                <label for="registration_form_username" class="form-label">Username</label>
+                {{ form_widget(registrationForm.username, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Choose a username',
+                        'autocomplete': 'username',
+                        'autofocus': true
+                    }
+                }) }}
+                <span class="input-icon" aria-hidden="true">👤</span>
+                {% if form_errors(registrationForm.username) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.username) }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="registration_form_plainPassword" class="form-label">Password</label>
+                {{ form_widget(registrationForm.plainPassword, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Create a strong password',
+                        'autocomplete': 'new-password'
+                    }
+                }) }}
+                <span class="input-icon" aria-hidden="true">🔒</span>
+                {% if form_errors(registrationForm.plainPassword) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                {% endif %}
+                <div class="valid-feedback" style="display: none;">
+                    Password looks good!
+                </div>
+            </div>
+
+            <div class="form-check">
+                {{ form_widget(registrationForm.agreeTerms, {
+                    'attr': {
+                        'class': 'form-check-input'
+                    }
+                }) }}
+                <label class="form-check-label" for="registration_form_agreeTerms">
+                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </label>
+            </div>
+            {% if form_errors(registrationForm.agreeTerms) %}
+                <div class="invalid-feedback" style="margin-top: -10px; margin-bottom: 10px;">
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn-register">Create Account</button>
+        {{ form_end(registrationForm) }}
+
+        <div class="divider"><span>Or sign up with</span></div>
+
+        <div class="social-register">
+            <button type="button" class="social-btn google">
+                <span>Google</span>
+            </button>
+            <button type="button" class="social-btn github">
+                <span>GitHub</span>
+            </button>
+        </div>
+
+        <div class="login-link">
+            Already have an account? <a href="{{ path('app_login') }}">Sign In</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password strength indicator
+const passwordInput = document.getElementById('registration_form_plainPassword');
+const passwordFeedback = document.querySelector('#registration_form_plainPassword + .valid-feedback');
+
+if (passwordInput) {
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumbers = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const isLongEnough = password.length >= 8;
+        
+        let strength = 0;
+        if (hasUpperCase) strength++;
+        if (hasLowerCase) strength++;
+        if (hasNumbers) strength++;
+        if (hasSpecialChar) strength++;
+        if (isLongEnough) strength++;
+        
+        if (password.length > 0) {
+            if (strength >= 4) {
+                passwordFeedback.style.display = 'block';
+                passwordFeedback.style.color = '#28a745';
+                passwordFeedback.textContent = '✓ Strong password!';
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else if (strength >= 2) {
+                passwordFeedback.style.display = 'block';
+                passwordFeedback.style.color = '#ffc107';
+                passwordFeedback.textContent = '⚠️ Medium strength - add numbers and special characters';
+                this.classList.remove('is-valid', 'is-invalid');
+            } else {
+                passwordFeedback.style.display = 'block';
+                passwordFeedback.style.color = '#dc3545';
+                passwordFeedback.textContent = '✗ Weak password - use at least 8 characters with uppercase, lowercase, numbers';
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        } else {
+            passwordFeedback.style.display = 'none';
+            this.classList.remove('is-valid', 'is-invalid');
+        }
+    });
+}
+
+// Real-time validation for username
+const usernameInput = document.getElementById('registration_form_username');
+if (usernameInput) {
+    usernameInput.addEventListener('input', function() {
+        const username = this.value;
+        if (username.length >= 3) {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        } else if (username.length > 0) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else {
+            this.classList.remove('is-valid', 'is-invalid');
+        }
+    });
+}
+
+// Form submission feedback
+document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+    const btn = this.querySelector('.btn-register');
+    if (btn) {
+        btn.innerHTML = 'Creating Account...';
+        btn.disabled = true;
+    }
+});
+
+// Focus management
+const inputs = document.querySelectorAll('.form-control');
+inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-1px)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+    });
+});
+
+// Social login placeholders (implement actual OAuth if needed)
+document.querySelectorAll('.social-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const provider = this.classList.contains('google') ? 'Google' : 'GitHub';
+        alert(`${provider} authentication coming soon!`);
+    });
+});
+</script>
 {% endblock %}

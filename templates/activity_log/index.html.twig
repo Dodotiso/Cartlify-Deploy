@@ -60,6 +60,41 @@ body {
     border-left:4px solid #E64C3C; 
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -131,10 +166,6 @@ body {
     display: block;
 }
 
-.profile-avatar i {
-    font-size: 18px;
-}
-
 .profile-name {
     font-weight: 500;
     color: #333;
@@ -151,7 +182,6 @@ body {
     transform: rotate(180deg);
 }
 
-/* Dropdown Menu with Role Display */
 .profile-dropdown {
     position: absolute;
     top: 50px;
@@ -171,7 +201,6 @@ body {
     display: flex;
 }
 
-/* Role Header in Dropdown */
 .dropdown-role-header {
     padding: 12px 16px;
     background: linear-gradient(135deg, #667eea, #764ba2);
@@ -475,31 +504,112 @@ body {
     opacity: 0.9;
 }
 
-/* --- Table --- */
+/* --- Table View (Desktop) --- */
+.table-view {
+    display: block;
+}
+
 .table-container {
     overflow-x: auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -webkit-overflow-scrolling: touch;
 }
 table {
     width:100%;
     border-collapse:collapse;
-    min-width: 800px;
+    min-width: 1000px;
 }
 table th { 
     background:#343a40; 
     color:white; 
     padding:12px; 
     text-align:left; 
+    font-size: 13px;
 }
 table td { 
     padding:12px; 
     border-bottom:1px solid #ddd; 
     vertical-align: middle; 
+    font-size: 13px;
 }
 tr:hover { 
     background:#f1f1f1; 
+}
+
+/* --- Card View (Mobile) --- */
+.activity-cards-view {
+    display: none;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.activity-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.activity-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.activity-card-content {
+    padding: 15px;
+}
+
+.activity-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.activity-card-id {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px;
+}
+
+.activity-card-date {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.activity-card-row {
+    display: flex;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.activity-card-label {
+    font-weight: 600;
+    color: #495057;
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 13px;
+}
+
+.activity-card-value {
+    flex: 1;
+    color: #343a40;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.activity-card-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
 }
 
 /* --- Badges --- */
@@ -541,14 +651,22 @@ tr:hover {
     display: flex;
     gap: 15px;
     align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
+}
+
+.search-form-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    max-width: 500px;
 }
 
 .search-form {
     display: flex;
     gap: 10px;
     flex: 1;
-    max-width: 500px;
 }
 
 .search-form input {
@@ -557,6 +675,7 @@ tr:hover {
     border-radius: 6px;
     flex: 1;
     font-size: 14px;
+    min-width: 0;
 }
 
 .search-form input:focus {
@@ -575,26 +694,29 @@ tr:hover {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .search-form button:hover {
     background: #0056b3;
 }
 
-.btn-secondary {
-    padding: 10px 15px;
-    background: #6c757d;
+.clear-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background-color: #6c757d;
     color: white;
     text-decoration: none;
     border-radius: 6px;
-    font-size: 14px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
 }
 
-.btn-secondary:hover {
-    background: #545b62;
+.clear-btn:hover {
+    background-color: #5a6268;
 }
 
 /* Statistics Summary */
@@ -626,31 +748,81 @@ tr:hover {
 .text-center { text-align: center; }
 .text-muted { color: #6c757d; }
 
-/* Responsive */
-@media (max-width:768px) {
-    body {
-        padding-top: 120px;
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
+
+/* Tablet Devices - 992px and below - Switch to Card View */
+@media (max-width: 992px) {
+    .table-view {
+        display: none;
     }
     
-    .sidebar { width:60px; }
-    .sidebar a span { display:none; }
+    .activity-cards-view {
+        display: flex;
+    }
+    
+    .activity-cards-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .header,
+    .sidebar:hover ~ .main-content {
+        left: 0;
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -659,26 +831,179 @@ tr:hover {
     
     .search-container {
         flex-direction: column;
-        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    .search-form {
+    
+    .search-form-wrapper {
         max-width: 100%;
+        width: 100%;
     }
+    
+    .search-form {
+        width: 100%;
+    }
+    
+    .search-form input {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .clear-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
     .stats-container {
         flex-direction: column;
     }
+    
     .stat-box {
         text-align: center;
+        padding: 12px 20px;
     }
+    
+    .stat-number {
+        font-size: 20px;
+    }
+    
+    .activity-cards-view {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .search-form input {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .search-form button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .clear-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .stat-number {
+        font-size: 18px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    .activity-card-content {
+        padding: 12px;
+    }
+    
+    .activity-card-label {
+        width: 80px;
+        font-size: 12px;
+    }
+    
+    .activity-card-value {
+        font-size: 12px;
+    }
+    
+    .activity-card-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .stats-container {
+        flex-direction: row;
+    }
+    
+    .stat-box {
+        flex: 1;
+    }
+    
+    .activity-cards-view {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -727,6 +1052,10 @@ tr:hover {
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
 %}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
+%}
 {% set avatarLetter = 
     role == 'ROLE_ADMIN' ? 'A' :
     (role == 'ROLE_STAFF' ? 'S' :
@@ -734,9 +1063,17 @@ tr:hover {
     app.user.username|first|upper))
 %}
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-clipboard-list"></i> Activity Logs</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-clipboard-list"></i> Activity Logs
+    </h1>
     
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -751,16 +1088,12 @@ tr:hover {
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <!-- Dropdown Menu with Role Display -->
         <div class="profile-dropdown" id="profileDropdown">
-            <!-- Role Header -->
             <div class="dropdown-role-header">
-                <i class="fas fa-{{ role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                {{ userRoleName }}
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
-            
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user"></i> My Profile
+                <i class="fas fa-user-circle"></i> My Profile
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i> Change Picture
@@ -784,17 +1117,19 @@ tr:hover {
 <div class="main-content">
     <!-- Search Bar -->
     <div class="search-container">
-        <form method="get" action="{{ path('app_activity_log_index') }}" class="search-form">
-            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by username, action, or target..." />
-            <button type="submit">
-                <i class="fas fa-search"></i> Search
-            </button>
+        <div class="search-form-wrapper">
+            <form method="get" action="{{ path('app_activity_log_index') }}" class="search-form">
+                <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by username, action, or target..." />
+                <button type="submit">
+                    <i class="fas fa-search"></i> <span>Search</span>
+                </button>
+            </form>
             {% if search %}
-                <a href="{{ path('app_activity_log_index') }}" class="btn-secondary">
-                    <i class="fas fa-times"></i> Clear
+                <a href="{{ path('app_activity_log_index') }}" class="clear-btn">
+                    <i class="fas fa-times"></i> <span>Clear</span>
                 </a>
             {% endif %}
-        </form>
+        </div>
     </div>
 
     <!-- Statistics Summary -->
@@ -809,86 +1144,163 @@ tr:hover {
         </div>
     </div>
 
-    <div class="table-container">
-         <table>
-            <thead>
-                 <tr>
-                    <th>ID</th>
-                    <th>User ID</th>
-                    <th>Username</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                    <th>Target Data</th>
-                    <th>Date & Time</th>
-                 </tr>
-            </thead>
-            <tbody>
-            {% for log in activity_logs %}
-                 <tr>
-                    <td>#{{ log.id }}</td>
-                    <td>{{ log.userId }}</td>
-                    <td>
-                        <strong>{{ log.username }}</strong>
-                    </td>
-                    <td>
-                        {% set roleClass = 
-                            log.role == 'ROLE_ADMIN' ? 'admin' :
-                            (log.role == 'ROLE_STAFF' ? 'staff' : 'user')
-                        %}
-                        <span style="
-                            display: inline-block;
-                            padding: 4px 12px;
-                            border-radius: 20px;
-                            font-size: 12px;
-                            font-weight: 600;
-                            background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }};
-                            color: white;
-                        ">
-                            {{ log.role|replace({'ROLE_': ''}) }}
+    <!-- Desktop Table View -->
+    <div class="table-view">
+        <div class="table-container">
+              <table>
+                <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Target Data</th>
+                        <th>Date & Time</th>
+                      </tr>
+                </thead>
+                <tbody>
+                {% for log in activity_logs %}
+                      <tr>
+                        <td style="font-weight: 500;">#{{ log.id }}</td>
+                        <td>{{ log.userId }}</td>
+                        <td><strong>{{ log.username }}</strong></td>
+                        <td>
+                            {% set roleClass = 
+                                log.role == 'ROLE_ADMIN' ? 'admin' :
+                                (log.role == 'ROLE_STAFF' ? 'staff' : 'user')
+                            %}
+                            <span style="
+                                display: inline-block;
+                                padding: 4px 12px;
+                                border-radius: 20px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }};
+                                color: white;
+                            ">
+                                {{ log.role|replace({'ROLE_': ''}) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ log.action }}">
+                                <i class="fas fa-{{ 
+                                    log.action == 'LOGIN' ? 'sign-in-alt' : 
+                                    (log.action == 'LOGOUT' ? 'sign-out-alt' : 
+                                    (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' :
+                                    (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' :
+                                    (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' :
+                                    (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' :
+                                    (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : 
+                                    (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : 
+                                    (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 
+                                    'info-circle')))))))) 
+                                }}"></i>
+                                {{ log.action|replace({'_': ' '})|title }}
+                            </span>
+                        </td>
+                        <td style="max-width: 300px; word-break: break-word;">
+                            {% if log.target|length > 50 %}
+                                {{ log.target|slice(0, 50) }}...
+                            {% else %}
+                                {{ log.target }}
+                            {% endif %}
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <i class="fas fa-calendar-alt" style="color: #6c757d; margin-right: 5px;"></i>
+                            {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '' }}
+                        </td>
+                      </tr>
+                {% else %}
+                      <tr>
+                        <td colspan="7" class="text-center text-muted" style="text-align: center; padding: 60px 20px;">
+                            <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block;"></i>
+                            No activity logs found
+                            {% if search %}
+                                for "{{ search }}"
+                            {% endif %}
+                        </td>
+                      </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+    
+    <!-- Mobile Card View -->
+    <div class="activity-cards-view">
+        {% for log in activity_logs %}
+            <div class="activity-card">
+                <div class="activity-card-content">
+                    <div class="activity-card-header">
+                        <span class="activity-card-id">#{{ log.id }}</span>
+                        <span class="activity-card-date">
+                            <i class="fas fa-calendar-alt"></i> {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '' }}
                         </span>
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ log.action }}">
-                            <i class="fas fa-{{ 
-                                log.action == 'LOGIN' ? 'sign-in-alt' : 
-                                (log.action == 'LOGOUT' ? 'sign-out-alt' : 
-                                (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' :
-                                (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' :
-                                (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' :
-                                (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' :
-                                (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : 
-                                (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : 
-                                (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 
-                                'info-circle')))))))) 
-                            }}"></i>
-                            {{ log.action|replace({'_': ' '})|title }}
-                        </span>
-                    </td>
-                    <td style="max-width: 300px; word-break: break-word;">
-                        {% if log.target|length > 50 %}
-                            {{ log.target|slice(0, 50) }}...
-                        {% else %}
-                            {{ log.target }}
-                        {% endif %}
-                    </td>
-                    <td style="white-space: nowrap;">
-                        <i class="fas fa-calendar-alt" style="color: #6c757d; margin-right: 5px;"></i>
-                        {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '' }}
-                    </td>
-                 </tr>
-            {% else %}
-                 <tr>
-                    <td colspan="7" class="text-center text-muted">
-                        <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block;"></i>
-                        No activity logs found
-                        {% if search %}
-                            for "{{ search }}"
-                        {% endif %}
-                    </td>
-                 </tr>
-            {% endfor %}
-            </tbody>
-         </table>
+                    </div>
+                    <div class="activity-card-row">
+                        <div class="activity-card-label">User ID:</div>
+                        <div class="activity-card-value">{{ log.userId }}</div>
+                    </div>
+                    <div class="activity-card-row">
+                        <div class="activity-card-label">Username:</div>
+                        <div class="activity-card-value"><strong>{{ log.username }}</strong></div>
+                    </div>
+                    <div class="activity-card-row">
+                        <div class="activity-card-label">Role:</div>
+                        <div class="activity-card-value">
+                            {% set roleClass = 
+                                log.role == 'ROLE_ADMIN' ? 'admin' :
+                                (log.role == 'ROLE_STAFF' ? 'staff' : 'user')
+                            %}
+                            <span style="
+                                display: inline-block;
+                                padding: 4px 12px;
+                                border-radius: 20px;
+                                font-size: 11px;
+                                font-weight: 600;
+                                background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }};
+                                color: white;
+                            ">
+                                {{ log.role|replace({'ROLE_': ''}) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="activity-card-row">
+                        <div class="activity-card-label">Action:</div>
+                        <div class="activity-card-value">
+                            <span class="badge badge-{{ log.action }}" style="display: inline-block;">
+                                <i class="fas fa-{{ 
+                                    log.action == 'LOGIN' ? 'sign-in-alt' : 
+                                    (log.action == 'LOGOUT' ? 'sign-out-alt' : 
+                                    (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' :
+                                    (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' :
+                                    (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' :
+                                    (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' :
+                                    (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : 
+                                    (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : 
+                                    (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 
+                                    'info-circle')))))))) 
+                                }}"></i>
+                                {{ log.action|replace({'_': ' '})|title }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="activity-card-row">
+                        <div class="activity-card-label">Target Data:</div>
+                        <div class="activity-card-value">{{ log.target }}</div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px;">
+                <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d; opacity: 0.3;"></i>
+                <p style="margin: 0; color: #6c757d; font-size: 16px;">No activity logs found</p>
+                {% if search %}
+                    <p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">for "{{ search }}"</p>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endif %}
@@ -930,14 +1342,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -950,16 +1428,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -967,10 +1452,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1171,9 +1661,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

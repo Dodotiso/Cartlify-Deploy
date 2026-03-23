@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}Cartlify | Edit User{% endblock %}
 
 {% block body %}
@@ -76,6 +77,41 @@ body {
 .sidebar a:hover {
     background:#34495e;
     border-left:4px solid #E64C3C;
+}
+
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
 }
 
 /* --- Sticky Header --- */
@@ -576,63 +612,86 @@ body {
     opacity: 0.9;
 }
 
-/* Notification */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 12px 20px;
+.btn-back {
+    background-color: #6c757d;
     color: white;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 3000;
-    animation: slideIn 0.3s ease;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 16px;
+    width: 100%;
+    transition: background 0.2s;
+    margin-top: 10px;
 }
 
-.notification-success {
-    background: #28a745;
+.btn-back:hover {
+    background-color: #5a6268;
+    color: white;
+    text-decoration: none;
 }
 
-.notification-error {
-    background: #dc3545;
-}
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Responsive */
-@media (max-width:768px) {
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
     body {
-        padding-top: 120px;
+        padding-top: 70px;
     }
     
-    .sidebar { width:60px; }
-    .sidebar a span { display:none; }
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main { 
-        margin-left: 60px; 
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .main {
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -643,14 +702,126 @@ body {
         padding: 20px;
     }
     
+    .card-body h3 {
+        font-size: 13px;
+        margin: 12px 0 6px;
+    }
+    
+    .card-body input, 
+    .card-body select {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .btn-submit, .btn-back {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main {
+        padding: 10px;
+    }
+    
+    .product-card {
+        max-width: 100%;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .card-body h3 {
+        font-size: 12px;
+        margin: 10px 0 5px;
+    }
+    
+    .card-body input, 
+    .card-body select {
+        padding: 8px;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .btn-submit, .btn-back {
+        padding: 8px;
+        font-size: 13px;
+    }
+    
+    small {
+        font-size: 10px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main {
+        padding: 15px;
+    }
+    
+    .product-card {
+        max-width: 450px;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -699,10 +870,22 @@ body {
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
 %}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
+%}
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-edit"></i> Edit User</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-edit"></i> Edit User
+    </h1>
 
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -719,11 +902,10 @@ body {
         
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
-                <i class="fas fa-{{ role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                {{ userRoleName }}
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user"></i> My Profile
+                <i class="fas fa-user-circle"></i> My Profile
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i> Change Picture
@@ -756,15 +938,18 @@ body {
                     {{ form_widget(form.roles, {'attr': {'class': 'role-select'}}) }}
                     
                     <h3><i class="fas fa-lock"></i> Password</h3>
-
                     {{ form_widget(form.password, {'attr': {'placeholder': 'New password...'}}) }}
-                     <small style="color: #6c757d; margin-top: -5px; margin-bottom: 10px; display: block;">
+                    <small style="color: #6c757d; margin-top: -5px; margin-bottom: 10px; display: block;">
                         <i class="fas fa-info-circle"></i> Leave blank to keep current password
                     </small>                   
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-save"></i> Update User
                     </button>
                 {{ form_end(form) }}
+                
+                <a href="{{ path('app_user_index') }}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Users
+                </a>
             </div>
         </div>
     </div>
@@ -808,14 +993,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -828,16 +1079,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -845,10 +1103,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1049,9 +1312,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

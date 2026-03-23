@@ -51,6 +51,41 @@ body {
 .sidebar:hover a span { display:inline; opacity: 1;}
 .sidebar a:hover { background-color:#34495e; border-left:4px solid #E64C3C; }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -122,10 +157,6 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-}
-
-.profile-avatar i {
-    font-size: 18px;
 }
 
 .profile-name {
@@ -478,6 +509,7 @@ body {
     align-items: center;
     gap: 8px;
     transition: opacity 0.3s;
+    white-space: nowrap;
 }
 
 .btn-create:hover {
@@ -491,7 +523,7 @@ body {
 /* --- Upgraded User Cards with Simple Background Colors --- */
 .users-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 25px;
     margin-top: 20px;
 }
@@ -591,6 +623,7 @@ body {
     font-size: 20px;
     font-weight: 600;
     margin: 0 0 5px;
+    word-break: break-word;
 }
 
 .user-id-badge {
@@ -674,6 +707,7 @@ body {
     margin: 15px 0;
     color: #6c757d;
     font-size: 13px;
+    flex-wrap: wrap;
 }
 
 .created-date-simple i {
@@ -727,14 +761,22 @@ body {
     display: flex;
     gap: 15px;
     align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
+}
+
+.search-form-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    max-width: 500px;
 }
 
 .search-form {
     display: flex;
     gap: 10px;
     flex: 1;
-    max-width: 500px;
 }
 
 .search-form input {
@@ -743,6 +785,7 @@ body {
     border-radius: 6px;
     flex: 1;
     font-size: 14px;
+    min-width: 0;
 }
 
 .search-form input:focus {
@@ -761,23 +804,29 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .search-form button:hover {
     background: #0056b3;
 }
 
-.btn-secondary {
-    padding: 10px 15px;
-    background: #6c757d;
+.clear-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background-color: #6c757d;
     color: white;
     text-decoration: none;
     border-radius: 6px;
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.btn-secondary:hover {
-    background: #545b62;
+.clear-btn:hover {
+    background-color: #5a6268;
 }
 
 .text-muted {
@@ -807,63 +856,64 @@ body {
     margin-bottom: 20px;
 }
 
-/* Notification */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    color: white;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 3000;
-    animation: slideIn 0.3s ease;
-}
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
 
-.notification-success {
-    background: #28a745;
-}
-
-.notification-error {
-    background: #dc3545;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Responsive */
-@media (max-width:768px) {
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
     body {
-        padding-top: 120px;
+        padding-top: 70px;
     }
     
-    .sidebar { width:60px; }
-    .sidebar a span { display:none; }
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .header,
+    .sidebar:hover ~ .main-content {
+        left: 0;
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -872,26 +922,210 @@ body {
     
     .search-container {
         flex-direction: column;
-        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    .search-form {
+    
+    .search-form-wrapper {
         max-width: 100%;
+        width: 100%;
     }
+    
+    .search-form {
+        width: 100%;
+    }
+    
+    .search-form input {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .clear-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .btn-create {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
     .users-container {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 15px;
     }
+    
+    .user-card-header {
+        padding: 20px 15px 12px;
+    }
+    
+    .user-avatar-large {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+    
+    .user-name {
+        font-size: 18px;
+    }
+    
+    .user-card-body {
+        padding: 15px;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+    
     .user-actions-simple {
         flex-direction: column;
+        gap: 8px;
     }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .search-form input {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .search-form button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .clear-btn, .btn-create {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .user-avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .user-name {
+        font-size: 16px;
+    }
+    
+    .user-id-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    .role-badge-simple {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    
+    .stat-value {
+        font-size: 16px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .created-date-simple {
+        font-size: 11px;
+    }
+    
+    .btn-action-simple {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .btn-action-simple i {
+        font-size: 12px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .users-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .user-actions-simple {
+        flex-direction: row;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -933,6 +1167,9 @@ body {
     </a>
 </div>
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -940,10 +1177,19 @@ body {
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
 %}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
+%}
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-users"></i> Staff Management</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-users"></i> Staff Management
+    </h1>
     
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -960,11 +1206,10 @@ body {
         
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
-                <i class="fas fa-{{ role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                {{ userRoleName }}
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user"></i> My Profile
+                <i class="fas fa-user-circle"></i> My Profile
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i> Change Picture
@@ -989,20 +1234,22 @@ body {
 <div class="main-content">
     <!-- Search Bar -->
     <div class="search-container">
-        <form method="get" action="{{ path('app_user_index') }}" class="search-form">
-            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by username or role..." />
-            <button type="submit">
-                <i class="fas fa-search"></i> Search
-            </button>
+        <div class="search-form-wrapper">
+            <form method="get" action="{{ path('app_user_index') }}" class="search-form">
+                <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by username or role..." />
+                <button type="submit">
+                    <i class="fas fa-search"></i> <span>Search</span>
+                </button>
+            </form>
             {% if search %}
-                <a href="{{ path('app_user_index') }}" class="btn-secondary">
-                    <i class="fas fa-times"></i> Clear
+                <a href="{{ path('app_user_index') }}" class="clear-btn">
+                    <i class="fas fa-times"></i> <span>Clear</span>
                 </a>
             {% endif %}
-        </form>
+        </div>
         
         <a href="{{ path('app_user_new') }}" class="btn-create">
-            <i class="fas fa-plus-circle"></i> Create New User
+            <i class="fas fa-plus-circle"></i> <span>Create New User</span>
         </a>
     </div>
 
@@ -1126,14 +1373,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -1146,16 +1459,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -1163,10 +1483,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1367,9 +1692,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

@@ -81,6 +81,41 @@ body {
     border-left: 4px solid #E64C3C;
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -532,51 +567,422 @@ body {
 .card p { margin:0; font-size:16px; color:#555; }
 .card a { text-decoration:none; color:#007bff; font-weight:bold; }
 
-/* Responsive */
-@media (max-width:768px) { 
-    body {
-        padding-top: 120px;
-    }
-    
-    .sidebar { width:60px; } 
-    .sidebar a span { display:none; } 
-    
-    .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
+/* ===== ENHANCED RESPONSIVE STYLES WITH MOBILE SIDEBAR ===== */
+
+/* Tablet & Mobile Devices - Up to 1024px */
+@media (max-width: 1024px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 15px;
     }
-    
-    .sidebar:hover ~ .header {
-        left: 220px;
+}
+
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    /* Show mobile menu toggle button */
+    .menu-toggle {
+        display: block;
+    }
+    
+    .header {
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
+    }
+    
+    .header h1 {
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Mobile Sidebar - Hidden by default, slides in when active */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Keep hover functionality on mobile when open */
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    /* Main content adjusts for mobile */
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    /* Override hover effects on mobile */
+    .sidebar:hover ~ .header,
+    .sidebar:hover ~ .main-content {
+        left: 0;
+        margin-left: 0;
+    }
+    
+    .dashboard-cards {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+    
+    .card h2 {
+        font-size: 20px;
+    }
+    
+    .card p {
+        font-size: 14px;
     }
     
     .chart-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+        gap: 15px;
     }
+    
+    .chart-grid > div[style*="grid-column: span 2"] {
+        grid-column: span 1 !important;
+    }
+    
+    .activity-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+    
+    .welcome-section {
+        padding: 20px;
+    }
+    
+    .welcome-section h2 {
+        font-size: 22px;
+    }
+    
+    .welcome-section p {
+        font-size: 14px;
+    }
+    
     .profile-name {
         display: none;
     }
+    
     .dropdown-icon {
         display: none;
     }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
+    /* Make tables responsive */
+    .activity-grid table {
+        font-size: 13px;
+    }
+    
+    .activity-grid th,
+    .activity-grid td {
+        padding: 10px 8px;
+    }
+    
+    .performance-metrics .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 16px;
+    }
+    
+    .header h1 i {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 12px;
+    }
+    
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    /* Cards become horizontal for better space usage */
+    .card {
+        padding: 15px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .card > div:first-child {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .card i {
+        font-size: 28px;
+        margin-bottom: 0;
+    }
+    
+    .card h2 {
+        margin: 0;
+        font-size: 22px;
+    }
+    
+    .card p {
+        margin: 0;
+        font-size: 13px;
+    }
+    
+    .welcome-section {
+        padding: 15px;
+    }
+    
+    .welcome-section h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .welcome-section p {
+        font-size: 12px;
+    }
+    
+    .welcome-section > div:first-child {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .welcome-section > div:first-child > div:last-child {
+        display: none;
+    }
+    
+    .chart-body {
+        height: 250px;
+        padding: 10px;
+    }
+    
+    .activity-grid {
+        gap: 15px;
+    }
+    
+    .action-buttons {
+        gap: 10px;
+    }
+    
+    .action-buttons a {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .performance-metrics {
+        padding: 15px;
+    }
+    
+    .performance-metrics .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    /* Metrics cards become horizontal */
+    .metric-card {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .metric-card > div {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+    
+    .metric-card i {
+        margin-bottom: 0;
+        font-size: 28px;
+    }
+    
+    .metric-card div:last-child {
+        flex: 1;
+    }
+    
+    .metric-value {
+        font-size: 20px;
+    }
+    
+    .metric-label {
+        font-size: 12px;
+    }
+    
+    /* Table responsiveness */
+    .activity-grid table {
+        font-size: 12px;
+    }
+    
+    .activity-grid th,
+    .activity-grid td {
+        padding: 8px 6px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .insights-section > div {
+        padding: 15px;
+    }
+    
+    .insights-section h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    
+    .insights-section p {
+        font-size: 12px;
+    }
+    
+    .insights-section > div > div {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .insights-section > div > div > div:last-child {
+        display: none;
+    }
+}
+
+/* Small Mobile Devices - 375px and below */
+@media (max-width: 375px) {
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .profile-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .card h2 {
+        font-size: 20px;
+    }
+    
+    .card p {
+        font-size: 12px;
+    }
+    
+    .chart-body {
+        height: 220px;
+    }
+    
+    .activity-grid th,
+    .activity-grid td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+    
+    .action-buttons a {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .metric-value {
+        font-size: 18px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .chart-grid > div[style*="grid-column: span 2"] {
+        grid-column: span 2 !important;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Admin Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -636,7 +1042,7 @@ body {
 
 {% elseif is_granted('ROLE_STAFF') %}
 <!-- Staff Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -683,6 +1089,9 @@ body {
 </div>
 {% endif %}
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section - Same for both Admin and Staff #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -697,7 +1106,12 @@ body {
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-chart-line"></i> {% if is_granted('ROLE_ADMIN') %}Admin{% else %}Staff{% endif %} Dashboard</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-chart-line"></i> {% if is_granted('ROLE_ADMIN') %}Admin{% else %}Staff{% endif %} Dashboard
+    </h1>
 
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -968,7 +1382,7 @@ body {
                 <div style="font-size: 32px; color: #ffc107; margin-bottom: 5px;">
                     <i class="fas fa-chart-pie"></i>
                 </div>
-                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ avgOrderValue|default('0')|number_format(2) }}</div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;">₱{{ avgOrderValue|default('0')|number_format(2) }}</div>
                 <div style="color: #6c757d; font-size: 14px;">Avg Order Value</div>
             </div>
             
@@ -1090,14 +1504,84 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle Functionality - FIXED to work without refresh
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    // Don't re-initialize if already done
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Remove existing listeners to prevent duplicates
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Global variables
 let chartInstances = {};
@@ -1203,7 +1687,7 @@ function renderCharts() {
                         maintainAspectRatio: false,
                         cutout: '70%',
                         plugins: {
-                            legend: { position: 'right', labels: { padding: 20, usePointStyle: true } }
+                            legend: { position: 'right', labels: { padding: 20, usePointStyle: true, font: { size: 11 } } }
                         }
                     }
                 });
@@ -1260,16 +1744,24 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        // Remove existing listeners by cloning
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -1277,10 +1769,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1519,36 +2016,31 @@ function initializeDashboard() {
     });
 }
 
+// Main initialization function
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDashboard();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDashboard, 100);
+    setTimeout(initAll, 100);
 });
 
-window.addEventListener('load', function() {
-    setTimeout(initializeDashboard, 100);
-});
-
+// Handle Turbo navigation (for Symfony Turbo)
 document.addEventListener('turbo:load', function() {
+    // Reset flags for Turbo navigation
+    sidebarInitialized = false;
     dropdownInitialized = false;
-    setTimeout(initializeDashboard, 100);
+    chartInstances = {};
+    
+    setTimeout(initAll, 100);
 });
 
-const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.type === 'childList' && document.getElementById('profileHeader')) {
-            if (!dropdownInitialized) {
-                initializeDashboard();
-            }
-        }
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    observer.observe(document.body, { childList: true, subtree: true });
-});
-
-const sidebar = document.querySelector('.sidebar');
-if (sidebar) {
-    sidebar.addEventListener('transitionend', () => {
+// Handle page visibility change
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
         setTimeout(() => {
             Object.values(chartInstances).forEach(chart => {
                 if (chart && chart.resize) {
@@ -1556,8 +2048,8 @@ if (sidebar) {
                 }
             });
         }, 100);
-    });
-}
+    }
+});
 
 let resizeTimeout;
 window.addEventListener('resize', function() {

@@ -38,6 +38,7 @@ security:
          - { path: ^/order, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
          - { path: ^/user, roles: ROLE_ADMIN }
          - { path: ^/shop, roles: ROLE_USER }
+         - { path: ^/profile/upload-picture, roles: ROLE_USER }
 
 when@test:
     security:

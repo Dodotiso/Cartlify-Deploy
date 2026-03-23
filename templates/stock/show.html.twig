@@ -81,6 +81,41 @@ body {
     border-left: 4px solid #E64C3C;
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -110,6 +145,7 @@ body {
     min-height: calc(100vh - 80px);
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .sidebar:hover ~ .main-content {
@@ -498,9 +534,12 @@ body {
     background:#fff; 
     padding:30px; 
     border-radius:12px; 
-    box-shadow:0 4px 20px rgba(0,0,0,0.08); 
+    box-shadow:0 2px 8px rgba(0,0,0,0.1); 
     max-width:700px; 
-    width:100%; 
+    width:100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .card h2 { 
@@ -512,6 +551,8 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
+    flex-wrap: wrap;
+    word-break: break-word;
 }
 
 .card img { 
@@ -526,45 +567,47 @@ body {
 }
 
 .card p { 
+    margin:12px 0; 
     font-size:16px; 
-    margin-bottom:12px; 
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    line-height: 1.5;
+    word-break: break-word;
 }
 
-.card p i {
-    width: 24px;
-    color: #007bff;
+.card strong { 
+    color:#1f2a44; 
+    min-width: 120px;
+    display: inline-block;
 }
 
-.card .buttons { 
+.action-buttons { 
+    margin-top:25px; 
     display:flex; 
-    justify-content:center; 
-    gap:10px; 
-    margin-top:20px; 
+    gap:15px; 
+    justify-content:center;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .btn { 
-    padding:10px 20px; 
-    border:none; 
+    padding:10px 24px; 
     border-radius:6px; 
-    cursor:pointer; 
-    font-weight:600; 
     text-decoration:none; 
-    text-align:center; 
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
+    color:white; 
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:all 0.3s; 
+    font-weight:500; 
+    border:none;
+    cursor:pointer;
+    min-width: 140px;
+    justify-content: center;
+    flex: 0 1 auto;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 
 .btn-primary { 
@@ -608,31 +651,64 @@ body {
     color: white;
 }
 
-/* Responsive */
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
+
+/* Tablet Devices - 768px and below */
 @media (max-width: 768px) {
     body {
-        padding-top: 120px;
+        padding-top: 70px;
     }
     
-    .sidebar { width: 60px; }
-    .sidebar a span { display: none; }
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
-        padding: 15px;
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px;
+    }
+    
+    .sidebar:hover ~ .header,
+    .sidebar:hover ~ .main-content {
+        left: 0;
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -641,6 +717,7 @@ body {
     
     .card {
         padding: 20px;
+        max-width: 100%;
     }
     
     .card img {
@@ -648,29 +725,173 @@ body {
         height: 150px;
     }
     
+    .card p {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+    
+    .card strong {
+        min-width: 100px;
+    }
+    
     .toast {
         min-width: 250px;
         padding: 12px 16px;
     }
     
-    .buttons {
+    .action-buttons {
         flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
     }
     
     .btn {
         width: 100%;
         justify-content: center;
+        padding: 10px 20px;
+        min-width: auto;
     }
     
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+    
+    .card h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .card img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .card p {
+        font-size: 13px;
+        margin: 8px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .card strong {
+        min-width: auto;
+        display: block;
+        margin-bottom: 3px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .stock-badge {
+        font-size: 12px;
+        padding: 3px 8px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Small Mobile - 375px and below */
+@media (max-width: 375px) {
+    .card img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .card h2 {
+        font-size: 16px;
+    }
+    
+    .card p {
+        font-size: 12px;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .card {
+        max-width: 90%;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .btn {
+        width: auto;
+        flex: 1;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -713,7 +934,7 @@ body {
 </div>
 
 {% elseif is_granted('ROLE_STAFF') %}
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -748,6 +969,9 @@ body {
 </div>
 {% endif %}
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -762,7 +986,12 @@ body {
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-boxes"></i> Stock Details</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-boxes"></i> Stock Details
+    </h1>
 
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -824,9 +1053,7 @@ body {
             <img src="{{ asset('images/no-image.png') }}" alt="No Image">
         {% endif %}
 
-        <p>
-            <i class="fas fa-chart-line"></i>
-            <strong>Stock Quantity:</strong> 
+        <p><strong>Stock Quantity:</strong> 
             {% if stock.stock < 10 %}
                 <span class="stock-badge stock-low"><i class="fas fa-exclamation-triangle"></i> {{ stock.stock }} (Low Stock)</span>
             {% elseif stock.stock < 20 %}
@@ -836,27 +1063,15 @@ body {
             {% endif %}
         </p>
         
-        <p>
-            <i class="fas fa-calendar-alt"></i>
-            <strong>Product Created:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}
-        </p>
+        <p><strong>Product Created:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
         
-        <p>
-            <i class="fas fa-tag"></i>
-            <strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}
-        </p>
+        <p><strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}</p>
         
-        <p>
-            <i class="fas fa-dollar-sign"></i>
-            <strong>Price:</strong> ₱{{ stock.product.price|number_format(2, '.', ',') }}
-        </p>
+        <p><strong>Price:</strong> ₱{{ stock.product.price|number_format(2, '.', ',') }}</p>
         
-        <p>
-            <i class="fas fa-align-left"></i>
-            <strong>Description:</strong> {{ stock.product.description }}
-        </p>
+        <p><strong>Description:</strong> {{ stock.product.description }}</p>
 
-        <div class="buttons">
+        <div class="action-buttons">
             <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="btn btn-primary">
                 <i class="fas fa-edit"></i> Edit Stock
             </a>
@@ -904,14 +1119,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -924,16 +1205,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -941,10 +1229,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1145,9 +1438,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

@@ -59,6 +59,41 @@ body {
     border-left:4px solid #E64C3C; 
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -569,31 +604,62 @@ body {
 .btn-secondary { background: #6c757d; color: white; }
 .btn-secondary:hover { background: #545b62; transform: translateY(-1px); }
 
-/* Responsive */
-@media (max-width:768px) {
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
+
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
     body {
-        padding-top: 120px;
+        padding-top: 70px;
     }
     
-    .sidebar { width:60px; }
-    .sidebar a span { display:none; }
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .main-content {
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -602,22 +668,142 @@ body {
     
     .profile-form-container {
         padding: 20px;
+        margin: 0 10px;
     }
+    
     .form-actions {
         flex-direction: column;
     }
+    
     .btn {
         width: 100%;
     }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+    
+    .form-header h2 {
+        font-size: 20px;
+    }
+    
+    .form-header p {
+        font-size: 13px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .profile-form-container {
+        padding: 15px;
+        margin: 0;
+    }
+    
+    .form-header h2 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .form-header p {
+        font-size: 12px;
+    }
+    
+    .form-group label {
+        font-size: 13px;
+    }
+    
+    .form-control {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+    
+    .form-help {
+        font-size: 11px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .profile-form-container {
+        max-width: 450px;
+    }
+    
+    .form-actions {
+        flex-direction: row;
+    }
+    
+    .btn {
+        width: auto;
+        flex: 1;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -667,12 +853,19 @@ body {
     </a>
 </div>
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- Profile Section -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
+%}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 {% set avatarLetter = 
     role == 'ROLE_ADMIN' ? 'A' :
@@ -683,7 +876,12 @@ body {
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-key"></i> Change Password</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-key"></i> Change Password
+    </h1>
     
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -702,12 +900,11 @@ body {
         <div class="profile-dropdown" id="profileDropdown">
             <!-- Role Header -->
             <div class="dropdown-role-header">
-                <i class="fas fa-{{ role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                {{ userRoleName }}
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
             
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user"></i> My Profile
+                <i class="fas fa-user-circle"></i> My Profile
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i> Change Picture
@@ -783,7 +980,7 @@ body {
 
 {% elseif is_granted('ROLE_STAFF') %}
 <!-- Sidebar for Staff -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -817,12 +1014,19 @@ body {
     </a>
 </div>
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- Profile Section for Staff -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
+%}
+{% set userRoleIcon = 
+    role == 'ROLE_ADMIN' ? 'crown' :
+    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 {% set avatarLetter = 
     role == 'ROLE_ADMIN' ? 'A' :
@@ -833,7 +1037,12 @@ body {
 
 <!-- Sticky Header for Staff -->
 <div class="header">
-    <h1><i class="fas fa-key"></i> Change Password</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-key"></i> Change Password
+    </h1>
     
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -852,12 +1061,11 @@ body {
         <div class="profile-dropdown" id="profileDropdown">
             <!-- Role Header -->
             <div class="dropdown-role-header">
-                <i class="fas fa-{{ role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                {{ userRoleName }}
+                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
             
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user"></i> My Profile
+                <i class="fas fa-user-circle"></i> My Profile
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i> Change Picture
@@ -968,14 +1176,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -988,16 +1262,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -1005,10 +1286,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1211,9 +1497,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

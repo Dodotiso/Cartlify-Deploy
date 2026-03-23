@@ -81,6 +81,41 @@ body {
     border-left: 4px solid #E64C3C;
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -330,18 +365,123 @@ body {
     }
 }
 
-/* --- Table Styling --- */
+/* --- Card View for Mobile - Responsive Product Cards --- */
+.product-cards-view {
+    display: none;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.product-card-image {
+    width: 100%;
+    height: 180px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.product-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-card-image .no-image {
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.product-card-content {
+    padding: 15px;
+}
+
+.product-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 8px;
+}
+
+.product-card-description {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.product-card-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 8px;
+}
+
+.product-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.product-card-category {
+    background: #e9ecef;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: #495057;
+}
+
+.product-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.product-card-actions .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px;
+    font-size: 12px;
+}
+
+/* --- Table View for Desktop --- */
+.table-view {
+    display: block;
+}
+
 .table-container {
     overflow-x: auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 1000px;
 }
 
 table th {
@@ -350,12 +490,15 @@ table th {
     padding: 12px;
     text-align: left;
     font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
 }
 
 table td {
     padding: 12px;
     border-bottom: 1px solid #ddd;
     vertical-align: middle;
+    font-size: 13px;
 }
 
 tr:hover {
@@ -363,15 +506,16 @@ tr:hover {
 }
 
 img.thumbnail {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 8px;
+    display: block;
 }
 
 /* --- Buttons --- */
 .btn {
-    padding: 8px 14px;
+    padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -382,10 +526,11 @@ img.thumbnail {
     align-items: center;
     gap: 6px;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .btn i {
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .btn-primary { background: #007bff; color: white; }
@@ -399,12 +544,13 @@ img.thumbnail {
 .btn-secondary { background: #6c757d; color: white; border-radius: 6px; }
 .btn-secondary:hover { background: #5a6268; transform: translateY(-1px); }
 
-/* --- Search Bar --- */
+/* --- Search Bar - FIXED: Search and Create button together --- */
 .search-container {
     margin-bottom: 25px;
     display: flex;
     gap: 15px;
     align-items: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
@@ -421,6 +567,7 @@ img.thumbnail {
     border-radius: 6px;
     flex: 1;
     font-size: 14px;
+    min-width: 200px;
 }
 
 .search-form input:focus {
@@ -439,10 +586,27 @@ img.thumbnail {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .search-form button:hover {
     background: #0056b3;
+}
+
+/* Create button - sticks with search */
+.create-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Clear button style */
+.clear-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Upload Modal */
@@ -606,44 +770,141 @@ img.thumbnail {
     opacity: 0.9;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    body {
-        padding-top: 120px;
-    }
-    
-    .sidebar { width: 60px; }
-    .sidebar a span { display: none; }
-    
-    .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Desktop & Tablet - Search and Create button stay together */
+@media (min-width: 769px) {
+    .search-container {
+        flex-direction: row;
+        align-items: center;
         gap: 15px;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .search-form {
+        flex: 1;
+        max-width: 500px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    .create-btn {
+        margin-left: 0;
+    }
+}
+
+/* Tablet Devices - 992px and below - Switch to Card View */
+@media (max-width: 992px) {
+    .table-view {
+        display: none;
+    }
+    
+    .product-cards-view {
+        display: flex;
+    }
+    
+    .product-cards-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .header {
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
+    }
+    
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .header,
+    .sidebar:hover ~ .main-content {
+        left: 0;
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
         display: none;
     }
     
-    .btn {
-        padding: 6px 10px;
-        font-size: 12px;
+    .search-container {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
     }
     
-    .btn i {
-        font-size: 10px;
+    .search-form {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .search-form input {
+        font-size: 13px;
+        padding: 8px 12px;
+        min-width: 0;
+    }
+    
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .create-btn, .clear-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .product-cards-view {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+    }
+    
+    .product-card-image {
+        height: 160px;
     }
     
     .toast {
@@ -652,29 +913,107 @@ img.thumbnail {
     }
     
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
     }
 }
 
-@media (max-width: 480px) {
+/* Mobile Devices - 576px and below */
+@media (max-width: 576px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
     .main-content {
-        padding: 10px;
+        padding: 12px;
     }
-    .btn span {
-        display: none;
+    
+    .product-cards-view {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
-    .btn i {
-        margin: 0;
+    
+    .product-card-image {
+        height: 180px;
     }
-    .btn {
-        padding: 8px 10px;
+    
+    .product-card-title {
+        font-size: 15px;
+    }
+    
+    .product-card-description {
+        font-size: 12px;
+    }
+    
+    .product-card-price {
+        font-size: 16px;
+    }
+    
+    .product-card-actions .btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Extra Small Mobile - 375px and below */
+@media (max-width: 375px) {
+    .product-card-image {
+        height: 150px;
+    }
+    
+    .product-card-content {
+        padding: 12px;
+    }
+    
+    .product-card-actions {
+        gap: 6px;
+    }
+    
+    .product-card-actions .btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -717,7 +1056,7 @@ img.thumbnail {
 </div>
 
 {% elseif is_granted('ROLE_STAFF') %}
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -752,6 +1091,9 @@ img.thumbnail {
 </div>
 {% endif %}
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -766,7 +1108,12 @@ img.thumbnail {
 
 <!-- Sticky Header -->
 <div class="header">
-<h1><i class="fas fa-shopping-bag"></i> Manage Products</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-shopping-bag"></i> Manage Products
+    </h1>
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -811,86 +1158,144 @@ img.thumbnail {
 
 <!-- Main Content -->
 <div class="main-content">
-    <!-- Search Bar -->
+    <!-- Search Bar - Search and Create button together -->
     <div class="search-container">
         <form method="get" action="{{ path('app_product_index') }}" class="search-form">
             <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by product name, description, or category..." />
             <button type="submit">
-                <i class="fas fa-search"></i> Search
+                <i class="fas fa-search"></i> <span>Search</span>
             </button>
-            {% if search %}
-                <a href="{{ path('app_product_index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Clear
-                </a>
-            {% endif %}
         </form>
-        
-        <a href="{{ path('app_product_new') }}" class="btn btn-success">
+        {% if search %}
+            <a href="{{ path('app_product_index') }}" class="btn btn-secondary clear-btn">
+                <i class="fas fa-times"></i> <span>Clear</span>
+            </a>
+        {% endif %}
+        <a href="{{ path('app_product_new') }}" class="btn btn-success create-btn">
             <i class="fas fa-plus-circle"></i> <span>Create New Product</span>
         </a>
     </div>
     
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Created</th>
-                    <th>Image</th>
-                    <th>Category</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for product in products %}
-                <tr>
-                    <td>{{ product.id }}</td>
-                    <td><strong>{{ product.name }}</strong></td>
-                    <td>{{ product.description|length > 50 ? product.description|slice(0,50) ~ '...' : product.description }}</td>
-                    <td>₱{{ product.price|number_format(2, '.', ',') }}</td>
-                    <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
-                    <td>
-                        {% if product.image %}
-                            {% set imagePath = product.image %}
-                            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
-                                {% set imagePath = '/uploads/' ~ imagePath %}
+    <!-- Desktop Table View -->
+    <div class="table-view">
+        <div class="table-container">
+             <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Created</th>
+                        <th>Image</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td style="font-weight: 500;">{{ product.id }}</td>
+                        <td><strong>{{ product.name }}</strong></td>
+                        <td>{{ product.description|length > 50 ? product.description|slice(0,50) ~ '...' : product.description }}</td>
+                        <td style="color: #28a745; font-weight: 600;">₱{{ product.price|number_format(2, '.', ',') }}</td>
+                        <td style="font-size: 11px;">{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+                        <td>
+                            {% if product.image %}
+                                {% set imagePath = product.image %}
+                                {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                                    {% set imagePath = '/uploads/' ~ imagePath %}
+                                {% endif %}
+                                <img src="{{ imagePath }}" alt="{{ product.name }}" class="thumbnail">
+                            {% else %}
+                                <span style="color: #6c757d; font-size: 11px;">No Image</span>
                             {% endif %}
-                            <img src="{{ imagePath }}" alt="{{ product.name }}" class="thumbnail">
-                        {% else %}
-                            <span class="text-muted">No Image</span>
+                        </td>
+                        <td>{{ product.category ? product.category.category : '—' }}</td>
+                        <td>
+                            <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-primary" title="View">
+                                    <i class="fas fa-eye"></i> <span>View</span>
+                                </a>
+                                <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i> <span>Edit</span>
+                                </a>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <button class="btn btn-danger" title="Delete">
+                                        <i class="fas fa-trash-alt"></i> <span>Delete</span>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 60px 20px;">
+                            <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d;"></i>
+                            <p style="margin: 0; color: #6c757d; font-size: 16px;">No products found</p>
+                            <p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">Click "Create New Product" to add your first product</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Mobile Card View -->
+    <div class="product-cards-view">
+        {% for product in products %}
+            <div class="product-card">
+                <div class="product-card-image">
+                    {% if product.image %}
+                        {% set imagePath = product.image %}
+                        {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                            {% set imagePath = '/uploads/' ~ imagePath %}
                         {% endif %}
-                    </td>
-                    <td>{{ product.category ? product.category.category : '—' }}</td>
-                    <td>
-                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-primary" title="View">
-                            <i class="fas fa-eye"></i> <span>View</span>
+                        <img src="{{ imagePath }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-image">
+                            <i class="fas fa-image" style="font-size: 48px; color: #adb5bd; margin-bottom: 8px; display: block;"></i>
+                            <span>No Image</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="product-card-content">
+                    <div class="product-card-title">{{ product.name }}</div>
+                    <div class="product-card-description">{{ product.description|length > 80 ? product.description|slice(0,80) ~ '...' : product.description }}</div>
+                    <div class="product-card-price">₱{{ product.price|number_format(2, '.', ',') }}</div>
+                    <div class="product-card-meta">
+                        <span><i class="fas fa-calendar-alt"></i> {{ product.createdAt ? product.createdAt|date('M d, Y') : 'N/A' }}</span>
+                        <span class="product-card-category">{{ product.category ? product.category.category : '—' }}</span>
+                    </div>
+                    <div class="product-card-actions">
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> View
                         </a>
-                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning" title="Edit">
-                            <i class="fas fa-edit"></i> <span>Edit</span>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
                         </a>
                         {% if is_granted('ROLE_ADMIN') %}
-                        <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                        <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-                            <button class="btn btn-danger" title="Delete">
-                                <i class="fas fa-trash-alt"></i> <span>Delete</span>
+                            <button class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete
                             </button>
                         </form>
                         {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted" style="padding: 40px;">
-                        <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
-                        No products found
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px;">
+                <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d;"></i>
+                <p style="margin: 0; color: #6c757d; font-size: 16px;">No products found</p>
+                <p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">Click "Create New Product" to add your first product</p>
+            </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -931,15 +1336,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Display flash messages from Symfony
-document.addEventListener('DOMContentLoaded', function() {
-    // Directly display flash messages from Twig
+// Mobile Sidebar Toggle
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
+// Display flash messages
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -952,16 +1422,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -969,10 +1446,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1173,9 +1655,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

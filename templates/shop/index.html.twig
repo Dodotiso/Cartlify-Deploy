@@ -39,6 +39,7 @@ body {
     top: 0;
     z-index: 1000;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
 }
 
 .logo-container {
@@ -46,6 +47,7 @@ body {
     align-items: center;
     text-decoration: none;
     color: var(--white);
+    flex-shrink: 0;
 }
 
 .logo-wrapper {
@@ -64,6 +66,18 @@ body {
 .brand-name {
     font-size: 1.8rem;
     font-weight: bold;
+}
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: auto;
 }
 
 .search-container {
@@ -94,6 +108,7 @@ body {
     display: flex;
     gap: 1.5rem;
     align-items: center;
+    transition: all 0.3s ease;
 }
 
 .nav-btn {
@@ -108,6 +123,7 @@ body {
     text-decoration: none;
     transition: var(--transition);
     font-size: 0.95rem;
+    white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -119,7 +135,7 @@ body {
     color: var(--primary-color);
 }
 
-/* --- Profile Dropdown in Navbar --- */
+/* Profile Dropdown */
 .profile-wrapper {
     position: relative;
 }
@@ -154,6 +170,7 @@ body {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .profile-avatar img {
@@ -255,6 +272,153 @@ body {
     padding: 0.2rem 0.4rem;
     font-size: 0.7rem;
     margin-left: 0.25rem;
+}
+
+/* Responsive Navbar */
+@media (max-width: 1024px) {
+    .brand-name {
+        font-size: 1.4rem;
+    }
+    
+    .logo-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .nav-btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .nav-actions {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+        position: relative;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+        order: 2;
+    }
+    
+    .search-container {
+        order: 3;
+        max-width: 100%;
+        margin: 1rem 0 0 0;
+        flex: 0 0 100%;
+    }
+    
+    .nav-actions {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background-color: var(--primary-color);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 80px 1rem 2rem;
+        gap: 0.5rem;
+        transition: right 0.3s ease;
+        z-index: 1001;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+    
+    .nav-actions.active {
+        right: 0;
+    }
+    
+    .nav-btn {
+        padding: 0.75rem 1rem;
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .profile-wrapper {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .profile-header {
+        width: 100%;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 8px;
+    }
+    
+    .profile-dropdown {
+        position: static;
+        width: 100%;
+        margin-top: 0.5rem;
+        background: rgba(255,255,255,0.95);
+    }
+    
+    /* Overlay for mobile menu */
+    .menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+    
+    .menu-overlay.active {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .brand-name {
+        font-size: 1.2rem;
+    }
+    
+    .profile-name {
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-stats {
+        gap: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .filter-section {
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 1rem;
+    }
 }
 
 /* --- HERO SECTION --- */
@@ -483,12 +647,34 @@ body {
     border: 1px solid var(--gray-dark);
 }
 
+/* Updated Product Grid - 4 cards per row */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto 3rem;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .product-card {
@@ -625,7 +811,7 @@ body {
     margin-top: auto;
 }
 
-.btn-icon, .btn-cart {
+.btn-icon, .btn-cart, .btn-buy-now {
     flex: 1;
     display: flex;
     align-items: center;
@@ -660,7 +846,19 @@ body {
     transform: translateY(-2px);
 }
 
-.btn-cart:disabled {
+.btn-buy-now {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-buy-now:hover:not(:disabled) {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-cart:disabled, .btn-buy-now:disabled {
     background-color: var(--gray-dark);
     cursor: not-allowed;
 }
@@ -893,43 +1091,14 @@ body {
     }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
     }
-    .logo-wrapper {
-        width: 70px;
-        height: 70px;
-    }
-    .brand-name {
-        font-size: 1.2rem;
-    }
-    .search-container {
-        max-width: 100%;
-        margin: 0;
-    }
-    .nav-actions {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    .products-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 0 1rem;
-    }
-    .filter-grid {
-        grid-template-columns: 1fr;
-    }
-    .profile-name {
-        display: none;
+    to {
+        transform: translateX(100%);
+        opacity: 0;
     }
 }
 </style>
@@ -942,8 +1111,12 @@ body {
         <div class="logo-wrapper">
             <img src="{{ asset('images/cart1.png') }}" alt="Cartlify">
         </div>
-        <span class="brand-name">Cartlify</span>
     </a>
+
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <div class="search-container">
         <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -953,7 +1126,7 @@ body {
         <input type="text" class="search-input" placeholder="Search products..." value="{{ search }}" id="searchInput">
     </div>
 
-    <div class="nav-actions">
+    <div class="nav-actions" id="navActions">
         <a href="{{ path('app_shop') }}" class="nav-btn">Home</a>
         <a href="#" class="nav-btn">Rentals</a>
         <a href="#" class="nav-btn">Trade Marketplace</a>
@@ -964,7 +1137,7 @@ body {
         <div class="profile-wrapper">
             <div class="profile-header" id="profileHeader">
                 <div class="profile-avatar">
-                    {% if app.user.profilePicture is defined and app.user.profilePicture %}
+                    {% if app.user.profilePicture %}
                         <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
                     {% else %}
                         {{ app.user.username|first|upper }}
@@ -993,6 +1166,9 @@ body {
         </div>
     </div>
 </nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
 
 <!-- HERO SECTION -->
 <section class="hero">
@@ -1187,13 +1363,20 @@ body {
                                 Quick View
                             </a>
                             
-                            <button class="btn-cart" {% if totalStock == 0 %}disabled{% endif %}>
+                            <button class="btn-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" {% if totalStock == 0 %}disabled{% endif %}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"/>
                                     <circle cx="20" cy="21" r="1"/>
                                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                                 </svg>
                                 Add to Cart
+                            </button>
+                            
+                            <button class="btn-buy-now" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" {% if totalStock == 0 %}disabled{% endif %}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 12V8H4v12h16v-4M12 2v20M2 12h20"/>
+                                </svg>
+                                Buy Now
                             </button>
                         </div>
                     </div>
@@ -1219,6 +1402,11 @@ body {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
+// Global variables
+let dropdownInitialized = false;
+let cartButtonsInitialized = false;
+let buyNowButtonsInitialized = false;
+
 // Toggle filters
 function toggleFilters() {
     const filterBody = document.getElementById('filterBody');
@@ -1251,7 +1439,7 @@ if (searchInput) {
     });
 }
 
-// Handle filter form submission without page reload issues
+// Handle filter form submission
 const filterForm = document.getElementById('filterForm');
 if (filterForm) {
     filterForm.addEventListener('submit', function(e) {
@@ -1266,7 +1454,6 @@ if (filterForm) {
             }
         }
         
-        // Preserve sort parameter if exists
         const currentUrl = new URL(window.location.href);
         const currentSort = currentUrl.searchParams.get('sort');
         if (currentSort) {
@@ -1287,7 +1474,6 @@ if (sortForm) {
         const formData = new FormData(this);
         const params = new URLSearchParams();
         
-        // Get existing filter params from URL
         const currentUrl = new URL(window.location.href);
         const currentSearch = currentUrl.searchParams.get('search');
         const currentCategory = currentUrl.searchParams.get('category');
@@ -1317,7 +1503,6 @@ if (sortSelect) {
         const params = new URLSearchParams(window.location.search);
         params.set('sort', this.value);
         
-        // Preserve existing filters
         const search = document.querySelector('input[name="search"]')?.value;
         const category = document.querySelector('select[name="category"]')?.value;
         const minPrice = document.querySelector('input[name="min_price"]')?.value;
@@ -1332,54 +1517,6 @@ if (sortSelect) {
     });
 }
 
-// Auto-populate filter inputs from URL on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // Populate search input
-    const search = urlParams.get('search');
-    if (search && searchInput) {
-        searchInput.value = search;
-    }
-    
-    // Populate category select
-    const category = urlParams.get('category');
-    if (category) {
-        const categorySelect = document.querySelector('select[name="category"]');
-        if (categorySelect) {
-            categorySelect.value = category;
-        }
-    }
-    
-    // Populate price inputs
-    const minPrice = urlParams.get('min_price');
-    if (minPrice) {
-        const minPriceInput = document.querySelector('input[name="min_price"]');
-        if (minPriceInput) {
-            minPriceInput.value = minPrice;
-        }
-    }
-    
-    const maxPrice = urlParams.get('max_price');
-    if (maxPrice) {
-        const maxPriceInput = document.querySelector('input[name="max_price"]');
-        if (maxPriceInput) {
-            maxPriceInput.value = maxPrice;
-        }
-    }
-    
-    // Show/hide filter body based on URL params
-    const filterBody = document.getElementById('filterBody');
-    const toggleBtn = document.getElementById('filterToggle');
-    if (filterBody && toggleBtn) {
-        const hasFilters = search || category || minPrice || maxPrice;
-        if (hasFilters) {
-            filterBody.classList.remove('hidden');
-            toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Hide Filters';
-        }
-    }
-});
-
 // Scroll to top button
 const scrollBtn = document.getElementById('scrollTop');
 window.addEventListener('scroll', () => {
@@ -1390,24 +1527,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Lazy load animations
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1, rootMargin: '50px' });
-
-document.querySelectorAll('.product-card').forEach(card => {
-    observer.observe(card);
-});
-
 // Profile dropdown functionality
-let dropdownInitialized = false;
-
 function initializeDropdown() {
     if (dropdownInitialized) return;
     
@@ -1416,15 +1536,19 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        // Remove existing listeners to avoid duplicates
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        
+        newHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
             profileDropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
+            if (!newHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
+                newHeader.classList.remove('active');
                 profileDropdown.classList.remove('show');
             }
         });
@@ -1433,13 +1557,50 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        
+        newChangeBtn.addEventListener('click', function(e) {
             e.preventDefault();
             showUploadModal();
         });
     }
 }
 
+// Attach button listeners
+function attachButtonListeners() {
+    // Add to Cart buttons
+    if (!cartButtonsInitialized) {
+        document.querySelectorAll('.btn-cart').forEach(button => {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            newButton.addEventListener('click', function() {
+                const productName = this.dataset.productName;
+                showNotification(`${productName} added to cart!`, 'success');
+            });
+        });
+        cartButtonsInitialized = true;
+    }
+    
+    // Buy Now buttons
+    if (!buyNowButtonsInitialized) {
+        document.querySelectorAll('.btn-buy-now').forEach(button => {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            newButton.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                const productName = this.dataset.productName;
+                window.location.href = `/checkout?product_id=${productId}&quantity=1`;
+                showNotification(`Proceeding to checkout with ${productName}`, 'success');
+            });
+        });
+        buyNowButtonsInitialized = true;
+    }
+}
+
+// Show upload modal
 function showUploadModal() {
     const existingModal = document.getElementById('uploadModal');
     if (existingModal) existingModal.remove();
@@ -1607,7 +1768,7 @@ function showUploadModal() {
             resetUpload();
         });
         
-        xhr.open('POST', '/dashboard/upload-profile-picture', true);
+        xhr.open('POST', '/profile/upload-picture', true);
         xhr.send(formData);
     }
     
@@ -1637,6 +1798,7 @@ function showUploadModal() {
     });
 }
 
+// Show notification
 function showNotification(message, type) {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1649,9 +1811,177 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// Initialize dropdown
+// Mobile Menu Functionality
+function initMobileMenu() {
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const navActions = document.getElementById('navActions');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    if (mobileToggle && navActions && menuOverlay) {
+        // Remove existing listeners to avoid duplicates
+        const newToggle = mobileToggle.cloneNode(true);
+        mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+        
+        newToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navActions.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navActions.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+                document.body.style.overflow = 'hidden';
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Close menu when clicking overlay
+        menuOverlay.addEventListener('click', function() {
+            navActions.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            const icon = newToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+            document.body.style.overflow = '';
+        });
+        
+        // Close menu when clicking a link
+        const navLinks = navActions.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navActions.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                const icon = newToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            const navActions = document.getElementById('navActions');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            
+            if (navActions && navActions.classList.contains('active')) {
+                navActions.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                if (mobileToggle) {
+                    const icon = mobileToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                document.body.style.overflow = '';
+            }
+        }
+    });
+}
+
+// Initialize all components
+function initializeAllComponents() {
+    initializeDropdown();
+    initMobileMenu();
+    attachButtonListeners();
+    
+    // Force show all product cards
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+    });
+    
+    // Re-initialize lazy load observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '50px' });
+    
+    document.querySelectorAll('.product-card').forEach(card => {
+        observer.observe(card);
+    });
+}
+
+// Auto-populate filter inputs from URL on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const search = urlParams.get('search');
+    if (search && searchInput) {
+        searchInput.value = search;
+    }
+    
+    const category = urlParams.get('category');
+    if (category) {
+        const categorySelect = document.querySelector('select[name="category"]');
+        if (categorySelect) {
+            categorySelect.value = category;
+        }
+    }
+    
+    const minPrice = urlParams.get('min_price');
+    if (minPrice) {
+        const minPriceInput = document.querySelector('input[name="min_price"]');
+        if (minPriceInput) {
+            minPriceInput.value = minPrice;
+        }
+    }
+    
+    const maxPrice = urlParams.get('max_price');
+    if (maxPrice) {
+        const maxPriceInput = document.querySelector('input[name="max_price"]');
+        if (maxPriceInput) {
+            maxPriceInput.value = maxPrice;
+        }
+    }
+    
+    const filterBody = document.getElementById('filterBody');
+    const toggleBtn = document.getElementById('filterToggle');
+    if (filterBody && toggleBtn) {
+        const hasFilters = search || category || minPrice || maxPrice;
+        if (hasFilters) {
+            filterBody.classList.remove('hidden');
+            toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Hide Filters';
+        }
+    }
+    
+    // Initialize all components
+    initializeAllComponents();
+});
+
+// Handle Turbo navigation if using Turbo
+if (typeof Turbo !== 'undefined') {
+    document.addEventListener('turbo:load', function() {
+        // Reset initialization flags for Turbo navigation
+        dropdownInitialized = false;
+        cartButtonsInitialized = false;
+        buyNowButtonsInitialized = false;
+        
+        // Re-initialize all components
+        setTimeout(() => {
+            initializeAllComponents();
+        }, 100);
+    });
+}
+
+// Handle regular page navigation
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // Page loaded from bfcache
+        setTimeout(() => {
+            initializeAllComponents();
+        }, 100);
+    }
 });
 </script>
 {% endblock %}

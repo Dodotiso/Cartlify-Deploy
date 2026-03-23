@@ -70,6 +70,41 @@ body {
     border-left:4px solid #E64C3C; 
 }
 
+/* Mobile Sidebar Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #343a40;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    transition: all 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
 /* --- Sticky Header --- */
 .header {
     position: fixed;
@@ -478,28 +513,145 @@ body {
     opacity: 0.9;
 }
 
+/* --- Card View for Mobile - Responsive Order Cards --- */
+.order-cards-view {
+    display: none;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.order-card-image {
+    width: 100%;
+    height: 180px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.order-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-card-image .no-image {
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.order-card-content {
+    padding: 15px;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.order-card-id {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px;
+}
+
+.order-card-date {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.order-card-product {
+    font-size: 16px;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+.order-card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px 0;
+    border-top: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.order-card-quantity {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.order-card-total {
+    font-size: 18px;
+    font-weight: 700;
+    color: #28a745;
+}
+
+.order-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.order-card-actions .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px;
+    font-size: 12px;
+}
+
 /* --- Table --- */
+.table-view {
+    display: block;
+}
+
 .table-container {
     overflow-x: auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -webkit-overflow-scrolling: touch;
 }
 table {
     width:100%;
     border-collapse:collapse;
-    min-width: 800px;
+    min-width: 1000px;
 }
 table th { 
     background:#343a40; 
     color:white; 
     padding:12px; 
     text-align:left; 
+    font-size: 13px;
 }
 table td { 
     padding:12px; 
     border-bottom:1px solid #ddd; 
     vertical-align: middle; 
+    font-size: 13px;
 }
 tr:hover { 
     background:#f1f1f1; 
@@ -518,6 +670,7 @@ tr:hover {
     align-items: center;
     gap: 6px;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .btn i {
@@ -535,8 +688,8 @@ tr:hover {
 .btn-secondary:hover { background:#5a6268; transform: translateY(-1px); }
 
 .thumbnail { 
-    width:60px; 
-    height:60px; 
+    width:50px; 
+    height:50px; 
     object-fit: cover; 
     border-radius:8px; 
 }
@@ -547,14 +700,22 @@ tr:hover {
     display: flex;
     gap: 15px;
     align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
+}
+
+.search-form-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    max-width: 500px;
 }
 
 .search-form {
     display: flex;
     gap: 10px;
     flex: 1;
-    max-width: 500px;
 }
 
 .search-form input {
@@ -563,6 +724,7 @@ tr:hover {
     border-radius: 6px;
     flex: 1;
     font-size: 14px;
+    min-width: 0;
 }
 
 .search-form input:focus {
@@ -581,10 +743,36 @@ tr:hover {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .search-form button:hover {
     background: #0056b3;
+}
+
+.clear-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clear-btn:hover {
+    background-color: #5a6268;
+}
+
+.create-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .text-muted {
@@ -595,31 +783,79 @@ tr:hover {
     text-align: center;
 }
 
-/* Responsive */
-@media (max-width:768px) {
-    body {
-        padding-top: 120px;
+/* ===== ENHANCED RESPONSIVE STYLES ===== */
+
+/* Tablet Devices - 992px and below - Switch to Card View */
+@media (max-width: 992px) {
+    .table-view {
+        display: none;
     }
     
-    .sidebar { width:60px; }
-    .sidebar a span { display:none; }
+    .order-cards-view {
+        display: flex;
+    }
+    
+    .order-cards-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Tablet Devices - 768px and below */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
     
     .header {
-        left: 60px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
+        left: 0 !important;
+        height: 70px;
+        padding: 0 15px;
+        z-index: 100;
     }
     
-    .sidebar:hover ~ .header {
-        left: 220px;
+    .header h1 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
-    .main-content { 
-        margin-left: 60px; 
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+        z-index: 1000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mobile-open:hover {
+        width: 260px;
+    }
+    
+    .sidebar.mobile-open a span {
+        display: inline;
+    }
+    
+    .sidebar.mobile-open .logo img {
+        height: 80px;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
         padding: 15px;
+    }
+    
+    .sidebar:hover ~ .main-content {
+        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
@@ -628,24 +864,158 @@ tr:hover {
     
     .search-container {
         flex-direction: column;
-        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    .search-form {
+    
+    .search-form-wrapper {
         max-width: 100%;
+        width: 100%;
     }
-    .btn {
-        padding: 6px 10px;
-        font-size: 12px;
+    
+    .search-form {
+        width: 100%;
     }
+    
+    .search-form input {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .clear-btn, .create-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .order-cards-view {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .order-card-image {
+        height: 160px;
+    }
+    
+    .toast {
+        min-width: 250px;
+        padding: 12px 16px;
+    }
+    
     .toast-container {
-        top: 140px;
+        top: 80px;
+        right: 15px;
+    }
+}
+
+/* Mobile Devices - 480px and below */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+    }
+    
+    .header {
+        height: 60px;
+        padding: 0 12px;
+    }
+    
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .order-card-image {
+        height: 180px;
+    }
+    
+    .order-card-product {
+        font-size: 15px;
+    }
+    
+    .order-card-total {
+        font-size: 16px;
+    }
+    
+    .order-card-actions .btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .toast-container {
+        top: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Extra Small Mobile - 375px and below */
+@media (max-width: 375px) {
+    .order-card-image {
+        height: 150px;
+    }
+    
+    .order-card-content {
+        padding: 12px;
+    }
+    
+    .order-card-actions {
+        gap: 6px;
+    }
+    
+    .order-card-actions .btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar.mobile-open {
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .order-cards-view {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: Ensure sidebar always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+    
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -688,7 +1058,7 @@ tr:hover {
 </div>
 
 {% elseif is_granted('ROLE_STAFF') %}
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
@@ -723,6 +1093,9 @@ tr:hover {
 </div>
 {% endif %}
 
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -737,7 +1110,12 @@ tr:hover {
 
 <!-- Sticky Header -->
 <div class="header">
-    <h1><i class="fas fa-receipt"></i> Transactions</h1>
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-receipt"></i> Transactions
+    </h1>
     
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
@@ -785,83 +1163,123 @@ tr:hover {
 <div class="main-content">
     <!-- Search Bar -->
     <div class="search-container">
-        <form method="get" action="{{ path('app_order_index') }}" class="search-form">
-            <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by product name, description, or order ID..." />
-            <button type="submit">
-                <i class="fas fa-search"></i> Search
-            </button>
+        <div class="search-form-wrapper">
+            <form method="get" action="{{ path('app_order_index') }}" class="search-form">
+                <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search by product name, description, or order ID..." />
+                <button type="submit">
+                    <i class="fas fa-search"></i> <span>Search</span>
+                </button>
+            </form>
             {% if search %}
-                <a href="{{ path('app_order_index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Clear
+                <a href="{{ path('app_order_index') }}" class="clear-btn">
+                    <i class="fas fa-times"></i> <span>Clear</span>
                 </a>
             {% endif %}
-        </form>
+        </div>
         
-        <a href="{{ path('app_order_new') }}" class="btn btn-success">
-            <i class="fas fa-shopping-cart"></i> Place New Order
+        <a href="{{ path('app_order_new') }}" class="btn btn-success create-btn">
+            <i class="fas fa-shopping-cart"></i> <span>Place New Order</span>
         </a>
     </div>
 
-    <div class="table-container">
-         <table>
-            <thead>
-                 <tr>
-                    <th>ID</th>
-                    <th>Product</th>
-                    <th>Image</th>
-                    <th>Qty</th>
-                    <th>Total</th>
-                    <th>Ordered At</th>
-                    <th>Actions</th>
-                 </tr>
-            </thead>
-            <tbody>
-            {% for order in orders %}
-                 <tr>
-                    <td>#{{ order.id }}</td>
-                    <td><strong>{{ order.stock.product.name }}</strong></td>
-                    <td>
-                        {% if order.stock.product.image %}
-                            {% set imagePath = order.stock.product.image %}
-                            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
-                                {% set imagePath = '/uploads/' ~ imagePath %}
+    <!-- Desktop Table View -->
+    <div class="table-view">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Ordered At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td style="font-weight: 500;">#{{ order.id }}</td>
+                        <td><strong>{{ order.stock.product.name }}</strong></td>
+                        <td>
+                            {% if order.stock.product.image %}
+                                {% set imagePath = order.stock.product.image %}
+                                {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                                    {% set imagePath = '/uploads/' ~ imagePath %}
+                                {% endif %}
+                                <img src="{{ imagePath }}" 
+                                     class="thumbnail" 
+                                     alt="{{ order.stock.product.name }}"
+                                     onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                            {% else %}
+                                <span class="text-muted">No Image</span>
                             {% endif %}
-                            <img src="{{ imagePath }}" 
-                                 class="thumbnail" 
-                                 alt="{{ order.stock.product.name }}"
-                                 onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
-                        {% else %}
-                            <span class="text-muted">No Image</span>
+                        </td>
+                        <td>{{ order.quantity }}</td>
+                        <td style="color: #28a745; font-weight: 600;">₱{{ order.totalAmount|number_format(2, '.', ',') }}</td>
+                        <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted" style="text-align: center; padding: 60px 20px;">
+                            <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d;"></i>
+                            {% if search %}
+                                No transactions found for "{{ search }}"
+                            {% else %}
+                                No orders found
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Mobile Card View -->
+    <div class="order-cards-view">
+        {% for order in orders %}
+            <div class="order-card">
+                <div class="order-card-image">
+                    {% if order.stock.product.image %}
+                        {% set imagePath = order.stock.product.image %}
+                        {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                            {% set imagePath = '/uploads/' ~ imagePath %}
                         {% endif %}
-                    </td>
-                    <td>{{ order.quantity }}</td>
-                    <td><strong>₱{{ order.totalAmount|number_format(2, '.', ',') }}</strong></td>
-                    <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
-                    <td>
-                        <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-primary" title="View">
-                            <i class="fas fa-eye"></i> <span>View</span>
-                        </a>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn btn-warning" title="Edit">
-                                <i class="fas fa-edit"></i> <span>Edit</span>
-                            </a>
-                        {% endif %}
-                    </td>
-                 </tr>
-            {% else %}
-                 <tr>
-                    <td colspan="7" class="text-center text-muted">
-                        <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
-                        {% if search %}
-                            No transactions found for "{{ search }}"
-                        {% else %}
-                            No orders found
-                        {% endif %}
-                    </td>
-                 </tr>
-            {% endfor %}
-            </tbody>
-         </table>
+                        <img src="{{ imagePath }}" alt="{{ order.stock.product.name }}">
+                    {% else %}
+                        <div class="no-image">
+                            <i class="fas fa-image" style="font-size: 48px; color: #adb5bd; margin-bottom: 8px; display: block;"></i>
+                            <span>No Image</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="order-card-content">
+                    <div class="order-card-header">
+                        <span class="order-card-id">#{{ order.id }}</span>
+                        <span class="order-card-date">
+                            <i class="fas fa-calendar-alt"></i> {{ order.createdAt ? order.createdAt|date('M d, Y H:i') : 'N/A' }}
+                        </span>
+                    </div>
+                    <div class="order-card-product">{{ order.stock.product.name }}</div>
+                    <div class="order-card-details">
+                        <span class="order-card-quantity"><i class="fas fa-cubes"></i> Quantity: {{ order.quantity }}</span>
+                        <span class="order-card-total">₱{{ order.totalAmount|number_format(2, '.', ',') }}</span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px;">
+                <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d;"></i>
+                <p style="margin: 0; color: #6c757d; font-size: 16px;">No orders found</p>
+                {% if search %}
+                    <p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">for "{{ search }}"</p>
+                {% endif %}
+                <a href="{{ path('app_order_new') }}" class="btn btn-success" style="margin-top: 15px;">
+                    <i class="fas fa-shopping-cart"></i> Place New Order
+                </a>
+            </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -902,14 +1320,80 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Mobile Sidebar Toggle - Fixed version
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
 // Display flash messages
-document.addEventListener('DOMContentLoaded', function() {
+function initFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             showToast('{{ message|escape('js') }}', '{{ label }}');
         {% endfor %}
     {% endfor %}
-});
+}
 
 // Profile dropdown
 let dropdownInitialized = false;
@@ -922,16 +1406,23 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        profileHeader.addEventListener('click', function(e) {
+        const newHeader = profileHeader.cloneNode(true);
+        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
+        const newProfileHeader = document.getElementById('profileHeader');
+        
+        newProfileHeader.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('active');
-            profileDropdown.classList.toggle('show');
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
         });
         
         document.addEventListener('click', function(e) {
-            if (!profileHeader.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileHeader.classList.remove('active');
-                profileDropdown.classList.remove('show');
+            const header = document.getElementById('profileHeader');
+            const dropdown = document.getElementById('profileDropdown');
+            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
+                header.classList.remove('active');
+                dropdown.classList.remove('show');
             }
         });
         
@@ -939,10 +1430,15 @@ function initializeDropdown() {
     }
     
     if (changePicBtn) {
-        changePicBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
+        const newChangeBtn = changePicBtn.cloneNode(true);
+        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
+        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
+        if (newChangePicBtn) {
+            newChangePicBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showUploadModal();
+            });
+        }
     }
 }
 
@@ -1143,9 +1639,23 @@ function showUploadModal() {
     });
 }
 
-// Initialize
+// Initialize all
+function initAll() {
+    initMobileSidebar();
+    initFlashMessages();
+    initializeDropdown();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initializeDropdown, 100);
+    setTimeout(initAll, 100);
+});
+
+// Handle Turbo navigation
+document.addEventListener('turbo:load', function() {
+    sidebarInitialized = false;
+    dropdownInitialized = false;
+    setTimeout(initAll, 100);
 });
 </script>
 {% endblock %}

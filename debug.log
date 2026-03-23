@@ -856,3 +856,495 @@ Route attributes: Array
 ✅ Logout log saved
 ✅ Login log saved
 ✅ Logout log saved
+✅ Login log saved
+2026-03-22 08:25:53 - POST Route: app_stock_edit
+POST Data: Array
+(
+    [stock] => Array
+        (
+            [product] => 5
+            [stock] => 50
+            [_token] => 9GEkD9grc1gxk0rU090q7lgG
+        )
+
+)
+
+Route attributes: Array
+(
+    [id] => 18
+)
+
+----------------------------------------
+Determining action for route: app_stock_edit, isAdmin: YES
+Determining target for route: app_stock_edit, id: 18
+Creating log - Action: ADMIN_UPDATES_RECORD Target: Admin edited stock: Vacuum Cleaner → 50 units
+✅ Log saved successfully: ADMIN_UPDATES_RECORD
+2026-03-22 08:26:16 - POST Route: app_stock_edit
+POST Data: Array
+(
+    [stock] => Array
+        (
+            [product] => 20
+            [stock] => 40
+            [_token] => GfRJrlSLl+IkAj5Zu9RbxYeA
+        )
+
+)
+
+Route attributes: Array
+(
+    [id] => 22
+)
+
+----------------------------------------
+Determining action for route: app_stock_edit, isAdmin: YES
+Determining target for route: app_stock_edit, id: 22
+Creating log - Action: ADMIN_UPDATES_RECORD Target: Admin edited stock: Pliers → 40 units
+✅ Log saved successfully: ADMIN_UPDATES_RECORD
+2026-03-22 08:26:32 - POST Route: app_stock_edit
+POST Data: Array
+(
+    [stock] => Array
+        (
+            [product] => 23
+            [stock] => 44
+            [_token] => fV/jaa2BhT41TZCA8+HzULs1
+        )
+
+)
+
+Route attributes: Array
+(
+    [id] => 23
+)
+
+----------------------------------------
+Determining action for route: app_stock_edit, isAdmin: YES
+Determining target for route: app_stock_edit, id: 23
+Creating log - Action: ADMIN_UPDATES_RECORD Target: Admin edited stock: Rope → 44 units
+✅ Log saved successfully: ADMIN_UPDATES_RECORD
+2026-03-22 08:27:18 - POST Route: app_stock_delete
+POST Data: Array
+(
+    [_token] => 217e3b9bdfa.6tpTDY9x6ZYkMaOcctaXyNEQKCRLsUcTDJFvzP_Qidk.n487dMUTuPtDduLZJ6PwoKN4a0kf0CpSXcMHlZC36IPSiClK5z_QoHRkxA
+)
+
+Route attributes: Array
+(
+    [id] => 18
+)
+
+----------------------------------------
+Delete route detected: app_stock_delete - Monitored: YES
+Determining action for route: app_stock_delete, isAdmin: YES
+Determining target for route: app_stock_delete, id: 18
+Creating log - Action: ADMIN_DELETES_RECORD Target: Admin deleted stock (ID: 18)
+✅ Log saved successfully: ADMIN_DELETES_RECORD
+2026-03-22 08:27:27 - POST Route: app_stock_delete
+POST Data: Array
+(
+    [_token] => 7640a1f7314.CtZB5A6XTyXMgoz68jHCu2wSdwYZc4NpNduA-c7i-tI.WpUml334Ck21utmWg3ih-h1-EmAoFuc7e4nKspuQlJk_-waSX_8NEIjx6w
+)
+
+Route attributes: Array
+(
+    [id] => 22
+)
+
+----------------------------------------
+Delete route detected: app_stock_delete - Monitored: YES
+Determining action for route: app_stock_delete, isAdmin: YES
+Determining target for route: app_stock_delete, id: 22
+Creating log - Action: ADMIN_DELETES_RECORD Target: Admin deleted stock (ID: 22)
+✅ Log saved successfully: ADMIN_DELETES_RECORD
+2026-03-22 08:27:35 - POST Route: app_stock_delete
+POST Data: Array
+(
+    [_token] => c75de701f5e.qmWfgIEcjY-uO02Kfh2yYUSMb65F-iL2OR0trjUsdbA.xQ71welfy-zoCzzIPG6FCwfmO-ELyhSFAE9Y6Gd_P_jHEKfrx3T_yt9OdQ
+)
+
+Route attributes: Array
+(
+    [id] => 23
+)
+
+----------------------------------------
+Delete route detected: app_stock_delete - Monitored: YES
+Determining action for route: app_stock_delete, isAdmin: YES
+Determining target for route: app_stock_delete, id: 23
+Creating log - Action: ADMIN_DELETES_RECORD Target: Admin deleted stock (ID: 23)
+✅ Log saved successfully: ADMIN_DELETES_RECORD
+2026-03-22 08:27:44 - POST Route: app_stock_delete
+POST Data: Array
+(
+    [_token] => 41416af5156e3d2c487.ckUcn7z45w_ClOoRN4D4Bsi-CAwRjbZybVKj-tcq4O4.X3VrrdC5qjjw4K98Z_W_MoTqUE166c8kJw3gjLZFrrQ4d0j6jZKROfPSnQ
+)
+
+Route attributes: Array
+(
+    [id] => 25
+)
+
+----------------------------------------
+Delete route detected: app_stock_delete - Monitored: YES
+Determining action for route: app_stock_delete, isAdmin: YES
+Determining target for route: app_stock_delete, id: 25
+Creating log - Action: ADMIN_DELETES_RECORD Target: Admin deleted stock (ID: 25)
+✅ Log saved successfully: ADMIN_DELETES_RECORD
+2026-03-22 08:27:58 - POST Route: app_stock_new
+POST Data: Array
+(
+    [stock] => Array
+        (
+            [product] => 28
+            [stock] => 44
+            [_token] => SQLmliPP13bSgyjddPX1O4ii
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+Determining action for route: app_stock_new, isAdmin: YES
+Determining target for route: app_stock_new, id: null
+Creating log - Action: ADMIN_CREATES_RECORD Target: Admin created stock: airpod x 44 units
+✅ Log saved successfully: ADMIN_CREATES_RECORD
+✅ Login log saved
+✅ Login log saved
+✅ Login log saved
+2026-03-23 14:07:35 - POST Route: app_order_new
+POST Data: Array
+(
+    [stock_id] => 14
+    [quantity] => 1
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+Determining action for route: app_order_new, isAdmin: YES
+Determining target for route: app_order_new, id: null
+Creating log - Action: ADMIN_CREATES_RECORD Target: NULL
+SKIPPED - No action or target
+✅ Login log saved
+✅ Logout log saved
+2026-03-23 14:11:33 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => Anthony
+            [plainPassword] => staff
+            [agreeTerms] => 1
+            [_token] => KOKXqUHofDUS46Ia1SWDci3E
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 14:11:52 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => Anthony
+            [plainPassword] => staff123
+            [agreeTerms] => 1
+            [_token] => /8aiiRNkuSowTo+1EAEwYW5U
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Login log saved
+2026-03-23 14:42:47 - POST Route: app_order_delete
+POST Data: Array
+(
+    [_token] => 66b6b00b07e4e2a394e7536df9f09879.PxKFGeF28Y3NP86cFuwDAuA7_33VC_SAr01T1JCDwv0.VHnmXJAdrvn5d5TOJoo6SY5VihKkObnrzRg9uL2ykqsNY99fmxqX1f1Z9g
+)
+
+Route attributes: Array
+(
+    [id] => 60
+)
+
+----------------------------------------
+Delete route detected: app_order_delete - Monitored: YES
+Determining action for route: app_order_delete, isAdmin: YES
+Determining target for route: app_order_delete, id: 60
+Creating log - Action: ADMIN_DELETES_RECORD Target: NULL
+SKIPPED - No action or target
+2026-03-23 14:48:42 - POST Route: app_order_new
+POST Data: Array
+(
+    [stock_id] => 26
+    [quantity] => 1
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+Determining action for route: app_order_new, isAdmin: YES
+Determining target for route: app_order_new, id: null
+Creating log - Action: ADMIN_CREATES_RECORD Target: NULL
+SKIPPED - No action or target
+✅ Logout log saved
+✅ Login log saved
+✅ Login log saved
+✅ Login log saved
+✅ Logout log saved
+✅ Login log saved
+2026-03-23 15:47:50 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 15:49:53 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Logout log saved
+✅ Login log saved
+2026-03-23 16:06:57 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:07:12 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:07:29 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Logout log saved
+2026-03-23 16:21:41 - POST Route: app_profile_upload_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Login log saved
+2026-03-23 16:22:28 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:22:47 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Logout log saved
+✅ Login log saved
+2026-03-23 16:26:06 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:26:17 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:26:29 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:26:38 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 16:39:31 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Logout log saved
+✅ Login log saved
+✅ Logout log saved
+✅ Login log saved
+✅ Logout log saved
+2026-03-23 16:50:35 - POST Route: app_dashboardupload_profile_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 17:01:57 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => Jajton
+            [plainPassword] => jajton123
+            [agreeTerms] => 1
+            [_token] => yMdjv3Jm4OQc5yTAZc926HGz
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Login log saved
+✅ Logout log saved
+✅ Logout log saved
+2026-03-23 17:17:10 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => loloy
+            [plainPassword] => loloy123
+            [_token] => VqPHmWMyo+FmZ6i45X7B2GzM
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+2026-03-23 17:17:19 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => loloy
+            [plainPassword] => loloy123
+            [agreeTerms] => 1
+            [_token] => CoQN+g2YFfdLgNu+VLYrpPSY
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Login log saved
+✅ Logout log saved
+2026-03-23 17:30:54 - POST Route: app_register
+POST Data: Array
+(
+    [registration_form] => Array
+        (
+            [username] => Arjay
+            [plainPassword] => arjay123
+            [agreeTerms] => 1
+            [_token] => Mk5tQrvQpTf7uiWteMaQyMWF
+        )
+
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Login log saved
+2026-03-23 17:31:38 - POST Route: app_profile_upload_picture
+POST Data: Array
+(
+)
+
+Route attributes: Array
+(
+)
+
+----------------------------------------
+✅ Logout log saved
