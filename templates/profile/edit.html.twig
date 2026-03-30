@@ -2,23 +2,24 @@
 
 {% block title %}Cartlify | Change Password{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 /* --- Sidebar & Header --- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #343a40;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f7fa;
+    color: #1e293b;
     padding-top: 80px;
 }
+
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100%;
     width: 60px;
-    background-color: #1f2a44;
+    background: #1f2a44;
     padding-top: 30px;
     display: flex;
     flex-direction: column;
@@ -26,37 +27,53 @@ body {
     transition: width 0.3s;
     z-index: 100;
 }
+
 .sidebar:hover { width: 220px; }
-.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
-.sidebar .logo img { height:48px; transition: height 0.3s; }
-.sidebar:hover .logo img { height:128px; }
+
+.sidebar .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+    height: 48px;
+    transition: height 0.3s;
+}
+
+.sidebar:hover .logo img { height: 128px; }
+
 .sidebar a {
-    display:flex;
-    align-items:center;
-    padding:15px 15px;
-    text-decoration:none;
-    color:#fff;
-    font-weight:500;
-    border-left:4px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    border-left: 4px solid transparent;
     transition: all 0.3s;
 }
+
 .sidebar a i {
     font-size: 18px;
     width: 24px;
     text-align: center;
 }
+
 .sidebar a span { 
-    display:none;
+    display: none;
     margin-left: 20px;
     white-space: nowrap;
 }
-.sidebar:hover a span { 
-    display:inline;
-    opacity:1;
+
+.sidebar:hover a span {
+    display: inline;
+    opacity: 1;
 }
-.sidebar a:hover { 
-    background-color:#34495e; 
-    border-left:4px solid #E64C3C; 
+
+.sidebar a:hover {
+    background-color: #34495e;
+    border-left: 4px solid #E64C3C;
 }
 
 /* Mobile Sidebar Toggle Button */
@@ -101,32 +118,31 @@ body {
     left: 60px;
     right: 0;
     height: 80px;
-    background-color:#fff;
-    display:flex;
-    align-items:center;
+    background: #fff;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding:0 30px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    padding: 0 30px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: left 0.3s;
     z-index: 99;
 }
+
 .sidebar:hover ~ .header { left: 220px; }
 
 /* --- Main Content --- */
 .main-content {
     margin-left: 60px;
-    padding:30px;
+    padding: 30px;
     transition: margin-left 0.3s;
     min-height: calc(100vh - 80px);
 }
-.sidebar:hover ~ .main-content { margin-left:220px; }
 
-/* --- Profile Dropdown (Complete with Role) --- */
+.sidebar:hover ~ .main-content { margin-left: 220px; }
+
+/* --- Profile Dropdown --- */
 .profile-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
-    height: 100%;
 }
 
 .profile-header {
@@ -168,10 +184,6 @@ body {
     display: block;
 }
 
-.profile-avatar i {
-    font-size: 18px;
-}
-
 .profile-name {
     font-weight: 500;
     color: #333;
@@ -188,10 +200,9 @@ body {
     transform: rotate(180deg);
 }
 
-/* Dropdown Menu - Fixed Positioning */
 .profile-dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: 50px;
     right: 0;
     width: 200px;
     background: white;
@@ -208,7 +219,6 @@ body {
     display: flex;
 }
 
-/* Role Header in Dropdown */
 .dropdown-role-header {
     padding: 12px 16px;
     background: linear-gradient(135deg, #667eea, #764ba2);
@@ -233,11 +243,6 @@ body {
     align-items: center;
     gap: 10px;
     transition: background-color 0.2s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
 }
 
 .dropdown-item i {
@@ -512,47 +517,236 @@ body {
     opacity: 0.9;
 }
 
-/* --- Form Styles --- */
-.profile-form-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    padding: 30px;
-    max-width: 500px;
+/* --- Edit Profile Layout --- */
+.edit-profile-container {
+    max-width: 1100px;
     margin: 0 auto;
 }
 
-.form-header {
+.edit-profile-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Left Column - Profile Picture & User Info */
+.edit-profile-left {
+    flex: 0 0 320px;
+    background: linear-gradient(135deg, #1f2a44 0%, #2d3a5e 100%);
     text-align: center;
-    margin-bottom: 30px;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Profile Picture - Clickable */
+.profile-picture-container {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-picture-container:hover .profile-picture-overlay {
+    opacity: 1;
+}
+
+.profile-picture-large {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.profile-picture-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture-large i {
+    font-size: 70px;
+    color: white;
+}
+
+.profile-picture-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+
+.profile-picture-overlay i {
+    color: white;
+    font-size: 32px;
+}
+
+/* User Info in Left Column */
+.profile-info-left {
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+.profile-info-left h3 {
+    margin: 0 0 5px 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.role-badge-left {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    margin-top: 8px;
+}
+
+.role-badge-left i {
+    margin-right: 6px;
+    font-size: 12px;
+}
+
+.active-status-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 40px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.active-status-dot-left {
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.active-status-text-left {
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+.user-stats-left {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.stat-item-left {
+    text-align: center;
+    color: white;
+}
+
+.stat-number-left {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.stat-label-left {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Right Column - Form */
+.edit-profile-right {
+    flex: 1;
+    padding: 32px;
+    background: white;
+}
+
+.form-header {
+    margin-bottom: 28px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
 }
 
 .form-header h2 {
-    margin: 0 0 10px 0;
-    color: #343a40;
+    margin: 0 0 5px 0;
+    font-size: 22px;
+    color: #1f2a44;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .form-header p {
     margin: 0;
     color: #6c757d;
+    font-size: 14px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #343a40;
+    color: #495057;
+    font-size: 14px;
+}
+
+.form-group label i {
+    margin-right: 6px;
+    color: #007bff;
 }
 
 .form-control {
     width: 100%;
-    padding: 12px;
+    padding: 12px 15px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.3s;
     box-sizing: border-box;
@@ -561,7 +755,7 @@ body {
 .form-control:focus {
     outline: none;
     border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
 
 .form-control:disabled {
@@ -570,23 +764,49 @@ body {
     cursor: not-allowed;
 }
 
+.form-control.error-field {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
+
 .form-help {
     font-size: 12px;
     color: #6c757d;
-    margin-top: 5px;
+    margin-top: 6px;
+    display: block;
+}
+
+.form-help i {
+    margin-right: 4px;
+}
+
+.password-hint {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6c757d;
+    border-left: 3px solid #ffc107;
+}
+
+.password-hint i {
+    color: #ffc107;
+    margin-right: 6px;
 }
 
 .form-actions {
     display: flex;
     gap: 15px;
-    justify-content: center;
     margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
 }
 
 .btn {
     padding: 12px 24px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
@@ -597,16 +817,62 @@ body {
     font-weight: 500;
     transition: all 0.3s;
 }
-.btn-primary { background: #007bff; color: white; }
-.btn-primary:hover { background: #0056b3; transform: translateY(-1px); }
-.btn-warning { background: #ffc107; color: #343a40; }
-.btn-warning:hover { background: #e0a800; transform: translateY(-1px); }
-.btn-secondary { background: #6c757d; color: white; }
-.btn-secondary:hover { background: #545b62; transform: translateY(-1px); }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
+.btn-primary {
+    background: #007bff;
+    color: white;
+    flex: 1;
+}
 
-/* Tablet Devices - 768px and below */
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    flex: 1;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 992px) {
+    .edit-profile-card {
+        flex-direction: column;
+    }
+    
+    .edit-profile-left {
+        flex: auto;
+        width: 100%;
+        padding: 32px 20px;
+    }
+    
+    .profile-picture-container {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-picture-large i {
+        font-size: 50px;
+    }
+    
+    .profile-info-left h3 {
+        font-size: 20px;
+    }
+    
+    .user-stats-left {
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
@@ -666,9 +932,12 @@ body {
         display: none;
     }
     
-    .profile-form-container {
+    .edit-profile-right {
         padding: 20px;
-        margin: 0 10px;
+    }
+    
+    .form-header h2 {
+        font-size: 18px;
     }
     
     .form-actions {
@@ -688,17 +957,8 @@ body {
         top: 80px;
         right: 15px;
     }
-    
-    .form-header h2 {
-        font-size: 20px;
-    }
-    
-    .form-header p {
-        font-size: 13px;
-    }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
@@ -717,18 +977,30 @@ body {
         padding: 10px;
     }
     
-    .profile-form-container {
-        padding: 15px;
-        margin: 0;
+    .profile-picture-container {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-info-left h3 {
+        font-size: 18px;
+    }
+    
+    .role-badge-left {
+        font-size: 11px;
+        padding: 4px 12px;
+    }
+    
+    .stat-number-left {
+        font-size: 18px;
+    }
+    
+    .stat-label-left {
+        font-size: 10px;
     }
     
     .form-header h2 {
-        font-size: 18px;
-        margin-bottom: 8px;
-    }
-    
-    .form-header p {
-        font-size: 12px;
+        font-size: 16px;
     }
     
     .form-group label {
@@ -741,12 +1013,8 @@ body {
     }
     
     .btn {
-        padding: 10px 20px;
+        padding: 10px 16px;
         font-size: 13px;
-    }
-    
-    .form-help {
-        font-size: 11px;
     }
     
     .toast-container {
@@ -761,31 +1029,6 @@ body {
     }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .profile-form-container {
-        max-width: 450px;
-    }
-    
-    .form-actions {
-        flex-direction: row;
-    }
-    
-    .btn {
-        width: auto;
-        flex: 1;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
@@ -800,8 +1043,11 @@ body {
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
+
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -811,42 +1057,34 @@ body {
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
     <a href="{{ path('app_product_index') }}">
         <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
     <a href="{{ path('app_stock_index') }}">
         <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
     <a href="{{ path('app_order_new') }}">
         <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
-    
     <a href="{{ path('app_user_index') }}">
         <i class="fas fa-user-tie"></i>
         <span>Staff Management</span>
     </a>
-    
     <a href="{{ path('app_activity_log_index') }}">
         <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
     </a>
-    
     <a href="{{ path('app_profile_index') }}">
         <i class="fas fa-user"></i>
         <span>Profile</span>
     </a>
-    
     <a href="{{ path('app_logout') }}">
         <i class="fas fa-power-off"></i>
         <span>Logout</span>
@@ -856,7 +1094,7 @@ body {
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Profile Section -->
+<!-- Profile Section Variables -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
@@ -867,12 +1105,7 @@ body {
     role == 'ROLE_ADMIN' ? 'crown' :
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
-%}
+{% set avatarLetter = app.user.username|first|upper %}
 
 <!-- Sticky Header -->
 <div class="header">
@@ -896,22 +1129,22 @@ body {
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <!-- Dropdown Menu with Role Display -->
         <div class="profile-dropdown" id="profileDropdown">
-            <!-- Role Header -->
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
-            
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user-circle"></i> My Profile
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                <i class="fas fa-camera"></i> Change Picture
+                <i class="fas fa-camera"></i>
+                <span>Change Picture</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
             </a>
         </div>
     </div>
@@ -927,58 +1160,97 @@ body {
 
 <!-- Main Content -->
 <div class="main-content">
-    <div class="profile-form-container">
-        <div class="form-header">
-            <h2>Change Your Password</h2>
-            <p>Update your account password below</p>
+    <div class="edit-profile-container">
+        <div class="edit-profile-card">
+            
+            <!-- LEFT COLUMN - Profile Picture & User Info -->
+            <div class="edit-profile-left">
+                <div class="profile-picture-container" id="changeProfilePicTrigger">
+                    <div class="profile-picture-large">
+                        {% if hasProfilePic %}
+                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                        {% else %}
+                            <i class="fas fa-user-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="profile-picture-overlay">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="profile-info-left">
+                    <h3>{{ app.user.username }}</h3>
+                    <div class="role-badge-left">
+                        <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                    </div>
+                    <div class="active-status-left">
+                        <div class="active-status-dot-left"></div>
+                        <span class="active-status-text-left">Active Now</span>
+                    </div>
+                </div>
+                <div class="user-stats-left">
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.roles|length }}</div>
+                        <div class="stat-label-left">Roles</div>
+                    </div>
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
+                        <div class="stat-label-left">Joined Day</div>
+                    </div>
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
+                        <div class="stat-label-left">Joined Month</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN - Password Form -->
+            <div class="edit-profile-right">
+                <div class="form-header">
+                    <h2><i class="fas fa-key"></i> Change Password</h2>
+                    <p>Update your account password below</p>
+                </div>
+                
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'passwordForm'}}) }}
+                
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Username</label>
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> New Password</label>
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...', 'id': 'password_first'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Minimum 6 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...', 'id': 'password_second'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Passwords must match</div>
+                    </div>
+                    
+                    <div class="password-hint">
+                        <i class="fas fa-lightbulb"></i> Leave both fields blank to keep your current password
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i> Update Password
+                        </button>
+                        <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                    
+                {{ form_end(form) }}
+            </div>
         </div>
-
-        {{ form_start(form) }}
-        
-            <div class="form-group">
-                {{ form_label(form.username) }}
-                {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
-                <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
-            </div>
-
-            <div class="form-group">
-                <div style="margin-bottom: 15px;">
-                    {{ form_label(form.plainPassword.first) }}
-                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...'}}) }}
-                    {% if form.plainPassword.first.vars.errors %}
-                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
-                            {{ form_errors(form.plainPassword.first) }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div>
-                    {{ form_label(form.plainPassword.second) }}
-                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...'}}) }}
-                    {% if form.plainPassword.second.vars.errors %}
-                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
-                            {{ form_errors(form.plainPassword.second) }}
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="form-help">
-                    <i class="fas fa-lock"></i> Leave blank to keep current password
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-warning">
-                    <i class="fas fa-save"></i> Update Password
-                </button>
-                <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancel
-                </a>
-            </div>
-        {{ form_end(form) }}
     </div>
 </div>
 
 {% elseif is_granted('ROLE_STAFF') %}
+
 <!-- Sidebar for Staff -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -1017,7 +1289,7 @@ body {
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Profile Section for Staff -->
+<!-- Profile Section Variables for Staff -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
@@ -1028,12 +1300,7 @@ body {
     role == 'ROLE_ADMIN' ? 'crown' :
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
-%}
+{% set avatarLetter = app.user.username|first|upper %}
 
 <!-- Sticky Header for Staff -->
 <div class="header">
@@ -1057,22 +1324,22 @@ body {
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <!-- Dropdown Menu with Role Display -->
         <div class="profile-dropdown" id="profileDropdown">
-            <!-- Role Header -->
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
-            
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user-circle"></i> My Profile
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
             </a>
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                <i class="fas fa-camera"></i> Change Picture
+                <i class="fas fa-camera"></i>
+                <span>Change Picture</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
             </a>
         </div>
     </div>
@@ -1088,58 +1355,97 @@ body {
 
 <!-- Main Content for Staff -->
 <div class="main-content">
-    <div class="profile-form-container">
-        <div class="form-header">
-            <h2>Change Your Password</h2>
-            <p>Update your account password below</p>
+    <div class="edit-profile-container">
+        <div class="edit-profile-card">
+            
+            <!-- LEFT COLUMN - Profile Picture & User Info -->
+            <div class="edit-profile-left">
+                <div class="profile-picture-container" id="changeProfilePicTrigger">
+                    <div class="profile-picture-large">
+                        {% if hasProfilePic %}
+                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                        {% else %}
+                            <i class="fas fa-user-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="profile-picture-overlay">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="profile-info-left">
+                    <h3>{{ app.user.username }}</h3>
+                    <div class="role-badge-left">
+                        <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                    </div>
+                    <div class="active-status-left">
+                        <div class="active-status-dot-left"></div>
+                        <span class="active-status-text-left">Active Now</span>
+                    </div>
+                </div>
+                <div class="user-stats-left">
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.roles|length }}</div>
+                        <div class="stat-label-left">Roles</div>
+                    </div>
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
+                        <div class="stat-label-left">Joined Day</div>
+                    </div>
+                    <div class="stat-item-left">
+                        <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
+                        <div class="stat-label-left">Joined Month</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN - Password Form -->
+            <div class="edit-profile-right">
+                <div class="form-header">
+                    <h2><i class="fas fa-key"></i> Change Password</h2>
+                    <p>Update your account password below</p>
+                </div>
+                
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'passwordForm'}}) }}
+                
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Username</label>
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> New Password</label>
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...', 'id': 'password_first'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Minimum 6 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...', 'id': 'password_second'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Passwords must match</div>
+                    </div>
+                    
+                    <div class="password-hint">
+                        <i class="fas fa-lightbulb"></i> Leave both fields blank to keep your current password
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i> Update Password
+                        </button>
+                        <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                    
+                {{ form_end(form) }}
+            </div>
         </div>
-
-        {{ form_start(form) }}
-        
-            <div class="form-group">
-                {{ form_label(form.username) }}
-                {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
-                <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
-            </div>
-
-            <div class="form-group">
-                <div style="margin-bottom: 15px;">
-                    {{ form_label(form.plainPassword.first) }}
-                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...'}}) }}
-                    {% if form.plainPassword.first.vars.errors %}
-                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
-                            {{ form_errors(form.plainPassword.first) }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div>
-                    {{ form_label(form.plainPassword.second) }}
-                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...'}}) }}
-                    {% if form.plainPassword.second.vars.errors %}
-                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
-                            {{ form_errors(form.plainPassword.second) }}
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="form-help">
-                    <i class="fas fa-lock"></i> Leave blank to keep current password
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-warning">
-                    <i class="fas fa-save"></i> Update Password
-                </button>
-                <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancel
-                </a>
-            </div>
-        {{ form_end(form) }}
     </div>
 </div>
 {% endif %}
 
+<!-- Add Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
@@ -1176,7 +1482,7 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1242,15 +1548,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
 // Profile dropdown
 let dropdownInitialized = false;
 
@@ -1260,6 +1557,7 @@ function initializeDropdown() {
     const profileHeader = document.getElementById('profileHeader');
     const profileDropdown = document.getElementById('profileDropdown');
     const changePicBtn = document.getElementById('changeProfilePicBtn');
+    const changePicTrigger = document.getElementById('changeProfilePicTrigger');
     
     if (profileHeader && profileDropdown) {
         const newHeader = profileHeader.cloneNode(true);
@@ -1283,6 +1581,14 @@ function initializeDropdown() {
         });
         
         dropdownInitialized = true;
+    }
+    
+    // Trigger change picture when clicking on profile picture
+    if (changePicTrigger) {
+        changePicTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            showUploadModal();
+        });
     }
     
     if (changePicBtn) {
@@ -1478,9 +1784,15 @@ function showUploadModal() {
     
     function updateProfilePicture(imageUrl) {
         const avatar = document.querySelector('.profile-avatar');
+        const largeAvatar = document.querySelector('.profile-picture-large');
+        
         const url = imageUrl + '?t=' + new Date().getTime();
+        
         if (avatar) {
             avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
+        }
+        if (largeAvatar) {
+            largeAvatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
         }
     }
     
@@ -1497,10 +1809,95 @@ function showUploadModal() {
     });
 }
 
+// ========== PASSWORD VALIDATION - CLIENT SIDE WITH FLASH MESSAGE ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('passwordForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!form) return;
+    
+    const passwordFirst = document.getElementById('password_first');
+    const passwordSecond = document.getElementById('password_second');
+    
+    function removeError(field) {
+        if (field) {
+            field.classList.remove('error-field');
+            field.style.border = '';
+            field.style.backgroundColor = '';
+        }
+    }
+    
+    function addError(field) {
+        if (field) {
+            field.classList.add('error-field');
+            field.style.border = '2px solid #dc3545';
+            field.style.backgroundColor = '#fff5f5';
+        }
+    }
+    
+    // Clear error on input
+    if (passwordFirst) {
+        passwordFirst.addEventListener('input', function() { removeError(passwordFirst); });
+    }
+    if (passwordSecond) {
+        passwordSecond.addEventListener('input', function() { removeError(passwordSecond); });
+    }
+    
+    // Form submit validation
+    form.addEventListener('submit', function(e) {
+        // Clear previous errors
+        removeError(passwordFirst);
+        removeError(passwordSecond);
+        
+        const password = passwordFirst ? passwordFirst.value : '';
+        const confirm = passwordSecond ? passwordSecond.value : '';
+        
+        let errorMessage = '';
+        let errorField = null;
+        
+        // Check if passwords are provided
+        if (password || confirm) {
+            // Check password length
+            if (password.length < 6 && password.length > 0) {
+                errorMessage = '❌ Password must be at least 6 characters long!';
+                errorField = passwordFirst;
+            }
+            // Check if passwords match
+            else if (password !== confirm) {
+                errorMessage = '❌ Passwords do not match! Please make sure both passwords are the same.';
+                errorField = passwordSecond;
+            }
+        }
+        
+        // If there's an error, prevent submission and show toast
+        if (errorMessage) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (errorField) {
+                addError(errorField);
+                errorField.focus();
+                errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            // Show error toast
+            showToast(errorMessage, 'error');
+            return false;
+        }
+        
+        // If no errors, show loading state
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Password...';
+        }
+        
+        return true;
+    });
+});
+
 // Initialize all
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
@@ -1515,5 +1912,18 @@ document.addEventListener('turbo:load', function() {
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

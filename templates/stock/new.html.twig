@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cartlify | New Stock{% endblock %}
+{% block title %}Cartlify | Add New Stock{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 /* --- Body & Sidebar --- */
-body { 
-    margin:0; 
-    font-family:Arial,sans-serif; 
-    background:#f4f6f9; 
-    color:#343a40;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
     padding-top: 80px;
 }
 
@@ -527,34 +527,40 @@ body {
 }
 
 /* --- Form Styles --- */
-.form-container { 
-    background:#fff; 
-    max-width:700px; 
-    padding:30px; 
-    border-radius:8px; 
-    box-shadow:0 2px 8px rgba(0,0,0,0.1); 
-    margin:auto; 
+.form-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
 }
 
-.form-group { 
+.form-group {
     margin-bottom: 20px;
 }
 
-.form-group label { 
-    font-weight:600; 
-    margin-bottom:8px; 
-    display:block; 
-    color:#495057;
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
     font-size: 14px;
 }
 
-.form-control { 
-    width:100%; 
-    padding:10px 12px; 
-    border:1px solid #ced4da; 
-    border-radius:4px; 
-    font-size:14px;
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
     box-sizing: border-box;
+}
+
+.form-control.error-field {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
 }
 
 .form-control:focus {
@@ -608,6 +614,11 @@ button.btn-submit:hover {
     background: #218838;
 }
 
+button.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .btn-back {
     background-color: #6c757d;
     color: white;
@@ -645,182 +656,151 @@ button.btn-submit:hover {
     color: #1f2a44;
 }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
+/* Product preview image */
+.product-preview {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    display: none;
+}
 
-/* Tablet Devices - 768px and below */
+.product-preview img {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 5px;
+    background: white;
+}
+
+.product-preview.show {
+    display: block;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
     }
-    
     .menu-toggle {
         display: block;
     }
-    
     .header {
         left: 0 !important;
         height: 70px;
         padding: 0 15px;
         z-index: 100;
     }
-    
     .header h1 {
         font-size: 16px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         width: 260px;
         z-index: 1000;
     }
-    
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
     .sidebar.mobile-open:hover {
         width: 260px;
     }
-    
     .sidebar.mobile-open a span {
         display: inline;
     }
-    
     .sidebar.mobile-open .logo img {
         height: 80px;
     }
-    
     .main-content {
         margin-left: 0 !important;
         padding: 15px;
     }
-    
     .sidebar:hover ~ .header,
     .sidebar:hover ~ .main-content {
         left: 0;
         margin-left: 0;
     }
-    
     .profile-name, .dropdown-icon {
         display: none;
     }
-    
     .form-container {
         padding: 20px;
         margin: 0;
     }
-    
     .toast {
         min-width: 250px;
         padding: 12px 16px;
     }
-    
     .button-group {
         flex-direction: column;
         gap: 10px;
     }
-    
     .toast-container {
         top: 80px;
         right: 15px;
     }
-    
-    .created-at-info {
-        font-size: 12px;
-        padding: 10px;
-    }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
     }
-    
     .header {
         height: 60px;
         padding: 0 12px;
     }
-    
     .header h1 {
         font-size: 14px;
     }
-    
     .main-content {
         padding: 10px;
     }
-    
     .form-container {
         padding: 15px;
     }
-    
     .form-group label {
         font-size: 13px;
     }
-    
     .form-control {
         padding: 8px 10px;
         font-size: 13px;
     }
-    
     button.btn-submit, .btn-back {
         padding: 8px 16px;
         font-size: 14px;
     }
-    
-    .created-at-info {
-        font-size: 11px;
-        padding: 8px;
-    }
-    
     .toast-container {
         top: 70px;
         right: 10px;
         left: 10px;
     }
-    
     .toast {
         min-width: auto;
         width: 100%;
     }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .form-container {
-        max-width: 90%;
-        margin: 0 auto;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
     }
-    
     .menu-toggle {
         display: none !important;
     }
-    
     .sidebar-overlay {
         display: none !important;
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -863,7 +843,6 @@ button.btn-submit:hover {
         <span>Logout</span>
     </a>
 </div>
-
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -900,7 +879,6 @@ button.btn-submit:hover {
 </div>
 {% endif %}
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {# Profile Section #}
@@ -915,7 +893,6 @@ button.btn-submit:hover {
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
@@ -923,7 +900,6 @@ button.btn-submit:hover {
         </button>
         <i class="fas fa-plus-circle"></i> Add New Stock
     </h1>
-
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -936,7 +912,6 @@ button.btn-submit:hover {
             <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
@@ -958,39 +933,37 @@ button.btn-submit:hover {
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content -->
 <div class="main-content">
     <div class="form-container">
         <div class="created-at-info">
-            <strong><i class="fas fa-calendar-alt"></i> Date:</strong> {{ "now"|date('Y-m-d H:i:s') }}
+            <strong><i class="fas fa-calendar-alt"></i> Stock will be recorded on:</strong> {{ "now"|date('Y-m-d H:i:s') }}
         </div>
         
-        {{ form_start(form, {'attr': {'class': 'stock-form', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'stockForm'}}) }}
         
         <div class="form-group">
             {{ form_label(form.product) }}
-            {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
-            {{ form_help(form.product) }}
-            {{ form_errors(form.product) }}
+            {{ form_widget(form.product, {'attr': {'class': 'form-control', 'id': 'stock_product'}}) }}
+            <small class="form-help">Select the product for this stock entry (Products with same name show ID for distinction)</small>
+        </div>
+        
+        <!-- Product preview image -->
+        <div class="product-preview" id="productPreview">
+            <img id="previewImage" src="" alt="Product preview">
         </div>
 
         <div class="form-group">
             {{ form_label(form.stock) }}
-            {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity', 'min': '0'}}) }}
-            <div class="form-help">Enter the quantity of items in stock</div>
-            {{ form_errors(form.stock) }}
+            {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity', 'min': '0', 'id': 'stock_stock'}}) }}
+            <small class="form-help">Enter the quantity of items in stock (numbers only, must be 0 or greater)</small>
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn-submit">
+            <button type="submit" class="btn-submit" id="submitBtn">
                 <i class="fas fa-save"></i> Add Stock
             </button>
             <a href="{{ path('app_stock_index') }}" class="btn-back">
@@ -1002,44 +975,8 @@ button.btn-submit:hover {
     </div>
 </div>
 
-<!-- Add Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <script>
-// Toast Notification System
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1105,16 +1042,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
-// Profile dropdown
 let dropdownInitialized = false;
 
 function initializeDropdown() {
@@ -1223,11 +1150,11 @@ function showUploadModal() {
         if (file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                window.showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1260,7 +1187,7 @@ function showUploadModal() {
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1306,25 +1233,25 @@ function showUploadModal() {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
+                        window.showToast('Profile picture updated successfully!', 'success');
                         modal.classList.remove('show');
                         setTimeout(() => modal.remove(), 300);
                     } else {
-                        showToast(response.message || 'Upload failed', 'error');
+                        window.showToast(response.message || 'Upload failed', 'error');
                         resetUpload();
                     }
                 } catch (e) {
-                    showToast('Invalid server response', 'error');
+                    window.showToast('Invalid server response', 'error');
                     resetUpload();
                 }
             } else {
-                showToast('Upload failed. Please try again.', 'error');
+                window.showToast('Upload failed. Please try again.', 'error');
                 resetUpload();
             }
         });
         
         xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
+            window.showToast('Network error. Please try again.', 'error');
             resetUpload();
         });
         
@@ -1358,23 +1285,66 @@ function showUploadModal() {
     });
 }
 
-// Initialize all
+// Show product preview when selected
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('stock_product');
+    const previewDiv = document.getElementById('productPreview');
+    const previewImg = document.getElementById('previewImage');
+    
+    if (productSelect) {
+        // Store product data from the select options
+        const productData = {};
+        
+        // Get all product options and their images
+        const options = productSelect.querySelectorAll('option');
+        options.forEach(function(option) {
+            if (option.value) {
+                // You'll need to pass product images via data attribute
+                // This requires modifying the form to include image data
+            }
+        });
+        
+        productSelect.addEventListener('change', function() {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const imageUrl = selectedOption.getAttribute('data-image');
+            
+            if (imageUrl && imageUrl !== '') {
+                previewImg.src = imageUrl;
+                previewDiv.classList.add('show');
+            } else {
+                previewDiv.classList.remove('show');
+                previewImg.src = '';
+            }
+        });
+    }
+});
+
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

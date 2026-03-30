@@ -2,7 +2,7 @@
 
 {% block title %}Cartlify | New Product{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 /* --- GLOBAL --- */
 body {
@@ -365,7 +365,7 @@ body {
     }
 }
 
-/* Upload Modal Styles */
+/* Upload Modal */
 .modal {
     display: none;
     position: fixed;
@@ -558,10 +558,10 @@ body {
     box-sizing: border-box;
 }
 
-.form-control:focus {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+/* Red border for error fields */
+.form-control.error-field {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
 }
 
 textarea.form-control {
@@ -614,6 +614,11 @@ button.btn-submit:hover {
     background: #218838;
 }
 
+button.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .btn-back {
     background-color: #6c757d;
     color: white;
@@ -649,7 +654,7 @@ button.btn-submit:hover {
     background: #e9ecef;
     padding: 12px;
     border-radius: 6px;
-    margin-bottom: 20px;
+    margin-top: 20px;
     text-align: center;
     font-size: 14px;
     color: #495057;
@@ -659,186 +664,116 @@ button.btn-submit:hover {
     color: #1f2a44;
 }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
-
-/* Tablet Devices - 768px and below */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
     }
-    
     .menu-toggle {
         display: block;
     }
-    
     .header {
         left: 0 !important;
         height: 70px;
         padding: 0 15px;
         z-index: 100;
     }
-    
     .header h1 {
         font-size: 16px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         width: 260px;
         z-index: 1000;
     }
-    
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
     .sidebar.mobile-open:hover {
         width: 260px;
     }
-    
     .sidebar.mobile-open a span {
         display: inline;
     }
-    
     .sidebar.mobile-open .logo img {
         height: 80px;
     }
-    
     .main-content {
         margin-left: 0 !important;
         padding: 15px;
     }
-    
     .sidebar:hover ~ .header,
     .sidebar:hover ~ .main-content {
         left: 0;
         margin-left: 0;
     }
-    
     .profile-name, .dropdown-icon {
         display: none;
     }
-    
     .form-container {
         padding: 20px;
         margin: 0;
     }
-    
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    
     .button-group {
         flex-direction: column;
         gap: 10px;
     }
-    
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
-    
-    button.btn-submit, .btn-back {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
     }
-    
     .header {
         height: 60px;
         padding: 0 12px;
     }
-    
     .header h1 {
         font-size: 14px;
     }
-    
     .main-content {
         padding: 10px;
     }
-    
     .form-container {
         padding: 15px;
     }
-    
     .form-group label {
         font-size: 13px;
     }
-    
     .form-control {
         padding: 8px 10px;
         font-size: 13px;
     }
-    
     button.btn-submit, .btn-back {
         padding: 8px 16px;
         font-size: 13px;
     }
-    
     .created-at-info {
         font-size: 12px;
         padding: 8px;
-    }
-    
-    .preview {
-        max-width: 120px;
-    }
-    
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    
-    .toast {
-        min-width: auto;
-        width: 100%;
+        margin-top: 15px;
     }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .form-container {
-        max-width: 90%;
-        margin: 0 auto;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
     }
-    
     .menu-toggle {
         display: none !important;
     }
-    
     .sidebar-overlay {
         display: none !important;
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -881,7 +816,6 @@ button.btn-submit:hover {
         <span>Logout</span>
     </a>
 </div>
-
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -918,7 +852,6 @@ button.btn-submit:hover {
 </div>
 {% endif %}
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {# Profile Section #}
@@ -933,7 +866,6 @@ button.btn-submit:hover {
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
@@ -941,7 +873,6 @@ button.btn-submit:hover {
         </button>
         <i class="fas fa-plus-circle"></i> Create New Product
     </h1>
-
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -954,7 +885,6 @@ button.btn-submit:hover {
             <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
@@ -976,66 +906,53 @@ button.btn-submit:hover {
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content -->
 <div class="main-content">
     <div class="form-container">
-        <!-- Created At Info -->
-        <div class="created-at-info">
-            <strong><i class="fas fa-calendar-alt"></i> Date:</strong> {{ "now"|date('Y-m-d H:i:s') }}
-        </div>
-        
-        {{ form_start(form, {'attr': {'class': 'product-form', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'productForm'}}) }}
         
         <div class="form-group">
             {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Enter product name'}}) }}
-            {{ form_help(form.name) }}
-            {{ form_errors(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Enter product name', 'id': 'product_name'}}) }}
+            <small class="form-help">Product name is required</small>
         </div>
 
         <div class="form-group">
             {{ form_label(form.description) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Enter product description'}}) }}
-            {{ form_help(form.description) }}
-            {{ form_errors(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Enter product description', 'id': 'product_description'}}) }}
+            <small class="form-help">Product description is required (No numbers allowed)</small>
+            <small class="form-help" id="descriptionWarning" style="color: #ffc107; display: none;">⚠️ Numbers are not allowed in description! Please use words only.</small>
         </div>
 
         <div class="form-group">
             {{ form_label(form.price) }}
-            {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '₱ 0.00'}}) }}
-            {{ form_help(form.price) }}
-            {{ form_errors(form.price) }}
+            {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '₱ 0.00', 'id': 'product_price'}}) }}
+            <small class="form-help">Product price is required (Numbers only, no text allowed)</small>
         </div>
 
         <div class="form-group">
             {{ form_label(form.category) }}
-            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
-            {{ form_help(form.category) }}
-            {{ form_errors(form.category) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-control', 'id': 'product_category'}}) }}
+            <small class="form-help">Select a category for the product</small>
         </div>
 
         <div class="form-group">
             {{ form_label(form.image) }}
-            {{ form_widget(form.image, {'attr': {'class': 'form-control', 'placeholder': 'https://example.com/image.jpg'}}) }}
-            {{ form_errors(form.image) }}
+            {{ form_widget(form.image, {'attr': {'class': 'form-control', 'placeholder': 'https://example.com/image.jpg', 'id': 'product_image'}}) }}
+            <small class="form-help">Enter an image URL (leave empty if uploading a file)</small>
         </div>
 
         <div class="form-group">
             {{ form_label(form.imageFile) }}
-            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control-file'}}) }}
-            {{ form_errors(form.imageFile) }}
+            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control-file', 'id': 'product_imageFile', 'accept': 'image/png,image/jpeg,image/jpg,image/gif,image/webp,image/avif'}}) }}
+            <small class="form-help">Upload an image file (PNG, JPEG, JPG, GIF, WEBP, AVIF only - Max 5MB)</small>
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn-submit">
+            <button type="submit" class="btn-submit" id="submitBtn">
                 <i class="fas fa-save"></i> Create Product
             </button>
             <a href="{{ path('app_product_index') }}" class="btn-back">
@@ -1045,57 +962,14 @@ button.btn-submit:hover {
 
         {{ form_end(form) }}
 
-        {% if form.vars.value.image %}
-            {% set imagePath = form.vars.value.image %}
-            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
-                {% set imagePath = '/uploads/' ~ imagePath %}
-            {% endif %}
-            <div style="text-align: center;">
-                <img src="{{ imagePath }}" alt="Preview" class="preview">
-                <p style="font-size: 12px; color: #6c757d; margin-top: 5px;">Current image preview</p>
-            </div>
-        {% endif %}
+        <div class="created-at-info">
+            <strong><i class="fas fa-calendar-alt"></i> Product will be created on:</strong> {{ "now"|date('Y-m-d H:i:s') }}
+        </div>
     </div>
 </div>
 
-<!-- Add Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <script>
-// Toast Notification System
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1161,16 +1035,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
-// Profile dropdown
 let dropdownInitialized = false;
 
 function initializeDropdown() {
@@ -1279,11 +1143,11 @@ function showUploadModal() {
         if (file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                window.showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1316,7 +1180,7 @@ function showUploadModal() {
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1362,25 +1226,25 @@ function showUploadModal() {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
+                        window.showToast('Profile picture updated successfully!', 'success');
                         modal.classList.remove('show');
                         setTimeout(() => modal.remove(), 300);
                     } else {
-                        showToast(response.message || 'Upload failed', 'error');
+                        window.showToast(response.message || 'Upload failed', 'error');
                         resetUpload();
                     }
                 } catch (e) {
-                    showToast('Invalid server response', 'error');
+                    window.showToast('Invalid server response', 'error');
                     resetUpload();
                 }
             } else {
-                showToast('Upload failed. Please try again.', 'error');
+                window.showToast('Upload failed. Please try again.', 'error');
                 resetUpload();
             }
         });
         
         xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
+            window.showToast('Network error. Please try again.', 'error');
             resetUpload();
         });
         
@@ -1414,19 +1278,192 @@ function showUploadModal() {
     });
 }
 
-// Initialize all
+// ========== COMPLETE VALIDATION ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('productForm');
+    
+    if (!form) {
+        console.error('Form not found!');
+        return;
+    }
+    
+    // Get all fields
+    const nameField = document.getElementById('product_name');
+    const descField = document.getElementById('product_description');
+    const priceField = document.getElementById('product_price');
+    const categoryField = document.getElementById('product_category');
+    const imageUrlField = document.getElementById('product_image');
+    const imageFileField = document.getElementById('product_imageFile');
+    const warningMsg = document.getElementById('descriptionWarning');
+    
+    // Allowed image extensions
+    const allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/avif'];
+    const allowedExtensions = ['.png', '.jpeg', '.jpg', '.gif', '.webp', '.avif'];
+    
+    // Remove error border function
+    function removeError(field) {
+        if (field) {
+            field.style.border = '';
+            field.style.backgroundColor = '';
+            field.classList.remove('error-field');
+        }
+    }
+    
+    // Add error border function
+    function addError(field) {
+        if (field) {
+            field.style.border = '2px solid #dc3545';
+            field.style.backgroundColor = '#fff5f5';
+            field.classList.add('error-field');
+        }
+    }
+    
+    // Clear error on input
+    if (nameField) {
+        nameField.addEventListener('input', function() { removeError(nameField); });
+    }
+    
+    if (descField) {
+        descField.addEventListener('input', function() { 
+            removeError(descField);
+            // Check for numbers in description
+            const hasNumbers = /\d/.test(descField.value);
+            if (hasNumbers && descField.value.length > 0) {
+                if (warningMsg) warningMsg.style.display = 'block';
+            } else {
+                if (warningMsg) warningMsg.style.display = 'none';
+            }
+        });
+    }
+    
+    if (priceField) {
+        priceField.addEventListener('input', function() { removeError(priceField); });
+    }
+    
+    if (categoryField) {
+        categoryField.addEventListener('change', function() { removeError(categoryField); });
+    }
+    
+    if (imageUrlField) {
+        imageUrlField.addEventListener('input', function() { removeError(imageUrlField); });
+    }
+    
+    if (imageFileField) {
+        imageFileField.addEventListener('change', function() { removeError(imageFileField); });
+    }
+    
+    // Form submit - Complete validation
+    form.addEventListener('submit', function(e) {
+        console.log('Validating form...');
+        
+        // Remove all existing errors
+        const allFields = [nameField, descField, priceField, categoryField, imageUrlField, imageFileField];
+        allFields.forEach(function(field) { removeError(field); });
+        
+        // Get values
+        const name = nameField ? nameField.value.trim() : '';
+        const description = descField ? descField.value.trim() : '';
+        const price = priceField ? priceField.value.trim() : '';
+        const category = categoryField ? categoryField.value : '';
+        const imageUrl = imageUrlField ? imageUrlField.value.trim() : '';
+        const imageFile = imageFileField ? imageFileField.files[0] : null;
+        
+        let errorMessage = '';
+        let errorField = null;
+        
+        // 1. Check Product Name
+        if (!name) {
+            errorMessage = '❌ Product Name is required! Please fill in the product name field.';
+            errorField = nameField;
+        }
+        // 2. Check Product Description
+        else if (!description) {
+            errorMessage = '❌ Product Description is required! Please fill in the product description field.';
+            errorField = descField;
+        }
+        // 3. Check for numbers in description
+        else if (/\d/.test(description)) {
+            errorMessage = '❌ Numbers are not allowed in Product Description! Please use words only.';
+            errorField = descField;
+        }
+        // 4. Check Price
+        else if (!price) {
+            errorMessage = '❌ Product Price is required! Please enter a price.';
+            errorField = priceField;
+        }
+        // 5. Check if price contains letters
+        else if (/[a-zA-Z]/.test(price)) {
+            errorMessage = '❌ Product Price must contain numbers only! Please enter a valid price (e.g., 99.99).';
+            errorField = priceField;
+        }
+        // 6. Check if price is a valid number
+        else if (isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
+            errorMessage = '❌ Product Price must be greater than 0! Please enter a valid price.';
+            errorField = priceField;
+        }
+        // 7. Check Category
+        else if (!category || category === '') {
+            errorMessage = '❌ Category is required! Please select a category for the product.';
+            errorField = categoryField;
+        }
+        // 8. Check Image (either file or URL)
+        else if (!imageFile && !imageUrl) {
+            errorMessage = '❌ Image is required! Please upload an image file OR enter an image URL.';
+            errorField = imageUrlField;
+        }
+        // 9. Check if both image file and URL are provided
+        else if (imageFile && imageUrl) {
+            errorMessage = '⚠️ Please use ONLY ONE image source! Either upload a file OR provide an image URL, not both.';
+            errorField = imageUrlField;
+        }
+        // 10. Validate image file type
+        else if (imageFile && !allowedImageTypes.includes(imageFile.type)) {
+            const allowed = 'PNG, JPEG, JPG, GIF, WEBP, AVIF';
+            errorMessage = `❌ Invalid file type! Only ${allowed} image files are allowed.`;
+            errorField = imageFileField;
+        }
+        // 11. Validate image file size (max 5MB)
+        else if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+            errorMessage = '❌ Image file is too large! Maximum size is 5MB.';
+            errorField = imageFileField;
+        }
+        
+        // If there's an error, prevent submission and show red border
+        if (errorMessage) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (errorField) {
+                addError(errorField);
+                errorField.focus();
+                errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            window.showToast(errorMessage, 'error');
+            return false;
+        }
+        
+        // If no errors, show loading state
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Product...';
+        }
+        
+        console.log('Validation passed!');
+        return true;
+    });
+});
+
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;

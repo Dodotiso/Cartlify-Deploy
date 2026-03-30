@@ -128,6 +128,136 @@ class DashboardController extends AbstractController
         ]);
     }
 
+    /**
+     * Real-time updates endpoint for AJAX polling
+     */
+    #[Route('/realtime-updates', name: '_realtime_updates', methods: ['GET'])]
+    public function realtimeUpdates(
+        Request $request,
+        ProductRepository $productRepository,
+        OrderRepository $orderRepository,
+        StockRepository $stockRepository,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        
+        // Get last update timestamp from request (optional)
+        $lastUpdate = $request->headers->get('X-Last-Update', 0);
+        
+        // Fetch current data
+        $totalProducts = $productRepository->count([]);
+        $totalOrders = $orderRepository->count([]);
+        
+        $totalIncome = $orderRepository->createQueryBuilder('o')
+            ->select('SUM(o.totalAmount) as total')
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0;
+        
+        // Role-based user count logic
+        $users = $userRepository->findAll();
+        
+        $totalAdmins = 0;
+        $totalStaff = 0;
+        $totalUsers = 0;
+        
+        foreach ($users as $user) {
+            $roles = $user->getRoles();
+            
+            if (in_array('ROLE_ADMIN', $roles)) {
+                $totalAdmins++;
+            }
+            if (in_array('ROLE_STAFF', $roles)) {
+                $totalStaff++;
+            }
+            if (in_array('ROLE_USER', $roles) && !in_array('ROLE_ADMIN', $roles) && !in_array('ROLE_STAFF', $roles)) {
+                $totalUsers++;
+            }
+        }
+        
+        // Get today's stats
+        $today = new \DateTime('today');
+        $tomorrow = new \DateTime('tomorrow');
+        
+        $todayOrders = $orderRepository->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->where('o.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $today)
+            ->setParameter('end', $tomorrow)
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0;
+            
+        $todaySales = $orderRepository->createQueryBuilder('o')
+            ->select('SUM(o.totalAmount)')
+            ->where('o.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $today)
+            ->setParameter('end', $tomorrow)
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0;
+        
+        $avgOrderValue = $totalOrders > 0 ? $totalIncome / $totalOrders : 0;
+        
+        // Get stock levels
+        $stockLevels = $this->getStockLevelData($stockRepository);
+        
+        // Get recent orders for table
+        $recentOrdersData = $orderRepository->createQueryBuilder('o')
+            ->leftJoin('o.stock', 's')
+            ->leftJoin('s.product', 'p')
+            ->select('o.id', 'o.quantity', 'o.totalAmount', 'o.createdAt', 'p.name as productName')
+            ->orderBy('o.createdAt', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+        
+        // Format recent orders
+        $formattedOrders = [];
+        foreach ($recentOrdersData as $order) {
+            $formattedOrders[] = [
+                'id' => $order['id'],
+                'productName' => $order['productName'] ?? 'Product Not Available',
+                'quantity' => $order['quantity'],
+                'totalAmount' => (float) $order['totalAmount'],
+                'createdAt' => $order['createdAt'] instanceof \DateTime ? 
+                    $order['createdAt']->format('M d, H:i') : 
+                    date('M d, H:i', strtotime($order['createdAt']))
+            ];
+        }
+        
+        // Get chart data
+        $monthlySales = $this->getMonthlySalesData($orderRepository);
+        $productCategories = $this->getProductCategoryData($productRepository, $entityManager);
+        
+        // Generate insight message based on data
+        $insightMessage = $this->generateInsightMessage($todayOrders, $todaySales, $stockLevels['low_stock']);
+        
+        // Prepare response data
+        $responseData = [
+            'hasUpdates' => true,
+            'metrics' => [
+                'totalProducts' => $totalProducts,
+                'totalOrders' => $totalOrders,
+                'totalIncome' => (float) $totalIncome,
+                'totalUsers' => $totalUsers,
+                'totalAdmins' => $totalAdmins,
+                'totalStaff' => $totalStaff,
+                'todayOrders' => $todayOrders,
+                'todaySales' => (float) $todaySales,
+                'avgOrderValue' => (float) $avgOrderValue,
+                'lowStockCount' => $stockLevels['low_stock'] ?? 0,
+            ],
+            'recentOrders' => $formattedOrders,
+            'salesTrend' => $monthlySales,
+            'productCategories' => $productCategories,
+            'stockLevels' => [
+                'labels' => ['Low Stock (<10)', 'Medium Stock (10-50)', 'Good Stock (>50)'],
+                'data' => [$stockLevels['low_stock'], $stockLevels['medium_stock'], $stockLevels['good_stock']]
+            ],
+            'insightMessage' => $insightMessage,
+        ];
+        
+        return $this->json($responseData);
+    }
+
     #[Route('/upload-profile-picture', name: 'upload_profile_picture', methods: ['POST'])]
     public function uploadProfilePicture(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -195,6 +325,17 @@ class DashboardController extends AbstractController
             ]);
         }
     }
+    #[Route('/update-last-active', name: 'update_last_active', methods: ['POST'])]
+     public function updateLastActive(EntityManagerInterface $entityManager): JsonResponse
+        {
+            $user = $this->getUser();
+            if ($user) {
+                $user->setLastActive(new \DateTime());
+                $entityManager->flush();
+                return $this->json(['success' => true]);
+            }
+    return $this->json(['success' => false], 401);
+}
 
     /**
      * Get monthly sales data for the last 6 months
@@ -221,7 +362,7 @@ class DashboardController extends AbstractController
                 ->getSingleScalarResult() ?? 0;
             
             $labels[] = $monthDate->format('M');
-            $data[] = $monthlyTotal;
+            $data[] = (float) $monthlyTotal;
         }
         
         return [
@@ -239,25 +380,29 @@ class DashboardController extends AbstractController
         $data = [];
         
         try {
-            // Get categories with product counts
-            $categories = $entityManager->createQuery(
-                'SELECT c.category as name, COUNT(p.id) as count 
-                 FROM App\Entity\Category c 
-                 LEFT JOIN c.products p 
-                 GROUP BY c.id
-                 ORDER BY count DESC'
-            )->getResult();
+            // Check if Category entity exists
+            $metadata = $entityManager->getClassMetadata('App\Entity\Category');
             
-            foreach ($categories as $category) {
-                if ($category['count'] > 0) { // Only include categories with products
-                    $labels[] = $category['name'];
-                    $data[] = $category['count'];
+            if ($metadata) {
+                $categories = $entityManager->createQuery(
+                    'SELECT c.category as name, COUNT(p.id) as count 
+                     FROM App\Entity\Category c 
+                     LEFT JOIN c.products p 
+                     GROUP BY c.id
+                     ORDER BY count DESC'
+                )->getResult();
+                
+                foreach ($categories as $category) {
+                    if ($category['count'] > 0) {
+                        $labels[] = $category['name'];
+                        $data[] = $category['count'];
+                    }
                 }
             }
             
             // If no categories with products, add a default
             if (empty($labels)) {
-                $labels[] = 'Uncategorized';
+                $labels[] = 'All Products';
                 $data[] = $productRepository->count([]);
             }
         } catch (\Exception $e) {
@@ -309,5 +454,41 @@ class DashboardController extends AbstractController
             'total_stocks' => $totalStocks,
             'data' => [$lowStock, $mediumStock, $goodStock]
         ];
+    }
+
+    /**
+     * Generate dynamic insight message based on current data
+     */
+    private function generateInsightMessage(int $todayOrders, float $todaySales, int $lowStockCount): string
+    {
+        $messages = [];
+        
+        if ($todayOrders > 10) {
+            $messages[] = "🔥 Great sales day! {$todayOrders} orders processed today.";
+        } elseif ($todayOrders > 5) {
+            $messages[] = "📈 Good sales activity with {$todayOrders} orders today.";
+        } elseif ($todayOrders > 0) {
+            $messages[] = "🛍️ {$todayOrders} orders placed today. Keep promoting your products!";
+        } else {
+            $messages[] = "📊 No orders yet today. Consider running a promotion to boost sales.";
+        }
+        
+        if ($todaySales > 5000) {
+            $messages[] = "💰 Excellent revenue today! Total: ₱" . number_format($todaySales, 2);
+        } elseif ($todaySales > 2000) {
+            $messages[] = "💵 Good revenue today: ₱" . number_format($todaySales, 2);
+        }
+        
+        if ($lowStockCount > 5) {
+            $messages[] = "⚠️ {$lowStockCount} products are low on stock! Restock soon to avoid shortages.";
+        } elseif ($lowStockCount > 0) {
+            $messages[] = "📦 {$lowStockCount} items need restocking. Check inventory management.";
+        }
+        
+        if (empty($messages)) {
+            return "Store performance is stable. Consider adding more products to boost sales.";
+        }
+        
+        return implode(' ', array_slice($messages, 0, 2)); // Return top 2 insights
     }
 }

@@ -2,81 +2,83 @@
 
 {% block title %}Cartlify | Edit User{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
-body { 
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f6f9;
-    color:#343a40;
+/* --- Body & Sidebar --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
     padding-top: 80px;
 }
 
 .sidebar {
-    position:fixed;
-    top:0;
-    left:0;
-    height:100%;
-    width:60px;
-    background:#1f2a44;
-    padding-top:30px;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-    transition:0.3s;
-    z-index:100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    background: #1f2a44;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.3s;
+    z-index: 100;
 }
 
 .sidebar:hover {
-    width:220px;
+    width: 220px;
 }
 
 .sidebar .logo {
-    display:flex;
-    justify-content:center;
-    margin-bottom:40px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
 }
 
 .sidebar .logo img {
-    height:48px;
-    transition:0.3s;
+    height: 48px;
+    transition: height 0.3s;
 }
 
 .sidebar:hover .logo img {
-    height:128px;
+    height: 128px;
 }
 
 .sidebar a {
-    display:flex;
-    align-items:center;
-    padding:15px 15px;
-    text-decoration:none;
-    color:#fff;
-    font-weight:500;
-    border-left:4px solid transparent;
-    transition:0.3s;
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
 }
 
 .sidebar a i {
-    min-width:24px;
-    font-size:18px;
-    text-align:center;
+    min-width: 24px;
+    font-size: 18px;
+    text-align: center;
 }
 
 .sidebar a span {
-    display:none;
-    margin-left:20px;
-    white-space:nowrap;
+    display: none;
+    margin-left: 20px;
+    white-space: nowrap;
+    transition: opacity 0.3s;
 }
 
 .sidebar:hover a span {
-    display:inline;
-    opacity:1;
+    display: inline;
+    opacity: 1;
 }
 
 .sidebar a:hover {
-    background:#34495e;
-    border-left:4px solid #E64C3C;
+    background-color: #34495e;
+    border-left: 4px solid #E64C3C;
 }
 
 /* Mobile Sidebar Toggle Button */
@@ -121,36 +123,33 @@ body {
     left: 60px;
     right: 0;
     height: 80px;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 30px;
-    box-shadow:0 2px 6px rgba(0,0,0,.1);
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: left 0.3s;
-    z-index:99;
+    z-index: 99;
 }
 
-.sidebar:hover~.header {
+.sidebar:hover ~ .header {
     left: 220px;
 }
 
 /* --- Main Content --- */
-.main {
-    margin-left:60px;
-    padding:30px;
-    transition:0.3s;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:calc(100vh - 80px);
+.main-content {
+    margin-left: 60px;
+    padding: 30px;
+    transition: margin-left 0.3s;
+    min-height: calc(100vh - 80px);
 }
 
-.sidebar:hover~.main {
-    margin-left:220px;
+.sidebar:hover ~ .main-content {
+    margin-left: 220px;
 }
 
-/* --- Profile Dropdown (Complete with Role) --- */
+/* --- Profile Dropdown --- */
 .profile-wrapper {
     position: relative;
 }
@@ -244,6 +243,12 @@ body {
     font-size: 12px;
 }
 
+.dropdown-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 4px 0;
+}
+
 .dropdown-item {
     padding: 12px 16px;
     text-decoration: none;
@@ -253,11 +258,6 @@ body {
     align-items: center;
     gap: 10px;
     transition: background-color 0.2s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
 }
 
 .dropdown-item i {
@@ -276,12 +276,6 @@ body {
 
 .dropdown-item.logout-item i {
     color: #dc3545;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
 }
 
 /* Toast Notifications */
@@ -497,111 +491,249 @@ body {
     gap: 10px;
 }
 
-.btn {
+.btn-primary-modal {
+    background: #007bff;
+    color: white;
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: opacity 0.3s;
 }
 
-.btn-primary {
-    background: #007bff;
-    color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
+.btn-primary-modal:hover:not(:disabled) {
     opacity: 0.9;
 }
 
-.btn-primary:disabled {
+.btn-primary-modal:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.btn-secondary {
+.btn-secondary-modal {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-secondary-modal:hover {
+    opacity: 0.9;
+}
+
+/* --- Form Container - Clean Layout --- */
+.form-container {
+    background: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.form-title h2 {
+    margin: 0;
+    color: #1f2a44;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.form-title p {
+    margin: 8px 0 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Profile Info Section - Side by Side */
+.profile-info-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    align-items: center;
+}
+
+/* Profile Picture - Left Side */
+.profile-picture-left {
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Role-specific avatar backgrounds */
+.profile-avatar-admin {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.profile-avatar-staff {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.profile-avatar-user {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+}
+
+/* User Info - Right Side */
+.user-info-right {
+    flex: 1;
+}
+
+.user-info-right h3 {
+    margin: 0 0 5px 0;
+    font-size: 22px;
+    color: #1f2a44;
+}
+
+.user-info-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #495057;
+    padding: 5px 0;
+}
+
+.info-item i {
+    width: 20px;
+    color: #007bff;
+}
+
+.info-item strong {
+    color: #1f2a44;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.role-badge-admin {
+    background: #dc3545;
+    color: white;
+}
+
+.role-badge-staff {
+    background: #007bff;
+    color: white;
+}
+
+.role-badge-user {
     background: #6c757d;
     color: white;
 }
 
-.btn-secondary:hover {
-    opacity: 0.9;
+/* Form Groups */
+.form-group {
+    margin-bottom: 25px;
 }
 
-/* --- Form Card --- */
-.products-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.product-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    overflow: hidden;
-    width: 100%;
-    max-width: 500px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-.card-body {
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-body h3 {
-    margin: 15px 0 8px;
-    font-size: 14px;
-    color: #6c757d;
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: #495057;
+    font-size: 14px;
 }
 
-.card-body h3:first-of-type {
-    margin-top: 0;
+.form-group label i {
+    margin-right: 8px;
+    color: #007bff;
 }
 
-.card-body input, 
-.card-body select {
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+.form-control {
     width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-size: 14px;
     transition: all 0.3s;
     box-sizing: border-box;
 }
 
-.card-body input:focus, 
-.card-body select:focus {
+.form-control:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
 
+.form-control.error-field {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
+
+.form-help {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-help i {
+    margin-right: 5px;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
 .btn-submit {
+    flex: 1;
     background: #28a745;
-    color: #fff;
+    color: white;
     border: none;
     border-radius: 8px;
-    padding: 12px;
+    padding: 12px 20px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
-    transition: opacity 0.3s;
+    transition: all 0.3s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -609,36 +741,50 @@ body {
 }
 
 .btn-submit:hover {
-    opacity: 0.9;
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .btn-back {
+    flex: 1;
     background-color: #6c757d;
     color: white;
     text-decoration: none;
-    padding: 12px;
     border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    text-align: center;
-    font-weight: 500;
-    font-size: 16px;
-    width: 100%;
-    transition: background 0.2s;
-    margin-top: 10px;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-back:hover {
     background-color: #5a6268;
+    transform: translateY(-2px);
     color: white;
     text-decoration: none;
 }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
+/* Select dropdown styling */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+}
 
-/* Tablet Devices - 768px and below */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
@@ -652,70 +798,64 @@ body {
         left: 0 !important;
         height: 70px;
         padding: 0 15px;
-        z-index: 100;
     }
     
     .header h1 {
         font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
     
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         width: 260px;
-        z-index: 1000;
     }
     
     .sidebar.mobile-open {
         transform: translateX(0);
     }
     
-    .sidebar.mobile-open:hover {
-        width: 260px;
-    }
-    
-    .sidebar.mobile-open a span {
-        display: inline;
-    }
-    
-    .sidebar.mobile-open .logo img {
-        height: 80px;
-    }
-    
-    .main {
+    .main-content {
         margin-left: 0 !important;
         padding: 15px;
-    }
-    
-    .sidebar:hover ~ .main {
-        margin-left: 0;
     }
     
     .profile-name, .dropdown-icon {
         display: none;
     }
     
-    .card-body {
+    .form-container {
         padding: 20px;
+        margin: 0;
     }
     
-    .card-body h3 {
-        font-size: 13px;
-        margin: 12px 0 6px;
+    .form-title h2 {
+        font-size: 20px;
     }
     
-    .card-body input, 
-    .card-body select {
-        padding: 10px;
-        font-size: 13px;
+    .profile-info-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .user-info-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
     }
     
     .btn-submit, .btn-back {
-        padding: 10px;
+        padding: 10px 16px;
         font-size: 14px;
+    }
+    
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
     }
     
     .toast {
@@ -729,7 +869,6 @@ body {
     }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
@@ -744,37 +883,44 @@ body {
         font-size: 14px;
     }
     
-    .main {
+    .main-content {
         padding: 10px;
     }
     
-    .product-card {
-        max-width: 100%;
-    }
-    
-    .card-body {
+    .form-container {
         padding: 15px;
     }
     
-    .card-body h3 {
-        font-size: 12px;
-        margin: 10px 0 5px;
+    .form-title h2 {
+        font-size: 18px;
     }
     
-    .card-body input, 
-    .card-body select {
-        padding: 8px;
-        font-size: 12px;
-        margin-bottom: 8px;
-    }
-    
-    .btn-submit, .btn-back {
-        padding: 8px;
+    .form-group label {
         font-size: 13px;
     }
     
-    small {
-        font-size: 10px;
+    .form-control {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .btn-submit, .btn-back {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .profile-avatar-large {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+    
+    .user-info-right h3 {
+        font-size: 18px;
+    }
+    
+    .info-item {
+        font-size: 12px;
     }
     
     .toast-container {
@@ -789,22 +935,6 @@ body {
     }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main {
-        padding: 15px;
-    }
-    
-    .product-card {
-        max-width: 450px;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
@@ -819,7 +949,9 @@ body {
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -863,6 +995,8 @@ body {
     </a>
 </div>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -875,10 +1009,6 @@ body {
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
@@ -886,7 +1016,6 @@ body {
         </button>
         <i class="fas fa-edit"></i> Edit User
     </h1>
-
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -899,7 +1028,6 @@ body {
             <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
@@ -918,40 +1046,101 @@ body {
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
 
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<div class="main">
-    <div class="products-container">
-        <div class="product-card">
-            <div class="card-body">
-                {{ form_start(form) }}
-                    <h3><i class="fas fa-user"></i> Username</h3>
-                    {{ form_widget(form.username, {'attr': {'placeholder': 'Enter username...'}}) }}
-                    
-                    <h3><i class="fas fa-tag"></i> Role</h3>
-                    {{ form_widget(form.roles, {'attr': {'class': 'role-select'}}) }}
-                    
-                    <h3><i class="fas fa-lock"></i> Password</h3>
-                    {{ form_widget(form.password, {'attr': {'placeholder': 'New password...'}}) }}
-                    <small style="color: #6c757d; margin-top: -5px; margin-bottom: 10px; display: block;">
-                        <i class="fas fa-info-circle"></i> Leave blank to keep current password
-                    </small>                   
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-save"></i> Update User
-                    </button>
-                {{ form_end(form) }}
+<div class="main-content">
+    <div class="form-container">
+        <div class="form-title">
+            <h2><i class="fas fa-edit"></i> Edit User</h2>
+            <p>Update user information and permissions</p>
+        </div>
+
+        <!-- Profile Info Section - Image Left, Info Right -->
+        <div class="profile-info-section">
+            <!-- Profile Picture - Left Side -->
+            <div class="profile-picture-left">
+                {% set currentRole = user.roles[0]|default('ROLE_USER') %}
+                {% set roleClass = 
+                    currentRole == 'ROLE_ADMIN' ? 'admin' :
+                    (currentRole == 'ROLE_STAFF' ? 'staff' : 'user')
+                %}
+                {% set avatarLetter = user.username|first|upper %}
+                {% set hasUserProfilePic = user.profilePicture is defined and user.profilePicture is not null %}
                 
-                <a href="{{ path('app_user_index') }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Users
-                </a>
+                <div class="profile-avatar-large profile-avatar-{{ roleClass }}">
+                    {% if hasUserProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ user.profilePicture) }}" alt="{{ user.username }}">
+                    {% else %}
+                        {{ avatarLetter }}
+                    {% endif %}
+                </div>
+                {# <small style="display: block; margin-top: 10px; color: #6c757d;">
+                    <i class="fas fa-camera"></i> Profile Picture
+                </small> #}
+            </div>
+
+            <!-- User Info - Right Side -->
+            <div class="user-info-right">
+                <h3>{{ user.username }}</h3>
+                <div class="user-info-details">
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span><strong>Created:</strong> {{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tag"></i>
+                        <span><strong>Role:</strong> 
+                            <span class="role-badge role-badge-{{ roleClass }}">
+                                {{ currentRole|replace({'ROLE_': ''}) }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span><strong>Last Active:</strong> {{ user.lastActive ? user.lastActive|date('Y-m-d H:i:s') : 'Never' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-hashtag"></i>
+                        <span><strong>User ID:</strong> {{ user.id }}</span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'userForm'}}) }}
+        
+        <div class="form-group">
+            <label><i class="fas fa-user"></i> Username</label>
+            {{ form_widget(form.username, {'attr': {'class': 'form-control', 'placeholder': 'Enter username...', 'id': 'user_username'}}) }}
+            <div class="form-help"><i class="fas fa-info-circle"></i> This will be used for login</div>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-tag"></i> Role</label>
+            {{ form_widget(form.roles, {'attr': {'class': 'form-control', 'id': 'user_roles'}}) }}
+            <div class="form-help"><i class="fas fa-info-circle"></i> Admin: Full access | Staff: Limited access | User: Basic access</div>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'New password...', 'id': 'user_password'}}) }}
+            <div class="form-help"><i class="fas fa-info-circle"></i> Leave blank to keep current password (minimum 6 characters if changed)</div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-save"></i> Update User
+            </button>
+            <a href="{{ path('app_user_index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Users
+            </a>
+        </div>
+
+        {{ form_end(form) }}
     </div>
 </div>
 {% endif %}
@@ -993,7 +1182,7 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1057,15 +1246,6 @@ function initMobileSidebar() {
     });
     
     sidebarInitialized = true;
-}
-
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
 }
 
 // Profile dropdown
@@ -1145,8 +1325,8 @@ function showUploadModal() {
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="cancelUpload">Cancel</button>
-                <button class="btn-primary" id="saveUpload" disabled>Upload</button>
+                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
+                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
             </div>
         </div>
     `;
@@ -1312,23 +1492,106 @@ function showUploadModal() {
     });
 }
 
-// Initialize all
+// Form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('userForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!form) return;
+    
+    const usernameField = document.getElementById('user_username');
+    const passwordField = document.getElementById('user_password');
+    
+    function removeError(field) {
+        if (field) {
+            field.classList.remove('error-field');
+            field.style.border = '';
+            field.style.backgroundColor = '';
+        }
+    }
+    
+    function addError(field) {
+        if (field) {
+            field.classList.add('error-field');
+            field.style.border = '2px solid #dc3545';
+            field.style.backgroundColor = '#fff5f5';
+        }
+    }
+    
+    if (usernameField) {
+        usernameField.addEventListener('input', function() { removeError(usernameField); });
+    }
+    if (passwordField) {
+        passwordField.addEventListener('input', function() { removeError(passwordField); });
+    }
+    
+    form.addEventListener('submit', function(e) {
+        removeError(usernameField);
+        removeError(passwordField);
+        
+        const username = usernameField ? usernameField.value.trim() : '';
+        const password = passwordField ? passwordField.value : '';
+        
+        let errorMessage = '';
+        let errorField = null;
+        
+        if (!username) {
+            errorMessage = '❌ Username is required! Please enter a username.';
+            errorField = usernameField;
+        } else if (password && password.length < 6) {
+            errorMessage = '❌ Password must be at least 6 characters long!';
+            errorField = passwordField;
+        }
+        
+        if (errorMessage) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (errorField) {
+                addError(errorField);
+                errorField.focus();
+                errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            showToast(errorMessage, 'error');
+            return false;
+        }
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating User...';
+        }
+        
+        return true;
+    });
+});
+
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

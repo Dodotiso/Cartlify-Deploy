@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,17 +12,24 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class LoginController extends AbstractController
 {
     #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, EntityManagerInterface $entityManager): Response
     {
-        // If already logged in, redirect based on role
+        // If already logged in, update last active and redirect based on role
         if ($this->getUser()) {
+            $user = $this->getUser();
+            
+            // Update last active time
+            if ($user instanceof User) {
+                $user->setLastActive(new \DateTime());
+                $entityManager->flush();
+            }
 
             if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
                 return $this->redirectToRoute('app_dashboard');
             }
 
             if ($this->isGranted('ROLE_USER')) {
-                return $this->redirectToRoute('app_shop'); // Changed to app_shop
+                return $this->redirectToRoute('app_shop');
             }
         }
 

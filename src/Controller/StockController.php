@@ -42,18 +42,55 @@ final class StockController extends AbstractController
 
     #[Route('/new', name: 'app_stock_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_STAFF')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, StockRepository $stockRepository): Response
     {
         $stock = new Stock();
+        
         $form = $this->createForm(StockType::class, $stock);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $selectedProduct = $stock->getProduct();
+            $stockQuantity = $stock->getStock();
+            
+            // Check if stock already exists for this product
+            $existingStock = $stockRepository->findOneBy(['product' => $selectedProduct]);
+            
+            if ($existingStock) {
+                // Update existing stock instead of creating new one
+                $oldQuantity = $existingStock->getStock();
+                $newQuantity = $oldQuantity + $stockQuantity;
+                $existingStock->setStock($newQuantity);
+                $existingStock->setCreatedAt(new \DateTime());
+                $entityManager->flush();
+                
+                $this->addFlash('success', '✅ Stock updated for "' . $selectedProduct->getName() . '"! Added ' . $stockQuantity . ' units. New total: ' . $newQuantity . ' units.');
+                return $this->redirectToRoute('app_stock_index');
+            }
+            
+            // No existing stock, create new
             $entityManager->persist($stock);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Stock created successfully.');
-            return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', '✅ Stock for "' . $stock->getProduct()->getName() . '" created successfully! Quantity: ' . $stockQuantity . ' units.');
+            return $this->redirectToRoute('app_stock_index');
+        }
+        
+        // Show ONLY ONE error message at a time
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = $form->getErrors(true);
+            $errorMessage = null;
+            
+            foreach ($errors as $error) {
+                $errorMessage = $error->getMessage();
+                break; // Only get the first error
+            }
+            
+            if ($errorMessage) {
+                $this->addFlash('error', '❌ ' . $errorMessage);
+            } else {
+                $this->addFlash('error', '❌ Please check the form. Stock quantity must be a valid number greater than 0.');
+            }
         }
 
         return $this->render('stock/new.html.twig', [
@@ -72,16 +109,35 @@ final class StockController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_stock_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_STAFF', 'ROLE_ADMIN')]
+    #[IsGranted('ROLE_STAFF')]
     public function edit(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(StockType::class, $stock);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $stockQuantity = $stock->getStock();
+            $stock->setCreatedAt(new \DateTime());
             $entityManager->flush();
-            $this->addFlash('success', 'Stock updated successfully.');
-            return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', '✅ Stock for "' . $stock->getProduct()->getName() . '" updated successfully! New quantity: ' . $stockQuantity . ' units.');
+            return $this->redirectToRoute('app_stock_index');
+        }
+        
+        // Show ONLY ONE error message at a time
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = $form->getErrors(true);
+            $errorMessage = null;
+            
+            foreach ($errors as $error) {
+                $errorMessage = $error->getMessage();
+                break; // Only get the first error
+            }
+            
+            if ($errorMessage) {
+                $this->addFlash('error', '❌ ' . $errorMessage);
+            } else {
+                $this->addFlash('error', '❌ Please check the form. Stock quantity must be a valid number.');
+            }
         }
 
         return $this->render('stock/edit.html.twig', [
@@ -100,14 +156,16 @@ final class StockController extends AbstractController
             // Check if stock has existing orders
             $orders = $stock->getOrders();
             if ($orders && count($orders) > 0) {
-                $this->addFlash('error', 'This stock cannot be deleted because it has existing orders. Cancel the orders first.');
+                $this->addFlash('error', '⚠️ This stock cannot be deleted because it has existing orders. Cancel the orders first.');
                 return $this->redirectToRoute('app_stock_index');
             }
 
+            $productName = $stock->getProduct()->getName();
+            
             // Safe to delete
             $entityManager->remove($stock);
             $entityManager->flush();
-            $this->addFlash('success', 'Stock deleted successfully.');
+            $this->addFlash('success', '🗑️ Stock for "' . $productName . '" deleted successfully!');
         }
 
         return $this->redirectToRoute('app_stock_index');

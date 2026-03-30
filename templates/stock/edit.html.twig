@@ -2,14 +2,14 @@
 
 {% block title %}Cartlify | Edit Stock{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 /* --- Body & Sidebar --- */
-body { 
-    margin:0; 
-    font-family:Arial,sans-serif; 
-    background:#f4f6f9; 
-    color:#343a40;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
     padding-top: 80px;
 }
 
@@ -527,34 +527,40 @@ body {
 }
 
 /* --- Form Styles --- */
-.form-container { 
-    background:#fff; 
-    max-width:700px; 
-    padding:30px; 
-    border-radius:8px; 
-    box-shadow:0 2px 8px rgba(0,0,0,0.1); 
-    margin:auto; 
+.form-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
 }
 
-.form-group { 
+.form-group {
     margin-bottom: 20px;
 }
 
-.form-group label { 
-    font-weight:600; 
-    margin-bottom:8px; 
-    display:block; 
-    color:#495057;
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
     font-size: 14px;
 }
 
-.form-control { 
-    width:100%; 
-    padding:10px 12px; 
-    border:1px solid #ced4da; 
-    border-radius:4px; 
-    font-size:14px;
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
     box-sizing: border-box;
+}
+
+.form-control.error-field {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
 }
 
 .form-control:focus {
@@ -602,6 +608,24 @@ body {
     color: #007bff;
 }
 
+.product-image {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.product-image img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    object-fit: contain;
+    background-color: white;
+    padding: 10px;
+}
+
 .button-group {
     display: flex;
     gap: 10px;
@@ -629,6 +653,11 @@ button.btn-update:hover {
     background: #218838;
 }
 
+button.btn-update:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .btn-back {
     background-color: #6c757d;
     color: white;
@@ -652,207 +681,146 @@ button.btn-update:hover {
     text-decoration: none;
 }
 
-.product-image {
-    text-align: center;
-    margin-top: 15px;
-}
-
-.product-image img {
-    max-width: 150px;
-    max-height: 150px;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-}
-
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
-
-/* Tablet Devices - 768px and below */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
     }
-    
     .menu-toggle {
         display: block;
     }
-    
     .header {
         left: 0 !important;
         height: 70px;
         padding: 0 15px;
         z-index: 100;
     }
-    
     .header h1 {
         font-size: 16px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         width: 260px;
         z-index: 1000;
     }
-    
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
     .sidebar.mobile-open:hover {
         width: 260px;
     }
-    
     .sidebar.mobile-open a span {
         display: inline;
     }
-    
     .sidebar.mobile-open .logo img {
         height: 80px;
     }
-    
     .main-content {
         margin-left: 0 !important;
         padding: 15px;
     }
-    
     .sidebar:hover ~ .header,
     .sidebar:hover ~ .main-content {
         left: 0;
         margin-left: 0;
     }
-    
     .profile-name, .dropdown-icon {
         display: none;
     }
-    
     .form-container {
         padding: 20px;
         margin: 0;
     }
-    
     .toast {
         min-width: 250px;
         padding: 12px 16px;
     }
-    
     .button-group {
         flex-direction: column;
         gap: 10px;
     }
-    
     .toast-container {
         top: 80px;
         right: 15px;
     }
-    
     .current-info p {
         font-size: 13px;
     }
-    
     .product-image img {
         max-width: 120px;
         max-height: 120px;
     }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
     }
-    
     .header {
         height: 60px;
         padding: 0 12px;
     }
-    
     .header h1 {
         font-size: 14px;
     }
-    
     .main-content {
         padding: 10px;
     }
-    
     .form-container {
         padding: 15px;
     }
-    
     .form-group label {
         font-size: 13px;
     }
-    
     .form-control {
         padding: 8px 10px;
         font-size: 13px;
     }
-    
     button.btn-update, .btn-back {
         padding: 8px 16px;
         font-size: 14px;
     }
-    
     .current-info {
         padding: 12px;
     }
-    
     .current-info p {
         font-size: 12px;
         margin: 6px 0;
     }
-    
     .product-image img {
         max-width: 100px;
         max-height: 100px;
     }
-    
     .toast-container {
         top: 70px;
         right: 10px;
         left: 10px;
     }
-    
     .toast {
         min-width: auto;
         width: 100%;
     }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .form-container {
-        max-width: 90%;
-        margin: 0 auto;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
     }
-    
     .menu-toggle {
         display: none !important;
     }
-    
     .sidebar-overlay {
         display: none !important;
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -895,7 +863,6 @@ button.btn-update:hover {
         <span>Logout</span>
     </a>
 </div>
-
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -932,7 +899,6 @@ button.btn-update:hover {
 </div>
 {% endif %}
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {# Profile Section #}
@@ -947,7 +913,6 @@ button.btn-update:hover {
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
@@ -955,7 +920,6 @@ button.btn-update:hover {
         </button>
         <i class="fas fa-edit"></i> Edit Stock
     </h1>
-
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -968,7 +932,6 @@ button.btn-update:hover {
             <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
@@ -990,21 +953,32 @@ button.btn-update:hover {
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content -->
 <div class="main-content">
     <div class="form-container">
+        <!-- IMAGE SECTION - ABOVE -->
+        <div class="product-image">
+            {% if stock.product.image %}
+                {% set imagePath = stock.product.image %}
+                {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
+                    {% set imagePath = '/uploads/' ~ imagePath %}
+                {% endif %}
+                <img src="{{ imagePath }}" alt="{{ stock.product.name }}">
+            {% else %}
+                <div style="text-align: center; color: #6c757d; padding: 20px;">
+                    <i class="fas fa-image" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
+                    <span>No Image Available</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- INFO SECTION - BELOW IMAGE -->
         <div class="current-info">
-            <p><i class="fas fa-box"></i> <strong>Product:</strong> {{ stock.product.name }}</p>
-            <p><i class="fas fa-calendar-alt"></i> <strong>Created:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
-            <p><i class="fas fa-tag"></i> <strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}</p>
+            <p><i class="fas fa-box"></i> <strong>Product:</strong> {{ stock.product.name }} (ID: {{ stock.product.id }})</p>
+            <p><i class="fas fa-calendar-alt"></i> <strong>Stock Created:</strong> {{ stock.createdAt ? stock.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
             <p><i class="fas fa-chart-line"></i> <strong>Current Stock:</strong> 
                 {% if stock.stock < 10 %}
                     <span style="color: #dc3545; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> {{ stock.stock }} (Low Stock)</span>
@@ -1014,35 +988,25 @@ button.btn-update:hover {
                     <span style="color: #28a745; font-weight: bold;"><i class="fas fa-check-circle"></i> {{ stock.stock }}</span>
                 {% endif %}
             </p>
-            {% if stock.product.image %}
-                <div class="product-image">
-                    {% set imagePath = stock.product.image %}
-                    {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
-                        {% set imagePath = '/uploads/' ~ imagePath %}
-                    {% endif %}
-                    <img src="{{ imagePath }}" alt="{{ stock.product.name }}">
-                </div>
-            {% endif %}
+            <p><i class="fas fa-clock"></i> <strong>Last Updated:</strong> {{ "now"|date('Y-m-d H:i:s') }}</p>
         </div>
         
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'stockForm'}}) }}
         
         <div class="form-group">
             {{ form_label(form.product) }}
-            {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.product, {'attr': {'class': 'form-control', 'id': 'stock_product'}}) }}
             {{ form_help(form.product) }}
-            {{ form_errors(form.product) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.stock) }}
-            {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity', 'min': '0'}}) }}
+            {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity', 'min': '0', 'id': 'stock_stock'}}) }}
             <div class="form-help">Update the stock quantity. Current: {{ stock.stock }}</div>
-            {{ form_errors(form.stock) }}
         </div>
 
         <div class="button-group">
-            <button class="btn-update">
+            <button class="btn-update" id="submitBtn">
                 <i class="fas fa-save"></i> Update Stock
             </button>
             <a href="{{ path('app_stock_index') }}" class="btn-back">
@@ -1054,44 +1018,8 @@ button.btn-update:hover {
     </div>
 </div>
 
-<!-- Add Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <script>
-// Toast Notification System
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1157,16 +1085,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
-// Profile dropdown
 let dropdownInitialized = false;
 
 function initializeDropdown() {
@@ -1275,11 +1193,11 @@ function showUploadModal() {
         if (file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                window.showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1312,7 +1230,7 @@ function showUploadModal() {
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1358,25 +1276,25 @@ function showUploadModal() {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
+                        window.showToast('Profile picture updated successfully!', 'success');
                         modal.classList.remove('show');
                         setTimeout(() => modal.remove(), 300);
                     } else {
-                        showToast(response.message || 'Upload failed', 'error');
+                        window.showToast(response.message || 'Upload failed', 'error');
                         resetUpload();
                     }
                 } catch (e) {
-                    showToast('Invalid server response', 'error');
+                    window.showToast('Invalid server response', 'error');
                     resetUpload();
                 }
             } else {
-                showToast('Upload failed. Please try again.', 'error');
+                window.showToast('Upload failed. Please try again.', 'error');
                 resetUpload();
             }
         });
         
         xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
+            window.showToast('Network error. Please try again.', 'error');
             resetUpload();
         });
         
@@ -1410,23 +1328,45 @@ function showUploadModal() {
     });
 }
 
-// Initialize all
+// Simple form submit handler
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('stockForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (form && submitBtn) {
+        form.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Stock...';
+        });
+    }
+});
+
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

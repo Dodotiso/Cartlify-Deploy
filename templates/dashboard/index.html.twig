@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Real-Time Dashboard{% endblock %}
 
 {% block body %}
 <style>
@@ -556,6 +556,8 @@ body {
     flex-direction:column; 
     justify-content:center;
     transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .card:hover {
@@ -566,6 +568,89 @@ body {
 .card h2 { margin:0 0 10px; font-size:24px; color:#28a745; }
 .card p { margin:0; font-size:16px; color:#555; }
 .card a { text-decoration:none; color:#007bff; font-weight:bold; }
+
+/* Pulse animation for real-time updates */
+@keyframes pulse-green {
+    0% { background-color: #fff; }
+    50% { background-color: #d4edda; }
+    100% { background-color: #fff; }
+}
+
+.card-updated {
+    animation: pulse-green 0.5s ease;
+}
+
+/* Real-time notification badge */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* New order row highlight */
+.new-order-row {
+    animation: highlight-row 2s ease;
+}
+
+@keyframes highlight-row {
+    0% { background-color: #fff3cd; }
+    100% { background-color: transparent; }
+}
+
+/* Auto-refresh status */
+.refresh-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1000;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.refresh-status.active {
+    color: #28a745;
+}
+
+.refresh-status.paused {
+    color: #dc3545;
+}
+
+.manual-refresh-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.manual-refresh-btn:hover {
+    background: rgba(0,0,0,0.05);
+    transform: rotate(180deg);
+}
 
 /* ===== ENHANCED RESPONSIVE STYLES WITH MOBILE SIDEBAR ===== */
 
@@ -1161,6 +1246,18 @@ body {
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- Auto-Refresh Status -->
+{# <div class="refresh-status active" id="refreshStatus">
+    <i class="fas fa-sync-alt" style="font-size: 10px;"></i>
+    <span>Auto-refreshing every 5 seconds</span>
+    <button id="toggleRefresh" style="background: none; border: none; cursor: pointer; margin-left: 8px; color: inherit;">
+        <i class="fas fa-pause"></i>
+    </button>
+    <button id="manualRefreshBtn" class="manual-refresh-btn" title="Refresh now">
+        <i class="fas fa-arrow-rotate-right"></i>
+    </button>
+</div> #}
+
 {% if is_granted('ROLE_ADMIN') %}
 <!-- Admin Main Content -->
 <div class="main-content">
@@ -1172,7 +1269,7 @@ body {
                     Welcome back, {{ app.user.username }}!
                 </h2>
                 <p style="margin: 0; opacity: 0.9; font-size: 16px;">
-                    Here's an overview of your store's performance and analytics.
+                    Here's an overview of your store's performance. <strong>Auto-refreshing every 5 seconds</strong>
                 </p>
             </div>
             <div style="font-size: 60px; opacity: 0.3;">
@@ -1181,53 +1278,53 @@ body {
         </div>
     </div>
 
-    <!-- Quick Stats Cards -->
+    <!-- Quick Stats Cards with Real-time IDs -->
     <div class="dashboard-cards">
-        <div class="card">
+        <div class="card" data-metric="totalProducts">
             <div style="font-size: 32px; color: #007bff; margin-bottom: 10px;">
                 <i class="fas fa-box"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalProducts|default('0') }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalProductsValue">{{ totalProducts|default('0') }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Products</p>
         </div>
         
-        <div class="card">
+        <div class="card" data-metric="totalOrders">
             <div style="font-size: 32px; color: #28a745; margin-bottom: 10px;">
                 <i class="fas fa-shopping-cart"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalOrders|default('0') }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalOrdersValue">{{ totalOrders|default('0') }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Transactions</p>
         </div>
         
-        <div class="card">
+        <div class="card" data-metric="totalIncome">
             <div style="font-size: 32px; color: #ffc107; margin-bottom: 10px;">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">₱{{ totalIncome|default('0')|number_format(2) }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalIncomeValue">₱{{ totalIncome|default('0')|number_format(2) }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Income</p>
         </div>
         
-        <div class="card">
+        <div class="card" data-metric="totalUsers">
             <div style="font-size: 32px; color: #17a2b8; margin-bottom: 10px;">
                 <i class="fas fa-users"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalUsers|default('0') }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalUsersValue">{{ totalUsers|default('0') }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Total Users</p>
         </div>
         
-        <div class="card">
+        <div class="card" data-metric="totalAdmins">
             <div style="font-size: 32px; color: #dc3545; margin-bottom: 10px;">
                 <i class="fas fa-user-tie"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalAdmins|default('0') }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalAdminsValue">{{ totalAdmins|default('0') }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Admin Users</p>
         </div>
         
-        <div class="card">
+        <div class="card" data-metric="totalStaff">
             <div style="font-size: 32px; color: #6c757d; margin-bottom: 10px;">
                 <i class="fas fa-user-check"></i>
             </div>
-            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;">{{ totalStaff|default('0') }}</h3>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px; color: #343a40;" id="totalStaffValue">{{ totalStaff|default('0') }}</h3>
             <p style="margin: 0; color: #6c757d; font-size: 14px;">Staff Users</p>
         </div>
     </div>
@@ -1239,7 +1336,7 @@ body {
             <div style="padding: 20px; border-bottom: 1px solid #f1f1f1;">
                 <h3 style="margin: 0; color: #343a40; font-size: 18px;">
                     <i class="fas fa-chart-line" style="color: #007bff; margin-right: 10px;"></i>
-                    Sales Trend (Last 6 Months)
+                    Sales Trend (Last 6 Months) <span id="lastUpdateTime" style="font-size: 12px; color: #6c757d; margin-left: 10px;"></span>
                 </h3>
             </div>
             <div style="padding: 20px; height: 300px;">
@@ -1304,11 +1401,12 @@ body {
             </div>
         </div>
 
-        <!-- Recent Orders -->
+        <!-- Recent Orders with Real-time Updates -->
         <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); grid-column: span 2;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0; color: #343a40; font-size: 18px;">
                     <i class="fas fa-history" style="color: #007bff; margin-right: 10px;"></i> Recent Transactions
+                    <span id="newOrderBadge" style="display: none;" class="notification-badge">!</span>
                 </h3>
                 <a href="{{ path('app_order_index') }}" style="color: #007bff; text-decoration: none; font-size: 14px; font-weight: 500;">
                     View All <i class="fas fa-arrow-right"></i>
@@ -1326,9 +1424,9 @@ body {
                             <th style="padding: 12px; text-align: left; color: #6c757d; font-weight: 600;">Date</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="recentOrdersTable">
                         {% for order in recentOrders|default([]) %}
-                        <tr style="border-bottom: 1px solid #f1f1f1; transition: background 0.3s;">
+                        <tr style="border-bottom: 1px solid #f1f1f1; transition: background 0.3s;" data-order-id="{{ order.id }}">
                             <td style="padding: 12px; font-weight: 500;">#{{ order.id }}</td>
                             <td style="padding: 12px;">
                                 {% if order.stock and order.stock.product %}
@@ -1342,7 +1440,7 @@ body {
                             <td style="padding: 12px; color: #6c757d;">{{ order.createdAt|date('M d, H:i') }}</td>
                         </tr>
                         {% else %}
-                        <tr>
+                        <tr id="noOrdersRow">
                             <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">
                                 <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
                                 <p style="margin: 0; font-size: 16px;">No recent transactions</p>
@@ -1355,7 +1453,7 @@ body {
         </div>
     </div>
 
-    <!-- Performance Metrics -->
+    <!-- Performance Metrics with Real-time IDs -->
     <div class="performance-metrics" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
         <h3 style="margin: 0 0 25px 0; color: #343a40; font-size: 18px;">
             <i class="fas fa-chart-bar" style="color: #28a745; margin-right: 10px;"></i> Performance Metrics
@@ -1366,7 +1464,7 @@ body {
                 <div style="font-size: 32px; color: #28a745; margin-bottom: 5px;">
                     <i class="fas fa-trophy"></i>
                 </div>
-                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ todayOrders|default('0') }}</div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;" id="todayOrdersValue">{{ todayOrders|default('0') }}</div>
                 <div style="color: #6c757d; font-size: 14px;">Orders Today</div>
             </div>
             
@@ -1374,7 +1472,7 @@ body {
                 <div style="font-size: 32px; color: #007bff; margin-bottom: 5px;">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
-                <div style="font-size: 24px; font-weight: 600; color: #343a40;">₱{{ todaySales|default('0')|number_format(2) }}</div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;" id="todaySalesValue">₱{{ todaySales|default('0')|number_format(2) }}</div>
                 <div style="color: #6c757d; font-size: 14px;">Sales Today</div>
             </div>
             
@@ -1382,7 +1480,7 @@ body {
                 <div style="font-size: 32px; color: #ffc107; margin-bottom: 5px;">
                     <i class="fas fa-chart-pie"></i>
                 </div>
-                <div style="font-size: 24px; font-weight: 600; color: #343a40;">₱{{ avgOrderValue|default('0')|number_format(2) }}</div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;" id="avgOrderValueValue">₱{{ avgOrderValue|default('0')|number_format(2) }}</div>
                 <div style="color: #6c757d; font-size: 14px;">Avg Order Value</div>
             </div>
             
@@ -1390,7 +1488,7 @@ body {
                 <div style="font-size: 32px; color: #dc3545; margin-bottom: 5px;">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <div style="font-size: 24px; font-weight: 600; color: #343a40;">{{ lowStockCount|default('0') }}</div>
+                <div style="font-size: 24px; font-weight: 600; color: #343a40;" id="lowStockCountValue">{{ lowStockCount|default('0') }}</div>
                 <div style="color: #6c757d; font-size: 14px;">Low Stock Items</div>
             </div>
         </div>
@@ -1404,7 +1502,7 @@ body {
                     <h3 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 600;">
                         <i class="fas fa-lightbulb"></i> Admin Insights
                     </h3>
-                    <p style="margin: 0; opacity: 0.9; font-size: 15px;">
+                    <p style="margin: 0; opacity: 0.9; font-size: 15px;" id="insightMessage">
                         Store performance is up 15% this month. Consider adding more products to the marketplace to boost sales.
                     </p>
                 </div>
@@ -1471,6 +1569,10 @@ body {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
+// ============================================
+// REAL-TIME DASHBOARD WITH HEARTBEAT & AUTO-RECOVERY
+// ============================================
+
 // Toast Notification System
 function showToast(message, type = 'success') {
     let container = document.getElementById('toastContainer');
@@ -1501,112 +1603,532 @@ function showToast(message, type = 'success') {
     setTimeout(() => {
         toast.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Mobile Sidebar Toggle Functionality - FIXED to work without refresh
-let sidebarInitialized = false;
-
-function initMobileSidebar() {
-    // Don't re-initialize if already done
-    if (sidebarInitialized) return;
-    
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (!menuToggle || !sidebar) return;
-    
-    function openSidebar() {
-        sidebar.classList.add('mobile-open');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove('mobile-open');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    // Remove existing listeners to prevent duplicates
-    const newToggle = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-    const newMenuToggle = document.getElementById('menuToggle');
-    
-    newMenuToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl.classList.contains('mobile-open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-    
-    if (overlay) {
-        const newOverlay = overlay.cloneNode(true);
-        overlay.parentNode.replaceChild(newOverlay, overlay);
-        const newOverlayEl = document.getElementById('sidebarOverlay');
-        newOverlayEl.addEventListener('click', closeSidebar);
-    }
-    
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(e) {
-        const currentSidebar = document.getElementById('sidebar');
-        const currentMenuToggle = document.getElementById('menuToggle');
-        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
-                closeSidebar();
-            }
-        }
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        const currentSidebar = document.getElementById('sidebar');
-        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            closeSidebar();
-        }
-    });
-    
-    sidebarInitialized = true;
-}
-
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
+    }, 5000);
 }
 
 // Global variables
 let chartInstances = {};
 let dropdownInitialized = false;
+let pollingInterval = null;
+let heartbeatInterval = null;
+let isPolling = true;
+let pollingFrequency = 5000; // 5 seconds
+let lastUpdateTimestamp = Date.now();
+let previousData = {};
+let isRefreshing = false;
+let lastHeartbeat = Date.now();
+let consecutiveErrors = 0;
 
-// Function to destroy existing charts
-function destroyCharts() {
-    Object.keys(chartInstances).forEach(key => {
-        if (chartInstances[key]) {
-            chartInstances[key].destroy();
-        }
-    });
-    chartInstances = {};
-    
-    if (typeof Chart !== 'undefined') {
-        const charts = Chart.instances ? Object.values(Chart.instances) : [];
-        charts.forEach(chart => {
-            if (chart && chart.destroy) {
-                chart.destroy();
-            }
-        });
+// Update last update time
+function updateLastUpdateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    const updateSpan = document.getElementById('lastUpdateTime');
+    if (updateSpan) {
+        updateSpan.innerHTML = `Last updated: ${timeString}`;
     }
 }
 
-// Function to render all charts
+// Animate card update
+function animateCard(cardElement) {
+    if (cardElement) {
+        cardElement.classList.add('card-updated');
+        setTimeout(() => {
+            cardElement.classList.remove('card-updated');
+        }, 500);
+    }
+}
+
+// Update metrics with real-time data
+function updateMetrics(data) {
+    let hasUpdates = false;
+    
+    // Update total products
+    if (data.totalProducts !== undefined && previousData.totalProducts !== data.totalProducts) {
+        const element = document.getElementById('totalProductsValue');
+        if (element) {
+            element.innerText = data.totalProducts;
+            animateCard(document.querySelector('[data-metric="totalProducts"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update total orders
+    if (data.totalOrders !== undefined && previousData.totalOrders !== data.totalOrders) {
+        const element = document.getElementById('totalOrdersValue');
+        if (element) {
+            element.innerText = data.totalOrders;
+            animateCard(document.querySelector('[data-metric="totalOrders"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update total income
+    if (data.totalIncome !== undefined && previousData.totalIncome !== data.totalIncome) {
+        const element = document.getElementById('totalIncomeValue');
+        if (element) {
+            element.innerText = `₱${data.totalIncome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            animateCard(document.querySelector('[data-metric="totalIncome"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update total users
+    if (data.totalUsers !== undefined && previousData.totalUsers !== data.totalUsers) {
+        const element = document.getElementById('totalUsersValue');
+        if (element) {
+            element.innerText = data.totalUsers;
+            animateCard(document.querySelector('[data-metric="totalUsers"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update total admins
+    if (data.totalAdmins !== undefined && previousData.totalAdmins !== data.totalAdmins) {
+        const element = document.getElementById('totalAdminsValue');
+        if (element) {
+            element.innerText = data.totalAdmins;
+            animateCard(document.querySelector('[data-metric="totalAdmins"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update total staff
+    if (data.totalStaff !== undefined && previousData.totalStaff !== data.totalStaff) {
+        const element = document.getElementById('totalStaffValue');
+        if (element) {
+            element.innerText = data.totalStaff;
+            animateCard(document.querySelector('[data-metric="totalStaff"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update today's orders
+    if (data.todayOrders !== undefined && previousData.todayOrders !== data.todayOrders) {
+        const element = document.getElementById('todayOrdersValue');
+        if (element) {
+            const oldValue = parseInt(previousData.todayOrders || 0);
+            element.innerText = data.todayOrders;
+            animateCard(document.querySelector('[data-metric="todayOrders"]'));
+            
+            if (data.todayOrders > oldValue) {
+                showToast(`🛒 New order received! Total today: ${data.todayOrders}`, 'info');
+            }
+            hasUpdates = true;
+        }
+    }
+    
+    // Update today's sales
+    if (data.todaySales !== undefined && previousData.todaySales !== data.todaySales) {
+        const element = document.getElementById('todaySalesValue');
+        if (element) {
+            element.innerText = `₱${data.todaySales.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            animateCard(document.querySelector('[data-metric="todaySales"]'));
+            hasUpdates = true;
+        }
+    }
+    
+    // Update average order value
+    if (data.avgOrderValue !== undefined && previousData.avgOrderValue !== data.avgOrderValue) {
+        const element = document.getElementById('avgOrderValueValue');
+        if (element) {
+            element.innerText = `₱${data.avgOrderValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            hasUpdates = true;
+        }
+    }
+    
+    // Update low stock count
+    if (data.lowStockCount !== undefined && previousData.lowStockCount !== data.lowStockCount) {
+        const element = document.getElementById('lowStockCountValue');
+        if (element) {
+            const oldValue = parseInt(previousData.lowStockCount || 0);
+            element.innerText = data.lowStockCount;
+            if (data.lowStockCount > oldValue && data.lowStockCount > 0) {
+                showToast(`⚠️ Warning: ${data.lowStockCount} items are low on stock!`, 'warning');
+            }
+            hasUpdates = true;
+        }
+    }
+    
+    // Update insight message
+    if (data.insightMessage && previousData.insightMessage !== data.insightMessage) {
+        const insightElement = document.getElementById('insightMessage');
+        if (insightElement) {
+            insightElement.textContent = data.insightMessage;
+            hasUpdates = true;
+        }
+    }
+    
+    // Store current data for next comparison
+    previousData = {...data};
+    
+    if (hasUpdates) {
+        updateLastUpdateTime();
+    }
+    
+    return hasUpdates;
+}
+
+// Update recent orders table
+function updateRecentOrders(orders) {
+    const tbody = document.getElementById('recentOrdersTable');
+    if (!tbody) return;
+    
+    // Check if orders have changed
+    const currentOrders = Array.from(tbody.querySelectorAll('tr[data-order-id]')).map(row => row.dataset.orderId);
+    const newOrderIds = orders.map(order => order.id.toString());
+    
+    // Check if there are new orders
+    const hasNewOrders = newOrderIds.some(id => !currentOrders.includes(id));
+    
+    if (hasNewOrders) {
+        // Clear existing rows except "no orders" row
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            if (row.id !== 'noOrdersRow') {
+                row.remove();
+            }
+        });
+        
+        // Add new orders
+        orders.forEach(order => {
+            const newRow = document.createElement('tr');
+            newRow.style.borderBottom = '1px solid #f1f1f1';
+            newRow.className = 'new-order-row';
+            newRow.setAttribute('data-order-id', order.id);
+            
+            const productName = order.productName || 'Product';
+            const truncatedName = productName.length > 20 ? productName.substring(0, 20) + '...' : productName;
+            
+            newRow.innerHTML = `
+                <td style="padding: 12px; font-weight: 500;">#${order.id}</td>
+                <td style="padding: 12px;">${truncatedName}</td>
+                <td style="padding: 12px;">${order.quantity}</td>
+                <td style="padding: 12px; font-weight: 600; color: #28a745;">₱${parseFloat(order.totalAmount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td style="padding: 12px; color: #6c757d;">${order.createdAt}</td>
+            `;
+            
+            tbody.appendChild(newRow);
+            
+            // Show notification for new order
+            showToast(`🛒 New order #${order.id} received! Amount: ₱${parseFloat(order.totalAmount).toLocaleString()}`, 'success');
+        });
+        
+        // Show notification badge
+        const badge = document.getElementById('newOrderBadge');
+        if (badge) {
+            badge.style.display = 'flex';
+            setTimeout(() => {
+                badge.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Remove highlight class after animation
+        setTimeout(() => {
+            tbody.querySelectorAll('.new-order-row').forEach(row => {
+                row.classList.remove('new-order-row');
+            });
+        }, 2000);
+    }
+}
+
+// Update chart data with recovery
+function updateChartData(chartId, newData) {
+    const chart = chartInstances[chartId];
+    if (chart && newData) {
+        try {
+            let needsUpdate = false;
+            
+            if (newData.labels && JSON.stringify(chart.data.labels) !== JSON.stringify(newData.labels)) {
+                chart.data.labels = newData.labels;
+                needsUpdate = true;
+            }
+            
+            if (newData.data && JSON.stringify(chart.data.datasets[0].data) !== JSON.stringify(newData.data)) {
+                chart.data.datasets[0].data = newData.data;
+                needsUpdate = true;
+            }
+            
+            if (needsUpdate) {
+                chart.update('none');
+            }
+        } catch (e) {
+            console.error(`Error updating chart ${chartId}:`, e);
+            // Chart might be corrupted, force re-render
+            forceChartRerender();
+        }
+    } else if (newData && !chart) {
+        // Chart instance missing, force re-render
+        forceChartRerender();
+    }
+}
+
+// Force all charts to re-render
+function forceChartRerender() {
+    console.log('Forcing chart re-render...');
+    renderCharts();
+}
+
+// Update sales trend chart
+function updateSalesTrend(data) {
+    if (data.salesTrend) {
+        updateChartData('salesTrend', data.salesTrend);
+    }
+}
+
+// Update product distribution chart
+function updateProductDistribution(data) {
+    if (data.productCategories) {
+        updateChartData('productDistribution', data.productCategories);
+    }
+}
+
+// Update stock chart
+function updateStockChart(data) {
+    if (data.stockLevels) {
+        updateChartData('stockGauge', data.stockLevels);
+    }
+}
+
+// Fetch real-time updates with cache busting
+async function fetchRealtimeUpdates(forceRefresh = false) {
+    if ((!isPolling && !forceRefresh) || isRefreshing) return;
+    
+    isRefreshing = true;
+    
+    try {
+        // Add cache-busting timestamp
+        const timestamp = Date.now();
+        const response = await fetch(`/dashboard/realtime-updates?_=${timestamp}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-Last-Update': lastUpdateTimestamp.toString(),
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
+        
+        if (response.ok) {
+            consecutiveErrors = 0;
+            const data = await response.json();
+            
+            if (data.hasUpdates || forceRefresh) {
+                if (data.metrics) {
+                    updateMetrics(data.metrics);
+                }
+                
+                if (data.salesTrend) {
+                    updateSalesTrend(data);
+                }
+                if (data.productCategories) {
+                    updateProductDistribution(data);
+                }
+                if (data.stockLevels) {
+                    updateStockChart(data);
+                }
+                
+                if (data.recentOrders) {
+                    updateRecentOrders(data.recentOrders);
+                }
+                
+                lastUpdateTimestamp = Date.now();
+                lastHeartbeat = Date.now();
+            }
+        } else {
+            consecutiveErrors++;
+            if (consecutiveErrors >= 3) {
+                console.warn('Multiple fetch errors, attempting recovery...');
+                forceChartRerender();
+                consecutiveErrors = 0;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching real-time updates:', error);
+        consecutiveErrors++;
+        if (consecutiveErrors >= 3) {
+            forceChartRerender();
+            consecutiveErrors = 0;
+        }
+    } finally {
+        isRefreshing = false;
+    }
+}
+
+// Heartbeat to check if dashboard is still active
+function startHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
+    
+    heartbeatInterval = setInterval(() => {
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastHeartbeat;
+        
+        // If no update for more than 30 seconds, force a refresh
+        if (timeSinceLastUpdate > 30000) {
+            console.log('Heartbeat: No updates for 30 seconds, forcing refresh...');
+            manualRefresh();
+        }
+    }, 15000); // Check every 15 seconds
+}
+
+// Manual refresh function - no toast message
+function manualRefresh() {
+    fetchRealtimeUpdates(true);
+}
+
+// Toggle auto-refresh
+function toggleAutoRefresh() {
+    isPolling = !isPolling;
+    const statusEl = document.getElementById('refreshStatus');
+    const toggleBtn = document.getElementById('toggleRefresh');
+    
+    if (isPolling) {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+        pollingInterval = setInterval(() => fetchRealtimeUpdates(false), pollingFrequency);
+        statusEl.className = 'refresh-status active';
+        statusEl.querySelector('span').textContent = 'Auto-refreshing every 5 seconds';
+        toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        showToast('Auto-refresh enabled', 'success');
+    } else {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+        statusEl.className = 'refresh-status paused';
+        statusEl.querySelector('span').textContent = 'Auto-refresh paused';
+        toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
+        showToast('Auto-refresh paused', 'info');
+    }
+}
+
+// Detect page visibility and refresh when returning to dashboard
+function setupVisibilityDetection() {
+    let wasHidden = false;
+    
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            // Page became visible again
+            console.log('Dashboard became visible, checking charts...');
+            
+            // Check if charts are still rendered properly
+            let chartsNeedRefresh = false;
+            Object.keys(chartInstances).forEach(key => {
+                if (!chartInstances[key] || !chartInstances[key].canvas) {
+                    chartsNeedRefresh = true;
+                }
+            });
+            
+            if (chartsNeedRefresh) {
+                console.log('Charts missing, re-rendering...');
+                forceChartRerender();
+            }
+            
+            // Always refresh data when coming back
+            setTimeout(() => manualRefresh(), 100);
+            wasHidden = true;
+        } else {
+            wasHidden = true;
+        }
+    });
+    
+    // Also detect when page is loaded from cache (back button)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            // Page was loaded from cache (back button)
+            console.log('Page loaded from cache, refreshing...');
+            forceChartRerender();
+            setTimeout(() => manualRefresh(), 100);
+        }
+    });
+    
+    // Detect if page becomes active after long inactivity
+    document.addEventListener('click', function() {
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastHeartbeat;
+        if (timeSinceLastUpdate > 30000) {
+            console.log('User interaction after long inactivity, refreshing...');
+            manualRefresh();
+        }
+    });
+}
+
+// Initialize dashboard
+function initializeDashboard() {
+    initializeDropdown();
+    setupVisibilityDetection();
+    startHeartbeat();
+    
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+    pollingInterval = setInterval(() => fetchRealtimeUpdates(false), pollingFrequency);
+    
+    const toggleBtn = document.getElementById('toggleRefresh');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleAutoRefresh);
+    }
+    
+    const manualBtn = document.getElementById('manualRefreshBtn');
+    if (manualBtn) {
+        manualBtn.addEventListener('click', manualRefresh);
+    }
+    
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const newCard = card.cloneNode(true);
+        card.parentNode.replaceChild(newCard, card);
+        
+        newCard.addEventListener('mouseenter', () => {
+            newCard.style.transform = 'translateY(-5px)';
+            newCard.style.boxShadow = '0 8px 25px rgba(0,0,0,0.12)';
+        });
+        
+        newCard.addEventListener('mouseleave', () => {
+            newCard.style.transform = 'translateY(0)';
+            newCard.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+        });
+    });
+    
+    const quickActions = document.querySelectorAll('.quick-actions a, [class*="quick-actions"] a, .activity-grid a');
+    quickActions.forEach(action => {
+        const newAction = action.cloneNode(true);
+        action.parentNode.replaceChild(newAction, action);
+        
+        newAction.addEventListener('mouseenter', () => {
+            newAction.style.transform = 'translateY(-3px)';
+            newAction.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+        });
+        
+        newAction.addEventListener('mouseleave', () => {
+            newAction.style.transform = 'translateY(0)';
+            newAction.style.boxShadow = 'none';
+        });
+    });
+    
+    updateLastUpdateTime();
+    
+    previousData = {
+        totalProducts: parseInt(document.getElementById('totalProductsValue')?.innerText || '0'),
+        totalOrders: parseInt(document.getElementById('totalOrdersValue')?.innerText || '0'),
+        totalIncome: parseFloat(document.getElementById('totalIncomeValue')?.innerText.replace('₱', '').replace(/,/g, '') || '0'),
+        totalUsers: parseInt(document.getElementById('totalUsersValue')?.innerText || '0'),
+        totalAdmins: parseInt(document.getElementById('totalAdminsValue')?.innerText || '0'),
+        totalStaff: parseInt(document.getElementById('totalStaffValue')?.innerText || '0'),
+        todayOrders: parseInt(document.getElementById('todayOrdersValue')?.innerText || '0'),
+        todaySales: parseFloat(document.getElementById('todaySalesValue')?.innerText.replace('₱', '').replace(/,/g, '') || '0'),
+        avgOrderValue: parseFloat(document.getElementById('avgOrderValueValue')?.innerText.replace('₱', '').replace(/,/g, '') || '0'),
+        lowStockCount: parseInt(document.getElementById('lowStockCountValue')?.innerText || '0')
+    };
+    
+    // Initial fetch
+    setTimeout(() => manualRefresh(), 500);
+}
+
+// Chart initialization function
 function renderCharts() {
     if (typeof Chart === 'undefined') {
         console.log('Chart.js not loaded yet, retrying...');
@@ -1614,7 +2136,17 @@ function renderCharts() {
         return;
     }
     
-    destroyCharts();
+    // Destroy existing charts safely
+    Object.keys(chartInstances).forEach(key => {
+        if (chartInstances[key]) {
+            try {
+                chartInstances[key].destroy();
+            } catch (e) {
+                console.error('Error destroying chart:', e);
+            }
+        }
+    });
+    chartInstances = {};
     
     setTimeout(() => {
         const salesCtx = document.getElementById('salesTrendChart');
@@ -1730,6 +2262,8 @@ function renderCharts() {
                 console.error('Error creating stock chart:', e);
             }
         }
+        
+        lastHeartbeat = Date.now();
     }, 100);
 }
 
@@ -1744,7 +2278,6 @@ function initializeDropdown() {
     const changePicBtn = document.getElementById('changeProfilePicBtn');
     
     if (profileHeader && profileDropdown) {
-        // Remove existing listeners by cloning
         const newHeader = profileHeader.cloneNode(true);
         profileHeader.parentNode.replaceChild(newHeader, profileHeader);
         const newProfileHeader = document.getElementById('profileHeader');
@@ -1781,6 +2314,82 @@ function initializeDropdown() {
     }
 }
 
+// Mobile sidebar initialization
+let sidebarInitialized = false;
+
+function initMobileSidebar() {
+    if (sidebarInitialized) return;
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    function openSidebar() {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    const newToggle = menuToggle.cloneNode(true);
+    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+    const newMenuToggle = document.getElementById('menuToggle');
+    
+    newMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    
+    if (overlay) {
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        const newOverlayEl = document.getElementById('sidebarOverlay');
+        newOverlayEl.addEventListener('click', closeSidebar);
+    }
+    
+    document.addEventListener('click', function(e) {
+        const currentSidebar = document.getElementById('sidebar');
+        const currentMenuToggle = document.getElementById('menuToggle');
+        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const currentSidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        }
+    });
+    
+    sidebarInitialized = true;
+}
+
+// Display flash messages
+function initFlashMessages() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            showToast('{{ message|escape('js') }}', '{{ label }}');
+        {% endfor %}
+    {% endfor %}
+}
+
+// Upload modal function
 function showUploadModal() {
     const existingModal = document.getElementById('uploadModal');
     if (existingModal) existingModal.remove();
@@ -1978,48 +2587,11 @@ function showUploadModal() {
     });
 }
 
-// Initialize all dashboard functionality
-function initializeDashboard() {
-    initializeDropdown();
-    renderCharts();
-    
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        const newCard = card.cloneNode(true);
-        card.parentNode.replaceChild(newCard, card);
-        
-        newCard.addEventListener('mouseenter', () => {
-            newCard.style.transform = 'translateY(-5px)';
-            newCard.style.boxShadow = '0 8px 25px rgba(0,0,0,0.12)';
-        });
-        
-        newCard.addEventListener('mouseleave', () => {
-            newCard.style.transform = 'translateY(0)';
-            newCard.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-        });
-    });
-
-    const quickActions = document.querySelectorAll('.quick-actions a, [class*="quick-actions"] a, .activity-grid a');
-    quickActions.forEach(action => {
-        const newAction = action.cloneNode(true);
-        action.parentNode.replaceChild(newAction, action);
-        
-        newAction.addEventListener('mouseenter', () => {
-            newAction.style.transform = 'translateY(-3px)';
-            newAction.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
-        });
-        
-        newAction.addEventListener('mouseleave', () => {
-            newAction.style.transform = 'translateY(0)';
-            newAction.style.boxShadow = 'none';
-        });
-    });
-}
-
 // Main initialization function
 function initAll() {
     initMobileSidebar();
     initFlashMessages();
+    renderCharts();
     initializeDashboard();
 }
 
@@ -2028,27 +2600,20 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation (for Symfony Turbo)
+// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
-    // Reset flags for Turbo navigation
     sidebarInitialized = false;
     dropdownInitialized = false;
     chartInstances = {};
     
-    setTimeout(initAll, 100);
-});
-
-// Handle page visibility change
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        setTimeout(() => {
-            Object.values(chartInstances).forEach(chart => {
-                if (chart && chart.resize) {
-                    chart.resize();
-                }
-            });
-        }, 100);
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
     }
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
+    
+    setTimeout(initAll, 100);
 });
 
 let resizeTimeout;
@@ -2061,6 +2626,16 @@ window.addEventListener('resize', function() {
             }
         });
     }, 100);
+});
+
+// Clean up on page unload
+window.addEventListener('beforeunload', function() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
 });
 </script>
 {% endblock %}

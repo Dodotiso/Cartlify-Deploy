@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cartlify | Stock Details{% endblock %}
+{% block title %}Cartlify | Product Details{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 /* --- Body & Sidebar --- */
 body {
@@ -526,7 +526,7 @@ body {
     opacity: 0.9;
 }
 
-/* --- Product Details - EXACT MATCH --- */
+/* --- Product Details - Fixed Image --- */
 .product-details {
     background: #fff;
     padding: 30px;
@@ -540,11 +540,13 @@ body {
 .product-details img {
     width: 250px;
     height: 250px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 10px;
     margin-bottom: 15px;
     border: 3px solid #f8f9fa;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #f8f9fa;
+    padding: 10px;
 }
 
 .product-details h2 {
@@ -589,255 +591,142 @@ body {
 .btn-primary {
     background: #007bff;
 }
+.btn-primary:hover {
+    background:#0056b3; 
+}
 
 .btn-warning {
-    background: #ffc107;
-    color: #000;
-}
-
-.stock-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.stock-low {
-    background: #dc3545;
+    background: #6c757d;
     color: white;
 }
 
-.stock-medium {
-    background: #ffc107;
-    color: #212529;
+.btn-warning:hover {
+   background:#5a6268; 
 }
 
-.stock-high {
-    background: #28a745;
-    color: white;
-}
-
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
-
-/* Tablet Devices - 768px and below */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     body {
         padding-top: 70px;
     }
-    
     .menu-toggle {
         display: block;
     }
-    
     .header {
         left: 0 !important;
         height: 70px;
         padding: 0 15px;
         z-index: 100;
     }
-    
     .header h1 {
         font-size: 16px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         width: 260px;
         z-index: 1000;
     }
-    
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
     .sidebar.mobile-open:hover {
         width: 260px;
     }
-    
     .sidebar.mobile-open a span {
         display: inline;
     }
-    
     .sidebar.mobile-open .logo img {
         height: 80px;
     }
-    
     .main-content {
         margin-left: 0 !important;
         padding: 15px;
     }
-    
     .sidebar:hover ~ .header,
     .sidebar:hover ~ .main-content {
         left: 0;
         margin-left: 0;
     }
-    
     .profile-name, .dropdown-icon {
         display: none;
     }
-    
     .product-details {
         padding: 20px;
         margin: 0 10px;
     }
-    
     .product-details img {
         width: 180px;
         height: 180px;
     }
-    
     .product-details p {
         font-size: 14px;
     }
-    
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
-    
     .action-buttons {
         flex-direction: column;
         gap: 10px;
     }
-    
     .btn {
         justify-content: center;
         padding: 10px 16px;
     }
 }
 
-/* Mobile Devices - 480px and below */
 @media (max-width: 480px) {
     body {
         padding-top: 60px;
     }
-    
     .header {
         height: 60px;
         padding: 0 12px;
     }
-    
     .header h1 {
         font-size: 14px;
     }
-    
     .main-content {
         padding: 10px;
     }
-    
     .product-details {
         padding: 15px;
         margin: 0;
     }
-    
     .product-details img {
         width: 150px;
         height: 150px;
     }
-    
     .product-details h2 {
         font-size: 18px;
         margin-bottom: 10px;
     }
-    
     .product-details p {
         font-size: 13px;
         margin: 8px 0;
     }
-    
     .btn {
         padding: 8px 14px;
         font-size: 13px;
     }
-    
-    .stock-badge {
-        font-size: 12px;
-        padding: 3px 8px;
-    }
-    
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    
-    .toast {
-        min-width: auto;
-        width: 100%;
-    }
 }
 
-/* Small Mobile - 375px and below */
-@media (max-width: 375px) {
-    .product-details img {
-        width: 120px;
-        height: 120px;
-    }
-    
-    .product-details h2 {
-        font-size: 16px;
-    }
-    
-    .product-details p {
-        font-size: 12px;
-    }
-    
-    .btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-}
-
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .product-details {
-        max-width: 90%;
-        margin: 0 auto;
-    }
-    
-    .product-details img {
-        width: 150px;
-        height: 150px;
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
     .sidebar {
         transform: translateX(0) !important;
     }
-    
     .menu-toggle {
         display: none !important;
     }
-    
     .sidebar-overlay {
         display: none !important;
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
 {% if is_granted('ROLE_ADMIN') %}
-<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
@@ -879,7 +768,6 @@ body {
         <span>Logout</span>
     </a>
 </div>
-
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -916,7 +804,6 @@ body {
 </div>
 {% endif %}
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {# Profile Section #}
@@ -931,15 +818,13 @@ body {
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
 
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <i class="fas fa-boxes"></i> Stock Details
+        <i class="fas fa-boxes"></i> Product Details
     </h1>
-
     <div class="profile-wrapper">
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
@@ -952,7 +837,6 @@ body {
             <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
@@ -974,93 +858,43 @@ body {
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content -->
 <div class="main-content">
     <div class="product-details">
-        {% if stock.product.image %}
-            {% set imagePath = stock.product.image %}
+        {% if product.image %}
+            {% set imagePath = product.image %}
             {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
                 {% set imagePath = '/uploads/' ~ imagePath %}
             {% endif %}
-            <img src="{{ imagePath }}" alt="{{ stock.product.name }}" 
+            <img src="{{ imagePath }}" alt="{{ product.name }}" 
                  onerror="this.onerror=null; this.src='{{ asset('images/no-image.png') }}'; this.alt='Image not available';">
         {% else %}
             <img src="{{ asset('images/no-image.png') }}" alt="No Image">
         {% endif %}
         
-        <h2>{{ stock.product.name }}</h2>
-        <p>{{ stock.product.description }}</p>
-        <p><strong>Stock Quantity:</strong> 
-            {% if stock.stock < 10 %}
-                <span class="stock-badge stock-low"><i class="fas fa-exclamation-triangle"></i> {{ stock.stock }} (Low Stock)</span>
-            {% elseif stock.stock < 20 %}
-                <span class="stock-badge stock-medium"><i class="fas fa-chart-line"></i> {{ stock.stock }}</span>
-            {% else %}
-                <span class="stock-badge stock-high"><i class="fas fa-check-circle"></i> {{ stock.stock }}</span>
-            {% endif %}
-        </p>
-        <p><strong>Price:</strong> ₱{{ stock.product.price|number_format(2,'.',',') }}</p>
-        <p><strong>Category:</strong> {{ stock.product.category ? stock.product.category.category : 'N/A' }}</p>
-        <p><strong>ID:</strong> {{ stock.product.id }}</p>
-        <p><strong>Created:</strong> {{ stock.product.createdAt ? stock.product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p><strong>Price:</strong> ₱{{ product.price|number_format(2,'.',',') }}</p>
+        <p><strong>Category:</strong> {{ product.category ? product.category.category : 'N/A' }}</p>
+        <p><strong>ID:</strong> {{ product.id }}</p>
+        <p><strong>Created:</strong> {{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
 
         <div class="action-buttons">
-            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Edit Stock
+            <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Product
             </a>
-            <a href="{{ path('app_stock_index') }}" class="btn btn-warning">
-                <i class="fas fa-arrow-left"></i> Back to Stocks
+            <a href="{{ path('app_product_index') }}" class="btn btn-warning">
+                <i class="fas fa-arrow-left"></i> Back to Products
             </a>
         </div>
     </div>
 </div>
 
-<!-- Add Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <script>
-// Toast Notification System
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1126,16 +960,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
-// Profile dropdown
 let dropdownInitialized = false;
 
 function initializeDropdown() {
@@ -1244,11 +1068,11 @@ function showUploadModal() {
         if (file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
+                window.showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1281,7 +1105,7 @@ function showUploadModal() {
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
             if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
+                window.showToast('File size must be less than 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -1327,25 +1151,25 @@ function showUploadModal() {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
+                        window.showToast('Profile picture updated successfully!', 'success');
                         modal.classList.remove('show');
                         setTimeout(() => modal.remove(), 300);
                     } else {
-                        showToast(response.message || 'Upload failed', 'error');
+                        window.showToast(response.message || 'Upload failed', 'error');
                         resetUpload();
                     }
                 } catch (e) {
-                    showToast('Invalid server response', 'error');
+                    window.showToast('Invalid server response', 'error');
                     resetUpload();
                 }
             } else {
-                showToast('Upload failed. Please try again.', 'error');
+                window.showToast('Upload failed. Please try again.', 'error');
                 resetUpload();
             }
         });
         
         xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
+            window.showToast('Network error. Please try again.', 'error');
             resetUpload();
         });
         
@@ -1379,23 +1203,32 @@ function showUploadModal() {
     });
 }
 
-// Initialize all
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES - Display with 500ms delay -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

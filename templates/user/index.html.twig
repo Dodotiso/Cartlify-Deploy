@@ -671,6 +671,31 @@ body {
     background: #6c757d;
 }
 
+/* Last Active Badge - SAME SIZE AND STYLE AS ROLE BADGE */
+.last-active-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.last-active-online {
+    background: #28a745;
+    color: white;
+}
+
+.last-active-recent {
+    background: #ffc107;
+    color: #212529;
+}
+
+.last-active-old {
+    background: #6c757d;
+    color: white;
+}
+
 /* User Stats */
 .user-stats {
     display: flex;
@@ -1056,6 +1081,11 @@ body {
         padding: 4px 10px;
     }
     
+    .last-active-badge {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    
     .stat-value {
         font-size: 16px;
     }
@@ -1264,6 +1294,40 @@ body {
                 {% set avatarLetter = user.username|first|upper %}
                 {% set hasUserProfilePic = user.profilePicture is defined and user.profilePicture is not null %}
                 
+                {# Calculate last active status - 5 minutes active now #}
+                {% set lastActive = user.lastActive %}
+                {% set isOnline = false %}
+                {% set isRecent = false %}
+                {% set activeText = 'Never Active' %}
+                {% set activeIcon = 'fa-calendar' %}
+                
+                {% if lastActive %}
+                    {% set nowDate = date() %}
+                    {% set diffSeconds = nowDate.timestamp - lastActive.timestamp %}
+                    {% set diffMinutes = (diffSeconds / 60)|round(0, 'floor') %}
+                    {% set diffHours = (diffSeconds / 3600)|round(0, 'floor') %}
+                    {% set diffDays = (diffSeconds / 86400)|round(0, 'floor') %}
+                    
+                    {% if diffMinutes < 5 %}
+                        {% set isOnline = true %}
+                        {% set activeText = 'Active Now' %}
+                        {% set activeIcon = 'fa-circle' %}
+                    {% elseif diffHours < 1 %}
+                        {% set isRecent = true %}
+                        {% set activeText = 'Active ' ~ diffMinutes ~ ' min ago' %}
+                        {% set activeIcon = 'fa-clock' %}
+                    {% elseif diffDays < 1 %}
+                        {% set activeText = 'Active ' ~ diffHours ~ ' hours ago' %}
+                        {% set activeIcon = 'fa-clock' %}
+                    {% elseif diffDays == 1 %}
+                        {% set activeText = 'Active yesterday' %}
+                        {% set activeIcon = 'fa-calendar' %}
+                    {% else %}
+                        {% set activeText = 'Active ' ~ diffDays ~ ' days ago' %}
+                        {% set activeIcon = 'fa-calendar' %}
+                    {% endif %}
+                {% endif %}
+                
                 <div class="user-card">
                     <div class="user-card-header {{ roleClass }}-bg">
                         <div class="user-avatar-large user-avatar-{{ roleClass }}">
@@ -1278,9 +1342,20 @@ body {
                     </div>
                     
                     <div class="user-card-body">
-                        <div class="role-badge-simple role-badge-{{ roleClass }}">
-                            <i class="fas fa-{{ userRole == 'ROLE_ADMIN' ? 'crown' : (userRole == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
-                            {{ userRole|replace({'ROLE_': ''}) }}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+                            <div class="role-badge-simple role-badge-{{ roleClass }}">
+                                <i class="fas fa-{{ userRole == 'ROLE_ADMIN' ? 'crown' : (userRole == 'ROLE_STAFF' ? 'user-tie' : 'user') }}"></i>
+                                {{ userRole|replace({'ROLE_': ''}) }}
+                            </div>
+                            
+                            {# Last Active Status - SAME SIZE AND STYLE AS ROLE BADGE #}
+                            <div class="last-active-badge 
+                                {% if isOnline %}last-active-online
+                                {% elseif isRecent %}last-active-recent
+                                {% else %}last-active-old{% endif %}">
+                                <i class="fas {{ activeIcon }}"></i>
+                                {{ activeText }}
+                            </div>
                         </div>
                         
                         <div class="user-stats">
@@ -1305,7 +1380,8 @@ body {
                             </a>
                             <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" 
                                   style="flex: 1;" 
-                                  onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                  onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                  data-turbo="false">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
                                 <button type="submit" class="btn-action-simple btn-delete-simple" style="width: 100%;">
                                     <i class="fas fa-trash-alt"></i> Delete
@@ -1373,7 +1449,7 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1437,15 +1513,6 @@ function initMobileSidebar() {
     });
     
     sidebarInitialized = true;
-}
-
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
 }
 
 // Profile dropdown
@@ -1695,20 +1762,97 @@ function showUploadModal() {
 // Initialize all
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
-// Initialize on page load
+// Function to update current user's last active status
+function updateMyLastActive() {
+    fetch('/last-active/update', {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update current user's badge if visible
+            const currentUsername = '{{ app.user.username }}';
+            const userCards = document.querySelectorAll('.user-card');
+            
+            userCards.forEach(card => {
+                const userNameElement = card.querySelector('.user-name');
+                if (userNameElement && userNameElement.textContent === currentUsername) {
+                    const badge = card.querySelector('.last-active-badge');
+                    if (badge) {
+                        badge.innerHTML = '<i class="fas fa-circle"></i> Active Now';
+                        badge.className = 'last-active-badge last-active-online';
+                    }
+                }
+            });
+        }
+    })
+    .catch(console.error);
+}
+
+// Refresh all users' active status
+function refreshAllActiveStatus() {
+    fetch(window.location.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newCards = doc.querySelectorAll('.user-card');
+        const currentCards = document.querySelectorAll('.user-card');
+        
+        if (newCards.length === currentCards.length) {
+            newCards.forEach((newCard, index) => {
+                const currentCard = currentCards[index];
+                if (currentCard) {
+                    const newBadge = newCard.querySelector('.last-active-badge');
+                    const currentBadge = currentCard.querySelector('.last-active-badge');
+                    if (newBadge && currentBadge) {
+                        currentBadge.innerHTML = newBadge.innerHTML;
+                        currentBadge.className = newBadge.className;
+                    }
+                }
+            });
+        }
+    })
+    .catch(() => {});
+}
+
+// Start update cycles
+setTimeout(updateMyLastActive, 1000);
+setInterval(updateMyLastActive, 30000);
+setInterval(refreshAllActiveStatus, 30000);
+
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initAll, 100);
 });
 
-// Handle Turbo navigation
 document.addEventListener('turbo:load', function() {
     sidebarInitialized = false;
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

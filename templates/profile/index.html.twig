@@ -2,15 +2,15 @@
 
 {% block title %}Cartlify | My Profile{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
 
 /* --- Sidebar & Header --- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #343a40;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f7fa;
+    color: #1e293b;
     padding-top: 80px;
 }
 
@@ -20,7 +20,7 @@ body {
     left: 0;
     height: 100%;
     width: 60px;
-    background-color: #1f2a44;
+    background: #1f2a44;
     padding-top: 30px;
     display: flex;
     flex-direction: column;
@@ -32,26 +32,26 @@ body {
 .sidebar:hover { width: 220px; }
 
 .sidebar .logo {
-    display:flex;
-    justify-content:center;
-    margin-bottom:40px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
 }
 
 .sidebar .logo img {
-    height:48px;
+    height: 48px;
     transition: height 0.3s;
 }
 
-.sidebar:hover .logo img { height:128px; }
+.sidebar:hover .logo img { height: 128px; }
 
 .sidebar a {
-    display:flex;
-    align-items:center;
-    padding:15px 15px;
-    text-decoration:none;
-    color:#fff;
-    font-weight:500;
-    border-left:4px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    border-left: 4px solid transparent;
     transition: all 0.3s;
 }
 
@@ -62,19 +62,19 @@ body {
 }
 
 .sidebar a span { 
-    display:none;
+    display: none;
     margin-left: 20px;
     white-space: nowrap;
 }
 
 .sidebar:hover a span {
-    display:inline;
-    opacity:1;
+    display: inline;
+    opacity: 1;
 }
 
 .sidebar a:hover {
-    background-color:#34495e;
-    border-left:4px solid #E64C3C;
+    background-color: #34495e;
+    border-left: 4px solid #E64C3C;
 }
 
 /* Mobile Sidebar Toggle Button */
@@ -119,12 +119,12 @@ body {
     left: 60px;
     right: 0;
     height: 80px;
-    background-color:#fff;
-    display:flex;
-    align-items:center;
+    background: #fff;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding:0 30px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    padding: 0 30px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: left 0.3s;
     z-index: 99;
 }
@@ -134,12 +134,12 @@ body {
 /* --- Main Content --- */
 .main-content {
     margin-left: 60px;
-    padding:30px;
+    padding: 30px;
     transition: margin-left 0.3s;
     min-height: calc(100vh - 80px);
 }
 
-.sidebar:hover ~ .main-content { margin-left:220px; }
+.sidebar:hover ~ .main-content { margin-left: 220px; }
 
 /* --- Profile Dropdown (Matching Dashboard & Marketplace) --- */
 .profile-wrapper {
@@ -520,42 +520,65 @@ body {
     opacity: 0.9;
 }
 
-/* ---------------- PROFILE CARD DESIGN ---------------- */
+/* ---------------- PROFESSIONAL PROFILE DESIGN ---------------- */
 .profile-container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
 .profile-card {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     border: 1px solid #e9ecef;
 }
 
-/* Card Header */
-.card-header {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    padding: 30px;
-    text-align: center;
-    position: relative;
+/* Two Column Layout */
+.profile-two-column {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.profile-avatar-large {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+/* Left Column - Profile Picture, Username, Role */
+.profile-left {
+    flex: 0 0 320px;
+    background: linear-gradient(135deg, #1f2a44 0%, #2d3a5e 100%);
+    text-align: center;
+    padding: 40px 24px;
+}
+
+/* Right Column - Account Info, Security, Permissions */
+.profile-right {
+    flex: 1;
     background: white;
-    color: #667eea;
-    font-size: 42px;
-    font-weight: bold;
+    padding: 32px;
+}
+
+/* Profile Avatar Large - Clickable */
+.profile-avatar-large {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff, #6610f2);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
-    border: 3px solid rgba(255,255,255,0.3);
+    margin: 0 auto 20px;
+    border: 4px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.profile-avatar-large:hover {
+    transform: scale(1.02);
+}
+
+.profile-avatar-large:hover .profile-avatar-overlay {
+    opacity: 1;
 }
 
 .profile-avatar-large img {
@@ -564,136 +587,216 @@ body {
     object-fit: cover;
 }
 
-.profile-name-large {
-    margin-top: 15px;
+.profile-avatar-large i {
+    font-size: 70px;
     color: white;
 }
 
-.profile-name-large h2 {
-    margin: 0 0 5px 0;
-    font-size: 22px;
-    font-weight: 600;
-    word-break: break-word;
+.profile-avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 50%;
 }
 
-.profile-name-large span {
-    font-size: 13px;
-    opacity: 0.9;
+.profile-avatar-overlay i {
+    font-size: 32px;
+    color: white;
+}
+
+/* Profile Name */
+.profile-left-name {
+    color: white;
+}
+
+.profile-left-name h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+    word-break: break-word;
 }
 
 /* Role Badge */
 .role-badge-large {
     display: inline-block;
-    padding: 5px 15px;
+    padding: 6px 16px;
     border-radius: 30px;
     font-size: 12px;
     font-weight: 600;
-    margin-top: 10px;
     background: rgba(255,255,255,0.2);
+    color: white;
 }
 
-/* Card Body */
-.card-body {
-    padding: 30px;
-}
-
-/* Stats Row */
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.stat-box {
-    text-align: center;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.stat-number {
-    font-size: 26px;
-    font-weight: 700;
-    color: #667eea;
-    line-height: 1.2;
-}
-
-.stat-label {
+.role-badge-large i {
+    margin-right: 6px;
     font-size: 12px;
-    color: #6c757d;
-    margin-top: 5px;
 }
 
-/* Info Grid */
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.info-card {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid #e9ecef;
-}
-
-.info-card h3 {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #495057;
-    display: flex;
+/* Active Status Badge - Green with Pulse */
+.active-status-badge {
+    display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-top: 16px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 40px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.info-card h3 i {
-    color: #667eea;
+.active-status-dot {
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
 }
 
-.info-item {
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.active-status-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+/* User Stats in Left Column */
+.user-stats-left {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    justify-content: space-around;
+}
+
+.stat-item-left {
+    text-align: center;
+    color: white;
+}
+
+.stat-number-left {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.stat-label-left {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Right Column Sections */
+.info-section {
+    margin-bottom: 28px;
+}
+
+.info-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1f2a44;
+}
+
+.info-section h3 i {
+    color: #007bff;
+    font-size: 18px;
+}
+
+.info-grid-two {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.info-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #e9ecef;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
 }
 
-.info-item:last-child {
-    border-bottom: none;
-}
-
-.info-item label {
+.info-row label {
     font-weight: 500;
     color: #6c757d;
     font-size: 13px;
 }
 
-.info-item span {
+.info-row span {
     color: #343a40;
     font-weight: 500;
     font-size: 13px;
 }
 
-/* Action Buttons */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-active {
+    color: #28a745;
+}
+
+.permission-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.permission-yes {
+    background: #d4edda;
+    color: #155724;
+}
+
+.permission-no {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Action Buttons - Moved to Right Side */
 .action-buttons {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     justify-content: flex-end;
-    padding-top: 20px;
+    margin-top: 28px;
+    padding-top: 24px;
     border-top: 1px solid #e9ecef;
     flex-wrap: wrap;
 }
 
 .btn-custom {
     padding: 10px 24px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
     border: none;
@@ -702,11 +805,21 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
 }
 
 .btn-custom:hover {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-custom-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-custom-warning:hover {
+    background: #e0a800;
 }
 
 .btn-custom-primary {
@@ -714,12 +827,51 @@ body {
     color: white;
 }
 
-.btn-custom-warning {
-    background: #ffc107;
-    color: #343a40;
+.btn-custom-primary:hover {
+    background: #0056b3;
 }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablet Devices - 992px and below */
+@media (max-width: 992px) {
+    .profile-two-column {
+        flex-direction: column;
+    }
+    
+    .profile-left {
+        flex: auto;
+        width: 100%;
+        padding: 32px 20px;
+    }
+    
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-avatar-large i {
+        font-size: 50px;
+    }
+    
+    .profile-left-name h2 {
+        font-size: 20px;
+    }
+    
+    .user-stats-left {
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .info-grid-two {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+    }
+}
 
 /* Tablet Devices - 768px and below */
 @media (max-width: 768px) {
@@ -781,27 +933,23 @@ body {
         display: none;
     }
     
-    .stats-row {
-        grid-template-columns: 1fr;
-        gap: 10px;
+    .profile-right {
+        padding: 20px;
     }
     
-    .info-grid {
-        grid-template-columns: 1fr;
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
     
     .action-buttons {
         flex-direction: column;
-        justify-content: stretch;
     }
     
     .btn-custom {
         justify-content: center;
         width: 100%;
-    }
-    
-    .profile-dropdown {
-        right: 15px;
     }
     
     .toast {
@@ -812,28 +960,6 @@ body {
     .toast-container {
         top: 80px;
         right: 15px;
-    }
-    
-    .card-header {
-        padding: 20px;
-    }
-    
-    .profile-avatar-large {
-        width: 80px;
-        height: 80px;
-        font-size: 32px;
-    }
-    
-    .profile-name-large h2 {
-        font-size: 18px;
-    }
-    
-    .card-body {
-        padding: 20px;
-    }
-    
-    .stat-number {
-        font-size: 22px;
     }
 }
 
@@ -856,39 +982,38 @@ body {
         padding: 10px;
     }
     
-    .profile-avatar-large {
-        width: 70px;
-        height: 70px;
-        font-size: 28px;
+    .profile-left {
+        padding: 24px 16px;
     }
     
-    .profile-name-large h2 {
-        font-size: 16px;
+    .profile-avatar-large {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-left-name h2 {
+        font-size: 18px;
     }
     
     .role-badge-large {
-        font-size: 10px;
-        padding: 4px 10px;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-    
-    .stat-number {
-        font-size: 20px;
-    }
-    
-    .stat-label {
         font-size: 11px;
+        padding: 4px 12px;
     }
     
-    .info-card h3 {
-        font-size: 13px;
+    .stat-number-left {
+        font-size: 18px;
     }
     
-    .info-item label,
-    .info-item span {
+    .stat-label-left {
+        font-size: 10px;
+    }
+    
+    .info-section h3 {
+        font-size: 14px;
+    }
+    
+    .info-row label,
+    .info-row span {
         font-size: 12px;
     }
     
@@ -919,21 +1044,19 @@ body {
         padding: 15px;
     }
     
-    .stats-row {
-        grid-template-columns: repeat(3, 1fr);
+    .profile-left {
+        padding: 20px;
     }
     
-    .info-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .profile-avatar-large {
+        width: 70px;
+        height: 70px;
     }
     
-    .action-buttons {
-        flex-direction: row;
-    }
-    
-    .btn-custom {
-        width: auto;
-        flex: 1;
+    .user-stats-left {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
     }
 }
 
@@ -952,7 +1075,11 @@ body {
     }
 }
 </style>
+{% endblock %}
 
+{% block body %}
+{# Hidden element to store username safely #}
+<span id="currentUsername" style="display: none;">{{ app.user.username|default('User') }}</span>
 
 {% if is_granted('ROLE_ADMIN') %}
 
@@ -965,42 +1092,34 @@ body {
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
     <a href="{{ path('app_product_index') }}">
         <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
     <a href="{{ path('app_stock_index') }}">
         <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
     <a href="{{ path('app_order_new') }}">
         <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
-    
     <a href="{{ path('app_user_index') }}">
         <i class="fas fa-user-tie"></i>
         <span>Staff Management</span>
     </a>
-    
     <a href="{{ path('app_activity_log_index') }}">
         <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
     </a>
-    
     <a href="{{ path('app_profile_index') }}">
-        <i class="fas fa-user-circle"></i>
+        <i class="fas fa-user"></i>
         <span>My Profile</span>
     </a>
-    
     <a href="{{ path('app_logout') }}">
         <i class="fas fa-power-off"></i>
         <span>Logout</span>
@@ -1010,9 +1129,9 @@ body {
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Profile Section -->
+<!-- Profile Section Variables -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-{% set hasProfilePic = user.profilePicture is defined and user.profilePicture is not null %}
+{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
@@ -1021,12 +1140,7 @@ body {
     role == 'ROLE_ADMIN' ? 'crown' :
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    user.username|first|upper))
-%}
+{% set avatarLetter = app.user.username|first|upper %}
 
 <!-- Sticky Header -->
 <div class="header">
@@ -1041,33 +1155,28 @@ body {
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
                 {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ user.profilePicture) }}" alt="{{ user.username }}">
+                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
                 {% else %}
                     {{ avatarLetter }}
                 {% endif %}
             </div>
-            <span class="profile-name">{{ user.username }}</span>
+            <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <!-- Dropdown Menu - Same as Marketplace -->
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
-            
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
                 <i class="fas fa-user-circle"></i>
                 <span>My Profile</span>
             </a>
-            
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i>
                 <span>Change Picture</span>
             </a>
-            
             <div class="dropdown-divider"></div>
-            
             <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
@@ -1086,123 +1195,173 @@ body {
 
 <!-- Main Content -->
 <div class="main-content">
-
-<div class="profile-container">
-    <div class="profile-card">
-        
-        <!-- Card Header with Gradient -->
-        <div class="card-header">
-            <div class="profile-avatar-large">
-                {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ user.profilePicture) }}" alt="{{ user.username }}">
-                {% else %}
-                    <i class="fas fa-user"></i>
-                {% endif %}
-            </div>
-            <div class="profile-name-large">
-                <h2>{{ user.username }}</h2>
-                <div class="role-badge-large">
-                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card Body -->
-        <div class="card-body">
-            
-            <!-- Stats Row -->
-            <div class="stats-row">
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.roles|length }}</div>
-                    <div class="stat-label">Roles</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.createdAt|date('d') }}</div>
-                    <div class="stat-label">Joined Day</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.createdAt|date('M Y') }}</div>
-                    <div class="stat-label">Joined Month</div>
-                </div>
-            </div>
-            
-            <!-- Info Grid -->
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3><i class="fas fa-user-circle"></i> Account Information</h3>
-                    <div class="info-item">
-                        <label>Username</label>
-                        <span>{{ user.username }}</span>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-two-column">
+                
+                <!-- LEFT COLUMN - Profile Picture, Username, Role, Active Status (Clickable Profile Picture) -->
+                <div class="profile-left">
+                    <div class="profile-avatar-large" id="profileAvatarTrigger">
+                        {% if hasProfilePic %}
+                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                        {% else %}
+                            <i class="fas fa-user-circle"></i>
+                        {% endif %}
+                        <div class="profile-avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>User ID</label>
-                        <span>#{{ user.id }}</span>
+                    <div class="profile-left-name">
+                        <h2>{{ app.user.username }}</h2>
+                        <div class="role-badge-large">
+                            <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                        </div>
+                        <div class="active-status-badge">
+                            <div class="active-status-dot"></div>
+                            <span class="active-status-text">Active Now</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>Created Date</label>
-                        <span>{{ user.createdAt|date('F d, Y H:i:s') }}</span>
+                    <div class="user-stats-left">
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.roles|length }}</div>
+                            <div class="stat-label-left">Roles</div>
+                        </div>
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
+                            <div class="stat-label-left">Joined Day</div>
+                        </div>
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
+                            <div class="stat-label-left">Joined Month</div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="info-card">
-                    <h3><i class="fas fa-shield-alt"></i> Security</h3>
-                    <div class="info-item">
-                        <label>Account Status</label>
-                        <span style="color: #28a745;"><i class="fas fa-circle" style="font-size: 10px;"></i> Active</span>
+                
+                <!-- RIGHT COLUMN - Account Information, Security, Permissions -->
+                <div class="profile-right">
+                    
+                    <!-- Account Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-user-circle"></i> Account Information</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Username</label>
+                                <span>{{ app.user.username }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>User ID</label>
+                                <span>#{{ app.user.id }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Created Date</label>
+                                <span>{{ app.user.createdAt|date('F d, Y H:i:s') }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Last Active</label>
+                                <span>{{ app.user.lastActive ? app.user.lastActive|date('F d, Y H:i:s') : 'Never' }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>User Role</label>
-                        <span>{{ userRoleName }}</span>
+                    
+                    <!-- Security -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-shield-alt"></i> Security</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Account Status</label>
+                                <span class="status-badge status-active"><i class="fas fa-circle" style="font-size: 10px;"></i> Active</span>
+                            </div>
+                            <div class="info-row">
+                                <label>User Role</label>
+                                <span>{{ userRoleName }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Password</label>
+                                <span>••••••••</span>
+                            </div>
+                            <div class="info-row">
+                                <label>2FA Status</label>
+                                <span class="status-badge status-active"><i class="fas fa-lock"></i> Disabled</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>Password</label>
-                        <span>••••••••</span>
+                    
+                    <!-- Permissions -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-key"></i> Permissions</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Access Level</label>
+                                <span>
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        Full System Access
+                                    {% elseif 'ROLE_STAFF' in app.user.roles %}
+                                        Staff Access
+                                    {% else %}
+                                        Limited Access
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <label>Dashboard Access</label>
+                                <span class="permission-badge permission-yes"><i class="fas fa-check-circle"></i> Available</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Products Management</label>
+                                <span class="permission-badge {% if 'ROLE_ADMIN' in app.user.roles or 'ROLE_STAFF' in app.user.roles %}permission-yes{% else %}permission-no{% endif %}">
+                                    {% if 'ROLE_ADMIN' in app.user.roles or 'ROLE_STAFF' in app.user.roles %}
+                                        <i class="fas fa-check-circle"></i> Yes
+                                    {% else %}
+                                        <i class="fas fa-times-circle"></i> No
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <label>Stocks Management</label>
+                                <span class="permission-badge {% if 'ROLE_ADMIN' in app.user.roles or 'ROLE_STAFF' in app.user.roles %}permission-yes{% else %}permission-no{% endif %}">
+                                    {% if 'ROLE_ADMIN' in app.user.roles or 'ROLE_STAFF' in app.user.roles %}
+                                        <i class="fas fa-check-circle"></i> Yes
+                                    {% else %}
+                                        <i class="fas fa-times-circle"></i> No
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <label>User Management</label>
+                                <span class="permission-badge {% if 'ROLE_ADMIN' in app.user.roles %}permission-yes{% else %}permission-no{% endif %}">
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <i class="fas fa-check-circle"></i> Yes
+                                    {% else %}
+                                        <i class="fas fa-times-circle"></i> No
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <label>Activity Logs</label>
+                                <span class="permission-badge {% if 'ROLE_ADMIN' in app.user.roles %}permission-yes{% else %}permission-no{% endif %}">
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <i class="fas fa-check-circle"></i> Yes
+                                    {% else %}
+                                        <i class="fas fa-times-circle"></i> No
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons - Moved to Right Side -->
+                    <div class="action-buttons">
+                        <a href="{{ path('app_profile_edit') }}" class="btn-custom btn-custom-warning">
+                            <i class="fas fa-key"></i> Change Password
+                        </a>
+                        <a href="{{ path('app_dashboard') }}" class="btn-custom btn-custom-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
                     </div>
                 </div>
-
-                <div class="info-card">
-                    <h3><i class="fas fa-key"></i> Permissions</h3>
-                    <div class="info-item">
-                        <label>Access Level</label>
-                        <span>
-                            {% if 'ROLE_ADMIN' in user.roles %}
-                                Full System Access
-                            {% elseif 'ROLE_STAFF' in user.roles %}
-                                Staff Access
-                            {% else %}
-                                Limited Access
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <label>Dashboard Access</label>
-                        <span><i class="fas fa-check-circle" style="color: #28a745;"></i> Available</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Products Management</label>
-                        <span>
-                            {% if 'ROLE_ADMIN' in user.roles or 'ROLE_STAFF' in user.roles %}
-                                <i class="fas fa-check-circle" style="color: #28a745;"></i> Yes
-                            {% else %}
-                                <i class="fas fa-times-circle" style="color: #dc3545;"></i> No
-                            {% endif %}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <a href="{{ path('app_profile_edit') }}" class="btn-custom btn-custom-warning">
-                    <i class="fas fa-key"></i> Change Password
-                </a>
-                <a href="{{ path('app_dashboard') }}" class="btn-custom btn-custom-primary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 {% elseif is_granted('ROLE_STAFF') %}
@@ -1216,32 +1375,26 @@ body {
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
     </a>
-    
     <a href="{{ path('app_product_index') }}">
         <i class="fas fa-shopping-bag"></i>
         <span>Products</span>
     </a>
-    
     <a href="{{ path('app_stock_index') }}">
         <i class="fas fa-boxes"></i>
         <span>Stocks</span>
     </a>
-    
     <a href="{{ path('app_order_new') }}">
         <i class="fas fa-shopping-cart"></i>
         <span>Marketplace</span>
     </a>
-    
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
         <span>Transactions</span>
     </a>
-    
     <a href="{{ path('app_profile_index') }}">
         <i class="fas fa-user-circle"></i>
         <span>My Profile</span>
     </a>
-    
     <a href="{{ path('app_logout') }}">
         <i class="fas fa-power-off"></i>
         <span>Logout</span>
@@ -1251,9 +1404,9 @@ body {
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Profile Section for Staff -->
+<!-- Profile Section Variables for Staff -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-{% set hasProfilePic = user.profilePicture is defined and user.profilePicture is not null %}
+{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = 
     role == 'ROLE_ADMIN' ? 'Administrator' :
     (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
@@ -1262,12 +1415,7 @@ body {
     role == 'ROLE_ADMIN' ? 'crown' :
     (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
 %}
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    user.username|first|upper))
-%}
+{% set avatarLetter = app.user.username|first|upper %}
 
 <!-- Sticky Header for Staff -->
 <div class="header">
@@ -1282,33 +1430,28 @@ body {
         <div class="profile-header" id="profileHeader">
             <div class="profile-avatar">
                 {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ user.profilePicture) }}" alt="{{ user.username }}">
+                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
                 {% else %}
                     {{ avatarLetter }}
                 {% endif %}
             </div>
-            <span class="profile-name">{{ user.username }}</span>
+            <span class="profile-name">{{ app.user.username }}</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <!-- Dropdown Menu - Same as Marketplace -->
         <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-role-header">
                 <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
             </div>
-            
             <a href="{{ path('app_profile_index') }}" class="dropdown-item">
                 <i class="fas fa-user-circle"></i>
                 <span>My Profile</span>
             </a>
-            
             <a href="#" class="dropdown-item" id="changeProfilePicBtn">
                 <i class="fas fa-camera"></i>
                 <span>Change Picture</span>
             </a>
-            
             <div class="dropdown-divider"></div>
-            
             <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
@@ -1327,109 +1470,141 @@ body {
 
 <!-- Main Content for Staff -->
 <div class="main-content">
-
-<div class="profile-container">
-    <div class="profile-card">
-        
-        <!-- Card Header with Gradient -->
-        <div class="card-header">
-            <div class="profile-avatar-large">
-                {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ user.profilePicture) }}" alt="{{ user.username }}">
-                {% else %}
-                    <i class="fas fa-user"></i>
-                {% endif %}
-            </div>
-            <div class="profile-name-large">
-                <h2>{{ user.username }}</h2>
-                <div class="role-badge-large">
-                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card Body -->
-        <div class="card-body">
-            
-            <!-- Stats Row -->
-            <div class="stats-row">
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.roles|length }}</div>
-                    <div class="stat-label">Roles</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.createdAt|date('d') }}</div>
-                    <div class="stat-label">Joined Day</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ user.createdAt|date('M Y') }}</div>
-                    <div class="stat-label">Joined Month</div>
-                </div>
-            </div>
-            
-            <!-- Info Grid -->
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3><i class="fas fa-user-circle"></i> Account Information</h3>
-                    <div class="info-item">
-                        <label>Username</label>
-                        <span>{{ user.username }}</span>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-two-column">
+                
+                <!-- LEFT COLUMN - Profile Picture, Username, Role, Active Status (Clickable Profile Picture) -->
+                <div class="profile-left">
+                    <div class="profile-avatar-large" id="profileAvatarTrigger">
+                        {% if hasProfilePic %}
+                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                        {% else %}
+                            <i class="fas fa-user-circle"></i>
+                        {% endif %}
+                        <div class="profile-avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>User ID</label>
-                        <span>#{{ user.id }}</span>
+                    <div class="profile-left-name">
+                        <h2>{{ app.user.username }}</h2>
+                        <div class="role-badge-large">
+                            <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                        </div>
+                        <div class="active-status-badge">
+                            <div class="active-status-dot"></div>
+                            <span class="active-status-text">Active Now</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>Created Date</label>
-                        <span>{{ user.createdAt|date('F d, Y H:i:s') }}</span>
+                    <div class="user-stats-left">
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.roles|length }}</div>
+                            <div class="stat-label-left">Roles</div>
+                        </div>
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
+                            <div class="stat-label-left">Joined Day</div>
+                        </div>
+                        <div class="stat-item-left">
+                            <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
+                            <div class="stat-label-left">Joined Month</div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="info-card">
-                    <h3><i class="fas fa-shield-alt"></i> Security</h3>
-                    <div class="info-item">
-                        <label>Account Status</label>
-                        <span style="color: #28a745;"><i class="fas fa-circle" style="font-size: 10px;"></i> Active</span>
+                
+                <!-- RIGHT COLUMN - Account Information, Security, Permissions -->
+                <div class="profile-right">
+                    
+                    <!-- Account Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-user-circle"></i> Account Information</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Username</label>
+                                <span>{{ app.user.username }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>User ID</label>
+                                <span>#{{ app.user.id }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Created Date</label>
+                                <span>{{ app.user.createdAt|date('F d, Y H:i:s') }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Last Active</label>
+                                <span>{{ app.user.lastActive ? app.user.lastActive|date('F d, Y H:i:s') : 'Never' }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>User Role</label>
-                        <span>{{ userRoleName }}</span>
+                    
+                    <!-- Security -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-shield-alt"></i> Security</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Account Status</label>
+                                <span class="status-badge status-active"><i class="fas fa-circle" style="font-size: 10px;"></i> Active</span>
+                            </div>
+                            <div class="info-row">
+                                <label>User Role</label>
+                                <span>{{ userRoleName }}</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Password</label>
+                                <span>••••••••</span>
+                            </div>
+                            <div class="info-row">
+                                <label>2FA Status</label>
+                                <span class="status-badge status-active"><i class="fas fa-lock"></i> Disabled</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <label>Password</label>
-                        <span>••••••••</span>
+                    
+                    <!-- Permissions -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-key"></i> Permissions</h3>
+                        <div class="info-grid-two">
+                            <div class="info-row">
+                                <label>Access Level</label>
+                                <span>Staff Access</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Dashboard Access</label>
+                                <span class="permission-badge permission-yes"><i class="fas fa-check-circle"></i> Available</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Products Management</label>
+                                <span class="permission-badge permission-yes"><i class="fas fa-check-circle"></i> Yes</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Stocks Management</label>
+                                <span class="permission-badge permission-yes"><i class="fas fa-check-circle"></i> Yes</span>
+                            </div>
+                            <div class="info-row">
+                                <label>User Management</label>
+                                <span class="permission-badge permission-no"><i class="fas fa-times-circle"></i> No</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Activity Logs</label>
+                                <span class="permission-badge permission-no"><i class="fas fa-times-circle"></i> No</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons - Moved to Right Side -->
+                    <div class="action-buttons">
+                        <a href="{{ path('app_profile_edit') }}" class="btn-custom btn-custom-warning">
+                            <i class="fas fa-key"></i> Change Password
+                        </a>
+                        <a href="{{ path('app_dashboard') }}" class="btn-custom btn-custom-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
                     </div>
                 </div>
-
-                <div class="info-card">
-                    <h3><i class="fas fa-key"></i> Permissions</h3>
-                    <div class="info-item">
-                        <label>Access Level</label>
-                        <span>Staff Access</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Dashboard Access</label>
-                        <span><i class="fas fa-check-circle" style="color: #28a745;"></i> Available</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Products Management</label>
-                        <span><i class="fas fa-check-circle" style="color: #28a745;"></i> Yes</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <a href="{{ path('app_profile_edit') }}" class="btn-custom btn-custom-warning">
-                    <i class="fas fa-key"></i> Change Password
-                </a>
-                <a href="{{ path('app_dashboard') }}" class="btn-custom btn-custom-primary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 {% endif %}
@@ -1471,7 +1646,7 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Mobile Sidebar Toggle - Fixed version
+// Mobile Sidebar Toggle
 let sidebarInitialized = false;
 
 function initMobileSidebar() {
@@ -1537,15 +1712,6 @@ function initMobileSidebar() {
     sidebarInitialized = true;
 }
 
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
 // Profile dropdown
 let dropdownInitialized = false;
 
@@ -1555,6 +1721,7 @@ function initializeDropdown() {
     const profileHeader = document.getElementById('profileHeader');
     const profileDropdown = document.getElementById('profileDropdown');
     const changePicBtn = document.getElementById('changeProfilePicBtn');
+    const profileAvatarTrigger = document.getElementById('profileAvatarTrigger');
     
     if (profileHeader && profileDropdown) {
         const newHeader = profileHeader.cloneNode(true);
@@ -1578,6 +1745,14 @@ function initializeDropdown() {
         });
         
         dropdownInitialized = true;
+    }
+    
+    // Trigger change picture when clicking on profile picture
+    if (profileAvatarTrigger) {
+        profileAvatarTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            showUploadModal();
+        });
     }
     
     if (changePicBtn) {
@@ -1774,14 +1949,15 @@ function showUploadModal() {
     function updateProfilePicture(imageUrl) {
         const avatar = document.querySelector('.profile-avatar');
         const largeAvatar = document.querySelector('.profile-avatar-large');
+        const username = document.getElementById('currentUsername')?.innerText || 'User';
         
         const url = imageUrl + '?t=' + new Date().getTime();
         
         if (avatar) {
-            avatar.innerHTML = `<img src="${url}" alt="{{ user.username }}">`;
+            avatar.innerHTML = `<img src="${url}" alt="${username}">`;
         }
         if (largeAvatar) {
-            largeAvatar.innerHTML = `<img src="${url}" alt="{{ user.username }}">`;
+            largeAvatar.innerHTML = `<img src="${url}" alt="${username}">`;
         }
     }
     
@@ -1801,7 +1977,6 @@ function showUploadModal() {
 // Initialize all
 function initAll() {
     initMobileSidebar();
-    initFlashMessages();
     initializeDropdown();
 }
 
@@ -1816,5 +1991,18 @@ document.addEventListener('turbo:load', function() {
     dropdownInitialized = false;
     setTimeout(initAll, 100);
 });
+</script>
+
+<!-- FLASH MESSAGES - Handled here -->
+<script>
+setTimeout(function() {
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            if (typeof window.showToast === 'function') {
+                window.showToast('{{ message|escape('js') }}', '{{ label }}');
+            }
+        {% endfor %}
+    {% endfor %}
+}, 500);
 </script>
 {% endblock %}

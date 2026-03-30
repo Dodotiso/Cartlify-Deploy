@@ -1162,7 +1162,7 @@ tr:hover {
                 <tbody>
                 {% for log in activity_logs %}
                       <tr>
-                        <td style="font-weight: 500;">#{{ log.id }}</td>
+                        <td style="font-weight: 500;">{{ log.id }}</td>
                         <td>{{ log.userId }}</td>
                         <td><strong>{{ log.username }}</strong></td>
                         <td>
@@ -1233,7 +1233,7 @@ tr:hover {
             <div class="activity-card">
                 <div class="activity-card-content">
                     <div class="activity-card-header">
-                        <span class="activity-card-id">#{{ log.id }}</span>
+                        <span class="activity-card-id">{{ log.id }}</span>
                         <span class="activity-card-date">
                             <i class="fas fa-calendar-alt"></i> {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '' }}
                         </span>

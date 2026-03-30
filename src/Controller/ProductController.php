@@ -57,9 +57,18 @@ class ProductController extends AbstractController
             $imageFile = $form->get('imageFile')->getData();
             $imageUrl = $form->get('image')->getData();
             
+            // Check if both image file and image URL are provided
+            if ($imageFile && !empty($imageUrl)) {
+                $this->addFlash('error', '⚠️ Please use ONLY ONE image source. Either upload a file OR provide an image URL, not both.');
+                return $this->render('product/new.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
             // Validation for required fields
             if (empty($product->getName())) {
-                $this->addFlash('error', '❌ Product name is required!');
+                $this->addFlash('error', '❌ Product name is required. Please fill in the product name field.');
                 return $this->render('product/new.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -67,15 +76,23 @@ class ProductController extends AbstractController
             }
             
             if (empty($product->getDescription())) {
-                $this->addFlash('error', '❌ Product description is required!');
+                $this->addFlash('error', '❌ Product description is required. Please fill in the product description field.');
                 return $this->render('product/new.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
                 ]);
             }
             
-            if (empty($product->getPrice())) {
-                $this->addFlash('error', '❌ Product price is required!');
+            if (empty($product->getPrice()) || $product->getPrice() <= 0) {
+                $this->addFlash('error', '❌ Product price is required. Please enter a valid price greater than 0.');
+                return $this->render('product/new.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            if (empty($product->getCategory())) {
+                $this->addFlash('error', '❌ Category is required. Please select a category for the product.');
                 return $this->render('product/new.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -147,7 +164,6 @@ class ProductController extends AbstractController
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $oldImage = $product->getImage();
-        $oldName = $product->getName();
         
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
@@ -156,9 +172,18 @@ class ProductController extends AbstractController
             $imageFile = $form->get('imageFile')->getData();
             $imageUrl = $form->get('image')->getData();
             
+            // Check if both image file and image URL are provided
+            if ($imageFile && !empty($imageUrl)) {
+                $this->addFlash('error', '⚠️ Please use ONLY ONE image source. Either upload a file OR provide an image URL, not both.');
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
             // Validation for required fields
             if (empty($product->getName())) {
-                $this->addFlash('error', '❌ Product name is required!');
+                $this->addFlash('error', '❌ Product name is required. Please fill in the product name field.');
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -166,15 +191,23 @@ class ProductController extends AbstractController
             }
             
             if (empty($product->getDescription())) {
-                $this->addFlash('error', '❌ Product description is required!');
+                $this->addFlash('error', '❌ Product description is required. Please fill in the product description field.');
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
                 ]);
             }
             
-            if (empty($product->getPrice())) {
-                $this->addFlash('error', '❌ Product price is required!');
+            if (empty($product->getPrice()) || $product->getPrice() <= 0) {
+                $this->addFlash('error', '❌ Product price is required. Please enter a valid price greater than 0.');
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            if (empty($product->getCategory())) {
+                $this->addFlash('error', '❌ Category is required. Please select a category for the product.');
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),

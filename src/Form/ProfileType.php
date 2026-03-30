@@ -19,8 +19,12 @@ class ProfileType extends AbstractType
         $builder
             ->add('username', TextType::class, [
                 'label' => 'Username',
-                'disabled' => true, // Username cannot be changed
-                'attr' => ['class' => 'form-control', 'readonly' => true]
+                'disabled' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'readonly' => true,
+                    'id' => 'user_username'
+                ]
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -28,18 +32,26 @@ class ProfileType extends AbstractType
                 'mapped' => false,
                 'first_options' => [
                     'label' => 'New Password',
-                    'attr' => ['class' => 'form-control', 'autocomplete' => 'new-password',
-                               'placeholder' => '6 or more characters required']
+                    'attr' => [
+                        'class' => 'form-control',
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'Enter new password...',
+                        'id' => 'password_first'
+                    ]
                 ],
                 'second_options' => [
-                    'label' => 'Repeat New Password',
-                    'attr' => ['class' => 'form-control', 'autocomplete' => 'new-password',
-                               'placeholder' => 'Repeat the new password']
+                    'label' => 'Confirm Password',
+                    'attr' => [
+                        'class' => 'form-control',
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'Confirm new password...',
+                        'id' => 'password_second'
+                    ]
                 ],
                 'constraints' => [
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Password must be at least {{ limit }} characters long',
                         'max' => 4096,
                     ]),
                 ],

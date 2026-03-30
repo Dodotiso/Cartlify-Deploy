@@ -34,6 +34,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $profilePicture = null;
 
+    // Add last active field
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $lastActive = null;
+
     public function getId(): ?int 
     { 
         return $this->id; 
@@ -86,6 +90,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfilePicture(?string $profilePicture): static
     {
         $this->profilePicture = $profilePicture;
+        return $this;
+    }
+
+    // Last active getter and setter
+    public function getLastActive(): ?\DateTimeInterface
+    {
+        return $this->lastActive;
+    }
+
+    public function setLastActive(?\DateTimeInterface $lastActive): static
+    {
+        $this->lastActive = $lastActive;
         return $this;
     }
 

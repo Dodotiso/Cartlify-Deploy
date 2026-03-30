@@ -21,19 +21,16 @@ class Stock
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     private ?Product $product = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $image = null;
-
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
-    // NEW RELATION ADDED ↓↓↓
     #[ORM\OneToMany(mappedBy: 'stock', targetEntity: Order::class)]
     private Collection $orders;
 
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->createdAt = new \DateTime(); // Auto-set when object is created
     }
 
     public function getId(): ?int { return $this->id; }
@@ -43,9 +40,6 @@ class Stock
 
     public function getProduct(): ?Product { return $this->product; }
     public function setProduct(?Product $product): static { $this->product = $product; return $this; }
-
-    public function getImage(): ?string { return $this->image; }
-    public function setImage(?string $image): static { $this->image = $image; return $this; }
 
     public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
     public function setCreatedAt(?\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
