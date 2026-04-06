@@ -4,7 +4,11 @@
 
 {% block stylesheets %}
 <style>
-/* --- Body & Sidebar --- */
+/* --- Base Reset --- */
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -13,6 +17,7 @@ body {
     padding-top: 80px;
 }
 
+/* --- Sidebar --- */
 .sidebar {
     position: fixed;
     top: 0;
@@ -24,7 +29,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: width 0.3s;
+    transition: width 0.3s, transform 0.3s ease;
     z-index: 100;
 }
 
@@ -81,7 +86,7 @@ body {
     border-left: 4px solid #E64C3C;
 }
 
-/* Mobile Sidebar Toggle Button */
+/* Mobile Sidebar */
 .menu-toggle {
     display: none;
     background: none;
@@ -99,7 +104,6 @@ body {
     border-radius: 8px;
 }
 
-/* Sidebar Overlay for Mobile */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -116,7 +120,7 @@ body {
     display: block;
 }
 
-/* --- Sticky Header --- */
+/* --- Header --- */
 .header {
     position: fixed;
     top: 0;
@@ -137,145 +141,194 @@ body {
     left: 220px;
 }
 
-/* --- Main Content --- */
-.main-content {
-    margin-left: 60px;
-    padding: 30px;
-    transition: margin-left 0.3s;
-    min-height: calc(100vh - 80px);
-}
-
-.sidebar:hover ~ .main-content {
-    margin-left: 220px;
-}
-
-/* --- Profile Dropdown --- */
-.profile-wrapper {
-    position: relative;
-}
-
-.profile-header {
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
     display: flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 20px;
-    transition: background-color 0.3s;
+    gap: 12px;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    flex-shrink: 0;
 }
 
-.profile-header:hover {
-    background-color: #f0f0f0;
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
 }
 
-.profile-header.active {
-    background-color: #e9ecef;
-}
-
-.profile-avatar {
-    width: 38px;
-    height: 38px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
+/* Icon Styles */
+.tracker-icon-link, .cart-icon-link {
+    position: relative;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-    overflow: hidden;
 }
 
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+.tracker-icon-link i, .cart-icon-link i, .notification-icon i {
+    font-size: 22px;
+    color: #1a1a2e;
+    transition: color 0.3s;
 }
 
-.profile-name {
-    font-weight: 500;
-    color: #333;
-    user-select: none;
+.tracker-icon-link:hover i, .cart-icon-link:hover i, .notification-icon:hover i {
+    color: #007bff;
 }
 
-.dropdown-icon {
-    font-size: 12px;
-    color: #6c757d;
-    transition: transform 0.3s;
-}
-
-.profile-header.active .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.profile-dropdown {
+/* Badge Styles */
+.tracker-badge, .cart-badge, .notification-badge {
     position: absolute;
-    top: 50px;
-    right: 0;
-    width: 200px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: none;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 1000;
-    overflow: hidden;
-}
-
-.profile-dropdown.show {
-    display: flex;
-}
-
-.dropdown-role-header {
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    top: -8px;
+    right: -10px;
+    background: #e74c3c;
     color: white;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.dropdown-role-header i {
-    margin-right: 5px;
-    font-size: 12px;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
-}
-
-.dropdown-item {
-    padding: 12px 16px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: background-color 0.2s;
+    justify-content: center;
+    box-shadow: 0 0 0 2px white;
+    display: none;
 }
 
-.dropdown-item i {
-    width: 18px;
+.tracker-badge.show, .cart-badge.show, .notification-badge.show {
+    display: flex;
+}
+
+.notification-badge.show, .tracker-badge.show {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Notification Dropdown */
+.notification-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: -80px;
+    width: 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.notification-dropdown.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-header {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #1a1a2e;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    font-family: Arial, sans-serif;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: Arial, sans-serif;
+}
+
+.notification-item:hover {
+    background: #f8f9fa;
+}
+
+.notification-item.unread {
+    background: #e3f2fd;
+    border-left: 3px solid #3498db;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+
+.notification-message {
+    font-size: 12px;
     color: #6c757d;
+    margin-bottom: 4px;
 }
 
-.dropdown-item:hover {
-    background-color: #f8f9fa;
+.notification-time {
+    font-size: 10px;
+    color: #adb5bd;
 }
 
-.dropdown-item.logout-item {
-    color: #dc3545;
-    border-top: 1px solid #eee;
+.notification-footer {
+    padding: 10px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.dropdown-item.logout-item i {
-    color: #dc3545;
+.clear-notif-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+}
+
+.view-all-link {
+    background: none;
+    border: none;
+    color: #28a745;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
 }
 
 /* Toast Notifications */
@@ -298,42 +351,23 @@ body {
     min-width: 300px;
     animation: slideInRight 0.3s ease;
     border-left: 4px solid;
+    font-family: Arial, sans-serif;
+    position: relative;
+    overflow: hidden;
 }
 
-.toast-success {
-    border-left-color: #28a745;
-    background: #f0f9f0;
-}
+.toast-success { border-left-color: #28a745; background: #f0f9f0; }
+.toast-error { border-left-color: #dc3545; background: #fff5f5; }
+.toast-warning { border-left-color: #ffc107; background: #fffbf0; }
+.toast-info { border-left-color: #17a2b8; background: #f0f9ff; }
 
-.toast-error {
-    border-left-color: #dc3545;
-    background: #fff5f5;
-}
-
-.toast-warning {
-    border-left-color: #ffc107;
-    background: #fffbf0;
-}
-
-.toast-info {
-    border-left-color: #17a2b8;
-    background: #f0f9ff;
-}
-
-.toast-icon {
-    font-size: 20px;
-}
-
+.toast-icon { font-size: 20px; }
 .toast-success .toast-icon { color: #28a745; }
 .toast-error .toast-icon { color: #dc3545; }
 .toast-warning .toast-icon { color: #ffc107; }
 .toast-info .toast-icon { color: #17a2b8; }
 
-.toast-content {
-    flex: 1;
-    color: #333;
-    font-size: 14px;
-}
+.toast-content { flex: 1; color: #333; font-size: 14px; }
 
 .toast-progress {
     position: absolute;
@@ -346,24 +380,91 @@ body {
 }
 
 @keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
 }
 
 @keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
+    from { width: 100%; }
+    to { width: 0%; }
 }
+
+/* Profile Dropdown */
+.profile-wrapper { position: relative; }
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+.profile-header:hover { background-color: #f0f0f0; }
+.profile-header.active { background-color: #e9ecef; }
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    overflow: hidden;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.profile-name { font-weight: 500; color: #333; font-family: Arial, sans-serif; }
+.dropdown-icon { font-size: 12px; color: #6c757d; transition: transform 0.3s; }
+.profile-header.active .dropdown-icon { transform: rotate(180deg); }
+
+.profile-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    width: 240px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+.profile-dropdown.show { display: flex; }
+
+.dropdown-role-header {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1a1a2e;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.2s;
+}
+.dropdown-item i { width: 18px; color: #6c757d; }
+.dropdown-item:hover { background: #f8f9fa; }
+.dropdown-divider { height: 1px; background: #e9ecef; margin: 5px 0; }
+.logout-item { color: #e74c3c; }
 
 /* Upload Modal */
 .modal {
@@ -378,11 +479,7 @@ body {
     align-items: center;
     justify-content: center;
 }
-
-.modal.show {
-    display: flex;
-}
-
+.modal.show { display: flex; }
 .modal-content {
     background: white;
     border-radius: 12px;
@@ -390,7 +487,6 @@ body {
     max-width: 400px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
-
 .modal-header {
     padding: 20px;
     border-bottom: 1px solid #e9ecef;
@@ -398,24 +494,9 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-.modal-header h3 {
-    margin: 0;
-    color: #343a40;
-    font-size: 18px;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6c757d;
-}
-
-.modal-body {
-    padding: 20px;
-}
+.modal-header h3 { margin: 0; font-size: 18px; font-family: Arial, sans-serif; }
+.close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d; }
+.modal-body { padding: 20px; }
 
 .upload-area {
     border: 2px dashed #ced4da;
@@ -425,43 +506,15 @@ body {
     cursor: pointer;
     transition: border-color 0.3s;
 }
+.upload-area:hover { border-color: #007bff; }
+.upload-area i { font-size: 48px; color: #6c757d; margin-bottom: 10px; }
+.upload-area p { margin: 0; color: #6c757d; font-family: Arial, sans-serif; }
+.upload-area small { color: #adb5bd; font-size: 12px; }
 
-.upload-area:hover {
-    border-color: #007bff;
-}
+.image-preview { margin-top: 20px; text-align: center; }
+.image-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; }
 
-.upload-area i {
-    font-size: 48px;
-    color: #6c757d;
-    margin-bottom: 10px;
-}
-
-.upload-area p {
-    margin: 0;
-    color: #6c757d;
-}
-
-.upload-area small {
-    color: #adb5bd;
-    font-size: 12px;
-}
-
-.image-preview {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.image-preview img {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-}
-
-.upload-progress {
-    margin-top: 20px;
-    text-align: center;
-}
-
+.upload-progress { margin-top: 20px; text-align: center; }
 .progress-bar {
     width: 100%;
     height: 8px;
@@ -470,18 +523,8 @@ body {
     overflow: hidden;
     margin-bottom: 5px;
 }
-
-.progress-fill {
-    height: 100%;
-    background: #007bff;
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-#progressText {
-    font-size: 12px;
-    color: #6c757d;
-}
+.progress-fill { height: 100%; background: #007bff; width: 0%; transition: width 0.3s ease; }
+#progressText { font-size: 12px; color: #6c757d; }
 
 .modal-footer {
     padding: 20px;
@@ -490,43 +533,29 @@ body {
     justify-content: flex-end;
     gap: 10px;
 }
-
-.btn-primary-modal {
-    background: #007bff;
-    color: white;
+.btn-primary-modal, .btn-secondary-modal {
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
+    font-family: Arial, sans-serif;
 }
+.btn-primary-modal { background: #007bff; color: white; }
+.btn-primary-modal:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary-modal { background: #6c757d; color: white; }
 
-.btn-primary-modal:hover:not(:disabled) {
-    opacity: 0.9;
+/* Main Content */
+.main-content {
+    margin-left: 60px;
+    padding: 30px;
+    transition: margin-left 0.3s;
+    min-height: calc(100vh - 80px);
 }
+.sidebar:hover ~ .main-content { margin-left: 220px; }
 
-.btn-primary-modal:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary-modal {
-    background: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.btn-secondary-modal:hover {
-    opacity: 0.9;
-}
-
-/* --- Form Styles --- */
+/* Form Styles */
 .form-container {
     background: #fff;
     padding: 30px;
@@ -546,16 +575,18 @@ body {
     font-weight: 600;
     color: #495057;
     font-size: 14px;
+    font-family: Arial, sans-serif;
 }
 
 .form-control {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ced4da;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.2s;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
 .form-control.error-field {
@@ -571,6 +602,7 @@ body {
 
 .form-control-file {
     padding: 8px 0;
+    font-family: Arial, sans-serif;
 }
 
 .form-help {
@@ -578,6 +610,7 @@ body {
     color: #6c757d;
     margin-top: 5px;
     display: block;
+    font-family: Arial, sans-serif;
 }
 
 .form-error {
@@ -601,6 +634,7 @@ body {
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    font-family: Arial, sans-serif;
 }
 
 .current-info i {
@@ -617,205 +651,116 @@ body {
 }
 
 .product-image img {
-    max-width: 200px;
-    max-height: 200px;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
     border-radius: 8px;
     border: 1px solid #dee2e6;
-    object-fit: contain;
     background-color: white;
-    padding: 10px;
 }
 
+/* Button Group - Uniform button sizes */
 .button-group {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 }
 
-button.btn-update {
-    background: #28a745;
-    color: white;
+button.btn-update, .btn-back {
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    flex: 1;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
+    white-space: nowrap;
+    font-family: Arial, sans-serif;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    flex: 1;
+}
+
+button.btn-update {
+    background: #28a745;
+    color: white;
 }
 
 button.btn-update:hover {
     background: #218838;
+    transform: translateY(-1px);
 }
 
 button.btn-update:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
 }
 
 .btn-back {
     background-color: #6c757d;
     color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
-    font-weight: 500;
-    font-size: 16px;
-    flex: 1;
-    transition: background 0.2s;
 }
 
 .btn-back:hover {
     background-color: #5a6268;
+    transform: translateY(-1px);
     color: white;
     text-decoration: none;
 }
 
 /* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
-    body {
-        padding-top: 70px;
-    }
-    .menu-toggle {
-        display: block;
-    }
-    .header {
-        left: 0 !important;
-        height: 70px;
-        padding: 0 15px;
-        z-index: 100;
-    }
-    .header h1 {
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        width: 260px;
-        z-index: 1000;
-    }
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-    .sidebar.mobile-open:hover {
-        width: 260px;
-    }
-    .sidebar.mobile-open a span {
-        display: inline;
-    }
-    .sidebar.mobile-open .logo img {
-        height: 80px;
-    }
-    .main-content {
-        margin-left: 0 !important;
-        padding: 15px;
-    }
-    .sidebar:hover ~ .header,
-    .sidebar:hover ~ .main-content {
-        left: 0;
-        margin-left: 0;
-    }
-    .profile-name, .dropdown-icon {
-        display: none;
-    }
-    .form-container {
-        padding: 20px;
-        margin: 0;
-    }
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    .button-group {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
-    .current-info p {
-        font-size: 13px;
-    }
-    .product-image img {
-        max-width: 120px;
-        max-height: 120px;
-    }
+    body { padding-top: 70px; }
+    .menu-toggle { display: block; }
+    .header { left: 0 !important; height: 70px; padding: 0 15px; z-index: 100; }
+    .header h1 { font-size: 16px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; width: 260px; z-index: 1000; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .sidebar.mobile-open:hover { width: 260px; }
+    .sidebar.mobile-open a span { display: inline; }
+    .sidebar.mobile-open .logo img { height: 80px; }
+    .main-content { margin-left: 0 !important; padding: 15px; }
+    .sidebar:hover ~ .header, .sidebar:hover ~ .main-content { left: 0; margin-left: 0; }
+    .profile-name, .dropdown-icon { display: none; }
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 18px; }
+    .form-container { padding: 20px; margin: 0; }
+    .button-group { flex-direction: column; gap: 10px; }
+    button.btn-update, .btn-back { width: 100%; }
+    .toast-container { top: 80px; right: 10px; left: 10px; }
+    .toast { min-width: auto; width: 100%; }
+    .notification-dropdown { position: fixed; top: 70px; left: 10px; right: 10px; width: auto; max-width: none; border-radius: 12px; }
+    .profile-dropdown { position: fixed; top: 70px; right: 10px; left: 10px; width: auto; max-width: none; }
+    .current-info p { font-size: 13px; }
+    .product-image img { width: 120px; height: 120px; }
 }
 
-@media (max-width: 480px) {
-    body {
-        padding-top: 60px;
-    }
-    .header {
-        height: 60px;
-        padding: 0 12px;
-    }
-    .header h1 {
-        font-size: 14px;
-    }
-    .main-content {
-        padding: 10px;
-    }
-    .form-container {
-        padding: 15px;
-    }
-    .form-group label {
-        font-size: 13px;
-    }
-    .form-control {
-        padding: 8px 10px;
-        font-size: 13px;
-    }
-    button.btn-update, .btn-back {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-    .current-info {
-        padding: 12px;
-    }
-    .current-info p {
-        font-size: 12px;
-        margin: 6px 0;
-    }
-    .product-image img {
-        max-width: 100px;
-        max-height: 100px;
-    }
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    .toast {
-        min-width: auto;
-        width: 100%;
-    }
+@media (max-width: 576px) {
+    body { padding-top: 60px; }
+    .header { height: 60px; padding: 0 12px; }
+    .header h1 { font-size: 14px; }
+    .header-right { gap: 10px; }
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 16px; }
+    .profile-avatar { width: 32px; height: 32px; font-size: 14px; }
+    .main-content { padding: 10px; }
+    .form-container { padding: 15px; }
+    .form-group label { font-size: 13px; }
+    .form-control { padding: 8px 10px; font-size: 13px; }
+    button.btn-update, .btn-back { padding: 8px 16px; font-size: 13px; }
+    .current-info { padding: 12px; }
+    .current-info p { font-size: 12px; margin: 6px 0; }
+    .product-image img { width: 100px; height: 100px; }
+    .notification-dropdown { top: 60px; }
+    .profile-dropdown { top: 60px; }
 }
 
 @media (min-width: 769px) {
-    .sidebar {
-        transform: translateX(0) !important;
-    }
-    .menu-toggle {
-        display: none !important;
-    }
-    .sidebar-overlay {
-        display: none !important;
-    }
+    .sidebar { transform: translateX(0) !important; }
+    .menu-toggle { display: none !important; }
+    .sidebar-overlay { display: none !important; }
 }
 </style>
 {% endblock %}
@@ -904,14 +849,8 @@ button.btn-update:disabled {
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
-{% set userRoleName = 
-    role == 'ROLE_ADMIN' ? 'Administrator' :
-    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
-%}
-{% set userRoleIcon = 
-    role == 'ROLE_ADMIN' ? 'crown' :
-    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
-%}
+{% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'User') %}
+{% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 
 <div class="header">
     <h1>
@@ -920,35 +859,63 @@ button.btn-update:disabled {
         </button>
         <i class="fas fa-edit"></i> Edit Stock
     </h1>
-    <div class="profile-wrapper">
-        <div class="profile-header" id="profileHeader">
-            <div class="profile-avatar">
-                {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                {% else %}
-                    {{ app.user.username|first|upper }}
-                {% endif %}
+    
+    <div class="header-right">
+        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="tracker-badge" id="trackerBadge">0</span>
+        </a>
+        
+        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        
+        <div class="notification-wrapper">
+            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                </div>
             </div>
-            <span class="profile-name">{{ app.user.username }}</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        <div class="profile-dropdown" id="profileDropdown">
-            <div class="dropdown-role-header">
-                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+        
+        <div class="profile-wrapper">
+            <div class="profile-header" id="profileHeader">
+                <div class="profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ app.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <span class="profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
-            <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user-circle"></i>
-                <span>My Profile</span>
-            </a>
-            <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                <i class="fas fa-camera"></i>
-                <span>Change Picture</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-role-header">
+                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                </div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Picture</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -956,10 +923,11 @@ button.btn-update:disabled {
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
+<div class="toast-container" id="toastContainer"></div>
 
 <div class="main-content">
     <div class="form-container">
-        <!-- IMAGE SECTION - ABOVE -->
+        <!-- IMAGE SECTION -->
         <div class="product-image">
             {% if stock.product.image %}
                 {% set imagePath = stock.product.image %}
@@ -975,7 +943,7 @@ button.btn-update:disabled {
             {% endif %}
         </div>
 
-        <!-- INFO SECTION - BELOW IMAGE -->
+        <!-- INFO SECTION -->
         <div class="current-info">
             <p><i class="fas fa-box"></i> <strong>Product:</strong> {{ stock.product.name }} (ID: {{ stock.product.id }})</p>
             <p><i class="fas fa-calendar-alt"></i> <strong>Stock Created:</strong> {{ stock.createdAt ? stock.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</p>
@@ -1006,7 +974,7 @@ button.btn-update:disabled {
         </div>
 
         <div class="button-group">
-            <button class="btn-update" id="submitBtn">
+            <button type="submit" class="btn-update" id="submitBtn">
                 <i class="fas fa-save"></i> Update Stock
             </button>
             <a href="{{ path('app_stock_index') }}" class="btn-back">
@@ -1018,355 +986,383 @@ button.btn-update:disabled {
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script>
-// Mobile Sidebar Toggle
-let sidebarInitialized = false;
+let notifications = [];
+let shownFlashes = [];
 
-function initMobileSidebar() {
-    if (sidebarInitialized) return;
-    
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (!menuToggle || !sidebar) return;
-    
-    function openSidebar() {
-        sidebar.classList.add('mobile-open');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove('mobile-open');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    const newToggle = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-    const newMenuToggle = document.getElementById('menuToggle');
-    
-    newMenuToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl.classList.contains('mobile-open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-    
-    if (overlay) {
-        const newOverlay = overlay.cloneNode(true);
-        overlay.parentNode.replaceChild(newOverlay, overlay);
-        const newOverlayEl = document.getElementById('sidebarOverlay');
-        newOverlayEl.addEventListener('click', closeSidebar);
-    }
-    
-    document.addEventListener('click', function(e) {
-        const currentSidebar = document.getElementById('sidebar');
-        const currentMenuToggle = document.getElementById('menuToggle');
-        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
-                closeSidebar();
-            }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        const currentSidebar = document.getElementById('sidebar');
-        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            closeSidebar();
-        }
-    });
-    
-    sidebarInitialized = true;
-}
-
-let dropdownInitialized = false;
-
-function initializeDropdown() {
-    if (dropdownInitialized) return;
-    
-    const profileHeader = document.getElementById('profileHeader');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const changePicBtn = document.getElementById('changeProfilePicBtn');
-    
-    if (profileHeader && profileDropdown) {
-        const newHeader = profileHeader.cloneNode(true);
-        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
-        const newProfileHeader = document.getElementById('profileHeader');
-        
-        newProfileHeader.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.toggle('active');
-            const dropdown = document.getElementById('profileDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            const header = document.getElementById('profileHeader');
-            const dropdown = document.getElementById('profileDropdown');
-            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
-                header.classList.remove('active');
-                dropdown.classList.remove('show');
-            }
-        });
-        
-        dropdownInitialized = true;
-    }
-    
-    if (changePicBtn) {
-        const newChangeBtn = changePicBtn.cloneNode(true);
-        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
-        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
-        if (newChangePicBtn) {
-            newChangePicBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showUploadModal();
-            });
+function markAllNotificationsAsRead() {
+    if (notifications.length > 0) {
+        let hasUnread = notifications.some(n => !n.read);
+        if (hasUnread) {
+            notifications.forEach(n => n.read = true);
+            saveNotifications();
+            updateNotificationBadge();
         }
     }
 }
 
-function showUploadModal() {
-    const existingModal = document.getElementById('uploadModal');
-    if (existingModal) existingModal.remove();
-    
-    const modal = document.createElement('div');
-    modal.id = 'uploadModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Change Profile Picture</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Click to upload or drag and drop</p>
-                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
-                </div>
-                <div class="image-preview" id="imagePreview" style="display: none;">
-                    <img src="" alt="Preview">
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
-                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('show'), 10);
-    
-    const uploadArea = document.getElementById('uploadArea');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImg = imagePreview.querySelector('img');
-    const saveBtn = document.getElementById('saveUpload');
-    const cancelBtn = document.getElementById('cancelUpload');
-    const closeBtn = modal.querySelector('.close-modal');
-    const progressContainer = document.getElementById('uploadProgress');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
-    fileInput.style.display = 'none';
-    modal.appendChild(fileInput);
-    
-    uploadArea.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                window.showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                window.showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#007bff';
-        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-        
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            if (file.size > 2 * 1024 * 1024) {
-                window.showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    saveBtn.addEventListener('click', function() {
-        if (fileInput.files.length > 0) {
-            uploadProfilePicture(fileInput.files[0]);
-        }
-    });
-    
-    function uploadProfilePicture(file) {
-        const formData = new FormData();
-        formData.append('profile_picture', file);
-        
-        progressContainer.style.display = 'block';
-        saveBtn.disabled = true;
-        
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const percentComplete = Math.round((e.loaded / e.total) * 100);
-                progressFill.style.width = percentComplete + '%';
-                progressText.textContent = percentComplete + '%';
-            }
-        });
-        
-        xhr.addEventListener('load', function() {
-            if (xhr.status === 200) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        updateProfilePicture(response.imageUrl);
-                        window.showToast('Profile picture updated successfully!', 'success');
-                        modal.classList.remove('show');
-                        setTimeout(() => modal.remove(), 300);
-                    } else {
-                        window.showToast(response.message || 'Upload failed', 'error');
-                        resetUpload();
-                    }
-                } catch (e) {
-                    window.showToast('Invalid server response', 'error');
-                    resetUpload();
+function markAllNotificationsAsReadBeforeRedirect() {
+    markAllNotificationsAsRead();
+    window.location.href = '{{ path('app_notifications_index') }}';
+}
+
+function updateCartBadge() {
+    fetch('/cart/count')
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
                 }
-            } else {
-                window.showToast('Upload failed. Please try again.', 'error');
-                resetUpload();
             }
-        });
-        
-        xhr.addEventListener('error', function() {
-            window.showToast('Network error. Please try again.', 'error');
-            resetUpload();
-        });
-        
-        xhr.open('POST', '/dashboard/upload-profile-picture', true);
-        xhr.send(formData);
-    }
-    
-    function resetUpload() {
-        progressContainer.style.display = 'none';
-        progressFill.style.width = '0%';
-        progressText.textContent = '0%';
-        saveBtn.disabled = false;
-    }
-    
-    function updateProfilePicture(imageUrl) {
-        const avatar = document.querySelector('.profile-avatar');
-        const url = imageUrl + '?t=' + new Date().getTime();
-        avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
-    }
-    
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    cancelBtn.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
+        })
+        .catch(e => console.log('Cart update error:', e));
 }
 
-// Simple form submit handler
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('stockForm');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    if (form && submitBtn) {
-        form.addEventListener('submit', function() {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Stock...';
-        });
-    }
-});
-
-function initAll() {
-    initMobileSidebar();
-    initializeDropdown();
+function updateTrackerBadge() {
+    fetch('{{ path('app_new_orders_count') }}')
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById('trackerBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            }
+        })
+        .catch(e => console.log('Tracker update error:', e));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initAll, 100);
-});
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
+    toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
-document.addEventListener('turbo:load', function() {
-    sidebarInitialized = false;
-    dropdownInitialized = false;
-    setTimeout(initAll, 100);
-});
-</script>
+function loadNotifications() {
+    const saved = localStorage.getItem('order_notifications');
+    notifications = saved ? JSON.parse(saved) : [];
+    updateNotificationUI();
+    updateNotificationBadge();
+}
 
-<!-- FLASH MESSAGES -->
-<script>
-setTimeout(function() {
+function saveNotifications() {
+    localStorage.setItem('order_notifications', JSON.stringify(notifications));
+    updateNotificationUI();
+    updateNotificationBadge();
+}
+
+function addNotification(title, message, orderId, type) {
+    const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
+    notifications.unshift(notification);
+    if (notifications.length > 100) notifications = notifications.slice(0, 100);
+    saveNotifications();
+    showToast(message, type);
+    updateTrackerBadge();
+}
+
+function updateNotificationBadge() {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    if (badge) { 
+        if (unreadCount > 0) { 
+            badge.classList.add('show'); 
+            badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+        } else { 
+            badge.classList.remove('show'); 
+        } 
+    }
+}
+
+function updateNotificationUI() {
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+    
+    if (notifications.length === 0) { 
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+    } else { 
+        const recentNotifications = notifications.slice(0, 5);
+        list.innerHTML = recentNotifications.map(n => `
+            <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
+                <div class="notification-title">${n.title}</div>
+                <div class="notification-message">${n.message}</div>
+                <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+            </div>
+        `).join('');
+        
+        if (notifications.length > 5) {
+            list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
+        }
+    }
+}
+
+function markNotificationAsRead(id) { 
+    const notification = notifications.find(n => n.id === id); 
+    if (notification) { 
+        notification.read = true; 
+        saveNotifications(); 
+    } 
+}
+
+function clearAllNotifications() { 
+    if (confirm('Clear all notifications?')) { 
+        notifications = []; 
+        saveNotifications(); 
+        showToast('All notifications cleared', 'info'); 
+    } 
+}
+
+function formatTimeAgo(timestamp) { 
+    const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
+    if (mins < 1) return 'Just now'; 
+    if (mins < 60) return `${mins} min ago`; 
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
+    return `${days} day${days > 1 ? 's' : ''} ago`; 
+}
+
+function toggleNotificationDropdown() { 
+    const dropdown = document.getElementById('notificationDropdown');
+    if (dropdown) {
+        markAllNotificationsAsRead();
+        dropdown.classList.toggle('show');
+    }
+}
+
+function checkOrderUpdates() {
+    fetch('{{ path('app_order_check_updates') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (data.updates && data.updates.length > 0) {
+                updateTrackerBadge();
+                data.updates.forEach(update => {
+                    let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                    if (!exists) {
+                        let title = '', message = '', type = 'info';
+                        switch(update.newStatus) {
+                            case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                            case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                            case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                            case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                            case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                            case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                            case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
+                            case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
+                            case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                            default: return;
+                        }
+                        addNotification(title, message, update.orderId, type);
+                    }
+                });
+            }
+        })
+        .catch(e => console.error('Polling error:', e));
+}
+
+let sidebarInit = false;
+function initMobileSidebar() {
+    if (sidebarInit) return;
+    let toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !sidebar) return;
+    function open() { sidebar.classList.add('mobile-open'); if (overlay) overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function close() { sidebar.classList.remove('mobile-open'); if (overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
+    toggle.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.contains('mobile-open') ? close() : open(); });
+    if (overlay) overlay.addEventListener('click', close);
+    document.addEventListener('click', e => { if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) close(); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) close(); });
+    sidebarInit = true;
+}
+
+function displayFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
-            if (typeof window.showToast === 'function') {
-                window.showToast('{{ message|escape('js') }}', '{{ label }}');
-            }
+            let msg = '{{ message|escape('js') }}';
+            if (!shownFlashes.includes(msg)) { shownFlashes.push(msg); showToast(msg, '{{ label }}'); }
         {% endfor %}
     {% endfor %}
-}, 500);
+}
+
+let dropdownInit = false;
+function initializeDropdown() {
+    if (dropdownInit) return;
+    let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
+    if (header && dropdown) {
+        header.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
+        });
+        dropdownInit = true;
+    }
+    let changeBtn = document.getElementById('changeProfilePicBtn');
+    if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+}
+
+document.addEventListener('click', function(event) {
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationIcon = document.getElementById('notificationIcon');
+    if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+        notificationDropdown.classList.remove('show');
+    }
+    
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileHeader = document.getElementById('profileHeader');
+    if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+        profileDropdown.classList.remove('show');
+        profileHeader.classList.remove('active');
+    }
+});
+
+function showUploadModal() {
+    let existing = document.getElementById('uploadModal'); if (existing) existing.remove();
+    let modal = document.createElement('div'); modal.id = 'uploadModal'; modal.className = 'modal';
+    modal.innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Change Profile Picture</h3><button class="close-modal">&times;</button></div><div class="modal-body"><div class="upload-area" id="uploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload or drag and drop</p><small>PNG, JPG, GIF, WebP up to 2MB</small></div><div class="image-preview" id="imagePreview" style="display:none;"><img src="" alt="Preview"></div><div class="upload-progress" id="uploadProgress" style="display:none;"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></div><div class="modal-footer"><button class="btn-secondary-modal" id="cancelUpload">Cancel</button><button class="btn-primary-modal" id="saveUpload" disabled>Upload</button></div></div>`;
+    document.body.appendChild(modal); setTimeout(() => modal.classList.add('show'), 10);
+    let uploadArea = document.getElementById('uploadArea'), preview = document.getElementById('imagePreview'), previewImg = preview.querySelector('img'), saveBtn = document.getElementById('saveUpload'), cancelBtn = document.getElementById('cancelUpload'), closeBtn = modal.querySelector('.close-modal'), progressContainer = document.getElementById('uploadProgress'), progressFill = document.getElementById('progressFill'), progressText = document.getElementById('progressText');
+    let fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp'; fileInput.style.display = 'none'; modal.appendChild(fileInput);
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => { let file = e.target.files[0]; if (file) { if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)) { showToast('Invalid image type', 'error'); return; } if (file.size > 2*1024*1024) { showToast('File too large (max 2MB)', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; }; reader.readAsDataURL(file); } });
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+    uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
+    saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
+    function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+    function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
+    window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
+    cancelBtn.addEventListener('click', closeUploadModal);
+    closeBtn.addEventListener('click', closeUploadModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
+}
+
+function markNotificationsAsReadOnPageLoad() {
+    markAllNotificationsAsRead();
+}
+
+function initAll() {
+    initMobileSidebar(); 
+    displayFlashMessages(); 
+    initializeDropdown(); 
+    loadNotifications();
+    markNotificationsAsReadOnPageLoad();
+    
+    checkOrderUpdates(); 
+    setInterval(checkOrderUpdates, 30000);
+    updateCartBadge(); 
+    setInterval(updateCartBadge, 5000);
+    updateTrackerBadge();
+}
+
+document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100));
+document.addEventListener('turbo:load', () => { sidebarInit = false; dropdownInit = false; setTimeout(initAll, 100); });
+
+window.showToast = showToast;
+
+// Form Validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('stockForm');
+    
+    if (!form) return;
+    
+    const productField = document.getElementById('stock_product');
+    const stockField = document.getElementById('stock_stock');
+    
+    function removeError(field) {
+        if (field) {
+            field.style.border = '';
+            field.style.backgroundColor = '';
+            field.classList.remove('error-field');
+        }
+    }
+    
+    function addError(field) {
+        if (field) {
+            field.style.border = '2px solid #dc3545';
+            field.style.backgroundColor = '#fff5f5';
+            field.classList.add('error-field');
+        }
+    }
+    
+    if (productField) {
+        productField.addEventListener('change', function() { removeError(productField); });
+    }
+    
+    if (stockField) {
+        stockField.addEventListener('input', function() { removeError(stockField); });
+    }
+    
+    form.addEventListener('submit', function(e) {
+        if (productField) removeError(productField);
+        if (stockField) removeError(stockField);
+        
+        const product = productField ? productField.value : '';
+        const stock = stockField ? stockField.value.trim() : '';
+        
+        let errorMessage = '';
+        let errorField = null;
+        
+        if (!product || product === '') {
+            errorMessage = '❌ Product is required! Please select a product.';
+            errorField = productField;
+        }
+        else if (!stock || stock === '') {
+            errorMessage = '❌ Stock quantity is required! Please enter a stock quantity.';
+            errorField = stockField;
+        }
+        else if (/[a-zA-Z]/.test(stock)) {
+            errorMessage = '❌ Stock quantity must contain numbers only! Please enter a valid number (e.g., 100).';
+            errorField = stockField;
+        }
+        else if (isNaN(parseInt(stock))) {
+            errorMessage = '❌ Stock quantity must be a valid number! Please enter a valid quantity.';
+            errorField = stockField;
+        }
+        else if (parseInt(stock) < 0) {
+            errorMessage = '❌ Stock quantity cannot be negative! Please enter a quantity of 0 or greater.';
+            errorField = stockField;
+        }
+        
+        if (errorMessage) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (errorField) {
+                addError(errorField);
+                errorField.focus();
+                errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            window.showToast(errorMessage, 'error');
+            return false;
+        }
+        
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Stock...';
+        }
+        
+        return true;
+    });
+});
 </script>
 {% endblock %}

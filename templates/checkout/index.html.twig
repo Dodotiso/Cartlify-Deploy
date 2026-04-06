@@ -1,0 +1,1653 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartlify | Checkout{% endblock %}
+
+{% block body %}
+<style>
+    /* --- Body & Sidebar --- */
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        color: #343a40;
+        padding-top: 80px;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 60px;
+        background: #1f2a44;
+        padding-top: 30px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: width 0.3s;
+        z-index: 100;
+    }
+
+    .sidebar:hover {
+        width: 220px;
+    }
+
+    .sidebar .logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+    }
+
+    .sidebar .logo img {
+        height: 48px;
+        transition: height 0.3s;
+    }
+
+    .sidebar:hover .logo img {
+        height: 128px;
+    }
+
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        padding: 15px 15px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 500;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .sidebar a i {
+        min-width: 24px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .sidebar a span {
+        display: none;
+        margin-left: 20px;
+        white-space: nowrap;
+        transition: opacity 0.3s;
+    }
+
+    .sidebar:hover a span {
+        display: inline;
+        opacity: 1;
+    }
+
+    .sidebar a:hover {
+        background-color: #34495e;
+        border-left: 4px solid #E64C3C;
+    }
+
+    /* Mobile Sidebar Toggle Button */
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #343a40;
+        cursor: pointer;
+        padding: 8px;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+
+    .menu-toggle:hover {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+    }
+
+    /* Sidebar Overlay for Mobile */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
+        transition: all 0.3s;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* --- Sticky Header --- */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 60px;
+        right: 0;
+        height: 80px;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: left 0.3s;
+        z-index: 99;
+    }
+
+    .sidebar:hover ~ .header {
+        left: 220px;
+    }
+
+    .header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1a1a2e;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Header Right Icons */
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .tracker-icon-link {
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    .tracker-icon-link i {
+        font-size: 22px;
+        color: #1a1a2e;
+        transition: color 0.3s;
+    }
+
+    .tracker-icon-link:hover i {
+        color: #007bff;
+    }
+
+    .tracker-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 5px;
+        font-size: 9px;
+        font-weight: bold;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 2px white;
+        display: none;
+    }
+
+    .tracker-badge.show {
+        display: flex;
+        animation: pulse 0.5s ease;
+    }
+
+    .cart-icon-link {
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    .cart-icon-link i {
+        font-size: 22px;
+        color: #1a1a2e;
+        transition: color 0.3s;
+    }
+
+    .cart-icon-link:hover i {
+        color: #007bff;
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 5px;
+        font-size: 9px;
+        font-weight: bold;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 2px white;
+        display: none;
+    }
+
+    .cart-badge.show {
+        display: flex;
+    }
+
+    .notification-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    .notification-icon i {
+        font-size: 22px;
+        color: #1a1a2e;
+        transition: color 0.3s;
+    }
+
+    .notification-icon:hover i {
+        color: #007bff;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 5px;
+        font-size: 9px;
+        font-weight: bold;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 2px white;
+        display: none;
+    }
+
+    .notification-badge.show {
+        display: flex;
+        animation: pulse 0.5s ease;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .notification-dropdown {
+        display: none;
+        position: absolute;
+        top: 45px;
+        right: -80px;
+        width: 350px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        z-index: 1000;
+        max-height: 450px;
+        overflow-y: auto;
+    }
+
+    .notification-dropdown.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notification-header {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #1a1a2e;
+        position: sticky;
+        top: 0;
+        background: white;
+        border-radius: 12px 12px 0 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: Arial, sans-serif;
+    }
+
+    .notification-item:hover {
+        background: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background: #e3f2fd;
+        border-left: 3px solid #3498db;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: #1a1a2e;
+        margin-bottom: 4px;
+    }
+
+    .notification-message {
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .notification-time {
+        font-size: 10px;
+        color: #adb5bd;
+    }
+
+    .notification-footer {
+        padding: 10px;
+        border-top: 1px solid #e9ecef;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .clear-notif-btn {
+        background: none;
+        border: none;
+        color: #3498db;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+    }
+
+    .view-all-link {
+        background: none;
+        border: none;
+        color: #28a745;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Profile Dropdown */
+    .profile-wrapper {
+        position: relative;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .profile-header:hover {
+        background-color: #f0f0f0;
+    }
+
+    .profile-header.active {
+        background-color: #e9ecef;
+    }
+
+    .profile-avatar {
+        width: 38px;
+        height: 38px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        overflow: hidden;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .profile-name {
+        font-weight: 500;
+        color: #333;
+        user-select: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .dropdown-icon {
+        font-size: 12px;
+        color: #6c757d;
+        transition: transform 0.3s;
+    }
+
+    .profile-header.active .dropdown-icon {
+        transform: rotate(180deg);
+    }
+
+    .profile-dropdown {
+        position: absolute;
+        top: 55px;
+        right: 0;
+        width: 240px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+        display: flex;
+    }
+
+    .dropdown-role-header {
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .dropdown-item {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1a1a2e;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background: #f8f9fa;
+    }
+
+    .dropdown-item i {
+        width: 18px;
+        color: #6c757d;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #e9ecef;
+        margin: 5px 0;
+    }
+
+    .logout-item {
+        color: #e74c3c;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast {
+        background: white;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease;
+        border-left: 4px solid;
+        font-family: Arial, sans-serif;
+    }
+
+    .toast-success {
+        border-left-color: #28a745;
+        background: #f0f9f0;
+    }
+
+    .toast-error {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .toast-warning {
+        border-left-color: #ffc107;
+        background: #fffbf0;
+    }
+
+    .toast-info {
+        border-left-color: #17a2b8;
+        background: #f0f9ff;
+    }
+
+    .toast-icon {
+        font-size: 20px;
+    }
+
+    .toast-success .toast-icon { color: #28a745; }
+    .toast-error .toast-icon { color: #dc3545; }
+    .toast-warning .toast-icon { color: #ffc107; }
+    .toast-info .toast-icon { color: #17a2b8; }
+
+    .toast-content {
+        flex: 1;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: rgba(0,0,0,0.1);
+        width: 100%;
+        animation: progress 3s linear forwards;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes progress {
+        from {
+            width: 100%;
+        }
+        to {
+            width: 0%;
+        }
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 60px;
+        padding: 30px;
+        transition: margin-left 0.3s;
+        min-height: calc(100vh - 80px);
+    }
+
+    .sidebar:hover ~ .main-content {
+        margin-left: 220px;
+    }
+
+    /* Checkout Styles */
+    .checkout-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .checkout-header {
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+    }
+
+    .checkout-header h2 {
+        margin: 0;
+        color: #1a1a2e;
+        font-family: Arial, sans-serif;
+    }
+
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .order-summary h3 {
+        margin: 0 0 15px 0;
+        color: #1a1a2e;
+        font-family: Arial, sans-serif;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+        font-family: Arial, sans-serif;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .order-total {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+    }
+
+    .order-total span:last-child {
+        color: #28a745;
+        font-size: 22px;
+    }
+
+    .delivery-form {
+        margin-top: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #1a1a2e;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+
+    .address-field {
+        display: none;
+    }
+
+    .address-field.show {
+        display: block;
+    }
+
+    .payment-methods {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .payment-method {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        max-width: 200px;
+    }
+
+    .payment-method.selected {
+        border-color: #28a745;
+        background: #e8f5e9;
+    }
+
+    .payment-method i {
+        font-size: 24px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .payment-method span {
+        font-size: 13px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    /* intl-tel-input styles */
+    .iti {
+        width: 100%;
+    }
+
+    .iti__flag-container {
+        z-index: 1;
+    }
+
+    .phone-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .email-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        justify-content: flex-end;
+    }
+
+    .btn-place-order {
+        background: #28a745;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .btn-place-order:hover { background: #218838; transform: translateY(-1px); }
+
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .btn-back:hover { background: #5a6268; transform: translateY(-1px); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        body {
+            padding-top: 70px;
+        }
+        .menu-toggle {
+            display: block;
+        }
+        .header {
+            left: 0 !important;
+            height: 70px;
+            padding: 0 15px;
+        }
+        .header h1 {
+            font-size: 18px;
+        }
+        .sidebar {
+            transform: translateX(-100%);
+            width: 260px;
+        }
+        .sidebar.mobile-open {
+            transform: translateX(0);
+        }
+        .main-content {
+            margin-left: 0 !important;
+            padding: 15px;
+        }
+        .profile-name, .dropdown-icon {
+            display: none;
+        }
+        .checkout-container {
+            padding: 20px;
+            margin: 0 10px;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+        .btn-place-order, .btn-back {
+            justify-content: center;
+        }
+        .payment-methods {
+            flex-direction: column;
+        }
+        .payment-method {
+            max-width: 100%;
+        }
+        .toast-container {
+            top: 80px;
+            right: 15px;
+        }
+        .toast {
+            min-width: 250px;
+            padding: 12px 16px;
+        }
+        .notification-dropdown {
+            width: 300px;
+            right: -60px;
+        }
+        .profile-dropdown {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            width: calc(100% - 20px);
+            max-width: 280px;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .sidebar {
+            transform: translateX(0) !important;
+        }
+        .menu-toggle {
+            display: none !important;
+        }
+        .sidebar-overlay {
+            display: none !important;
+        }
+    }
+</style>
+
+<!-- ============================================ -->
+<!-- SIDEBAR
+<!-- ============================================ -->
+{% if is_granted('ROLE_ADMIN') %}
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-store"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_user_index') }}">
+        <i class="fas fa-user-tie"></i>
+        <span>Staff Management</span>
+    </a>
+    <a href="{{ path('app_activity_log_index') }}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Activity Logs</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+{% elseif is_granted('ROLE_STAFF') %}
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
+    </div>
+    <a href="{{ path('app_dashboard') }}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ path('app_product_index') }}">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Products</span>
+    </a>
+    <a href="{{ path('app_stock_index') }}">
+        <i class="fas fa-boxes"></i>
+        <span>Stocks</span>
+    </a>
+    <a href="{{ path('app_order_new') }}">
+        <i class="fas fa-store"></i>
+        <span>Marketplace</span>
+    </a>
+    <a href="{{ path('app_order_index') }}">
+        <i class="fas fa-receipt"></i>
+        <span>Transactions</span>
+    </a>
+    <a href="{{ path('app_profile_index') }}">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+    <a href="{{ path('app_logout') }}">
+        <i class="fas fa-power-off"></i>
+        <span>Logout</span>
+    </a>
+</div>
+{% endif %}
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ============================================ -->
+<!-- PROFILE VARIABLES
+<!-- ============================================ -->
+{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
+{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
+{% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'Customer') %}
+{% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
+
+<!-- ============================================ -->
+<!-- HEADER
+<!-- ============================================ -->
+<div class="header">
+    <h1>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <i class="fas fa-credit-card"></i> Checkout
+    </h1>
+
+    <div class="header-right">
+        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="tracker-badge" id="trackerBadge">0</span>
+        </a>
+        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <div class="notification-wrapper">
+            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-wrapper">
+            <div class="profile-header" id="profileHeader">
+                <div class="profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ app.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <span class="profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-role-header">
+                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                </div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="{{ path('app_order_tracker') }}" class="dropdown-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Order Tracker</span>
+                </a>
+                <a href="{{ path('app_notifications_index') }}" class="dropdown-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Picture</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
+    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
+</form>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================ -->
+<!-- MAIN CONTENT
+<!-- ============================================ -->
+<div class="main-content">
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h2><i class="fas fa-credit-card"></i> Checkout</h2>
+        </div>
+
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            {% for order in orders %}
+                <div class="order-item">
+                    <span>{{ order.stock.product.name }} (x{{ order.quantity }})</span>
+                    <span>₱{{ order.totalAmount|number_format(2, '.', ',') }}</span>
+                </div>
+            {% endfor %}
+            <div class="order-total">
+                <span>Total:</span>
+                <span>₱{{ total|number_format(2, '.', ',') }}</span>
+            </div>
+        </div>
+
+        <form method="post" class="delivery-form" id="checkoutForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name *</label>
+                <input type="text" name="customer_name" id="customerName" placeholder="Enter your full name" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email Address *</label>
+                <input type="email" name="customer_email" id="customerEmail" placeholder="Enter your email" value="{{ app.user.email ?? '' }}" required>
+                <div id="emailError" class="email-error"></div>
+                <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Use valid email like name@gmail.com or name@yahoo.com</small>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Contact Number *</label>
+                <input type="tel" id="customerPhone" class="phone-input" placeholder="e.g., +639171234567 or +14155552671" maxlength="20" required>
+                <div id="phoneError" class="phone-error"></div>
+                <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Select your country flag and enter your phone number with country code</small>
+            </div>
+
+            <div class="form-group">
+                <label for="delivery_type"><i class="fas fa-truck"></i> Delivery Method *</label>
+                <select name="delivery_type" id="deliveryType" required>
+                    <option value="pickup">🏪 Pickup (In-Store)</option>
+                    <option value="shipping">🚚 Ship / Delivery</option>
+                </select>
+            </div>
+
+            <div class="form-group address-field" id="addressField">
+                <label for="delivery_address"><i class="fas fa-map-marker-alt"></i> Delivery Address *</label>
+                <textarea name="delivery_address" id="deliveryAddress" rows="3" placeholder="House #, Street, Barangay, City, Province, Postal Code"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> Payment Method *</label>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-payment="cod" onclick="selectPaymentMethod('cod')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Cash on Delivery</span>
+                    </div>
+                </div>
+                <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="cod">
+            </div>
+
+            <div class="form-actions">
+                <a href="{% if isFromCart is defined and isFromCart %}{{ path('app_cart_view') }}{% else %}{{ path('app_order_new') }}{% endif %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Cart
+                </a>
+                <button type="submit" class="btn-place-order">
+                    <i class="fas fa-check-circle"></i> Place Order
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- intl-tel-input CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+    let notifications = [];
+    let shownFlashes = [];
+    let phoneInputInstance = null;
+
+    // ============================================
+    // MARK ALL NOTIFICATIONS AS READ
+    // ============================================
+    function markAllNotificationsAsRead() {
+        if (notifications.length > 0) {
+            let hasUnread = notifications.some(n => !n.read);
+            if (hasUnread) {
+                notifications.forEach(n => n.read = true);
+                saveNotifications();
+                updateNotificationBadge();
+            }
+        }
+    }
+    
+    function markAllNotificationsAsReadBeforeRedirect() {
+        markAllNotificationsAsRead();
+        window.location.href = '{{ path('app_notifications_index') }}';
+    }
+
+    // ============================================
+    // BADGE UPDATE FUNCTIONS
+    // ============================================
+    function updateCartBadge() {
+        fetch('/cart/count')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('cartBadge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
+                }
+            })
+            .catch(e => console.log('Cart update error:', e));
+    }
+
+    function updateTrackerBadge() {
+        fetch('{{ path('app_new_orders_count') }}')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('trackerBadge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
+                }
+            })
+            .catch(e => console.log('Tracker update error:', e));
+    }
+
+    // ============================================
+    // TOAST NOTIFICATION
+    // ============================================
+    function showToast(message, type = 'success') {
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
+        toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // NOTIFICATION SYSTEM
+    // ============================================
+    function loadNotifications() {
+        const saved = localStorage.getItem('order_notifications');
+        notifications = saved ? JSON.parse(saved) : [];
+        updateNotificationUI();
+        updateNotificationBadge();
+    }
+    
+    function saveNotifications() {
+        localStorage.setItem('order_notifications', JSON.stringify(notifications));
+        updateNotificationUI();
+        updateNotificationBadge();
+    }
+    
+    function addNotification(title, message, orderId, type) {
+        const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
+        notifications.unshift(notification);
+        if (notifications.length > 100) notifications = notifications.slice(0, 100);
+        saveNotifications();
+        showToast(message, type);
+        updateTrackerBadge();
+    }
+    
+    function updateNotificationBadge() {
+        const unreadCount = notifications.filter(n => !n.read).length;
+        const badge = document.getElementById('notificationBadge');
+        if (badge) { 
+            if (unreadCount > 0) { 
+                badge.classList.add('show'); 
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+            } else { 
+                badge.classList.remove('show'); 
+            } 
+        }
+    }
+    
+    function updateNotificationUI() {
+        const list = document.getElementById('notificationList');
+        if (!list) return;
+        
+        if (notifications.length === 0) { 
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+        } else { 
+            const recentNotifications = notifications.slice(0, 5);
+            list.innerHTML = recentNotifications.map(n => `
+                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
+                    <div class="notification-title">${n.title}</div>
+                    <div class="notification-message">${n.message}</div>
+                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+                </div>
+            `).join('');
+            
+            if (notifications.length > 5) {
+                list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
+            }
+        }
+    }
+    
+    function markNotificationAsRead(id) { 
+        const notification = notifications.find(n => n.id === id); 
+        if (notification) { 
+            notification.read = true; 
+            saveNotifications(); 
+        } 
+    }
+    
+    function clearAllNotifications() { 
+        if (confirm('Clear all notifications?')) { 
+            notifications = []; 
+            saveNotifications(); 
+            showToast('All notifications cleared', 'info'); 
+        } 
+    }
+    
+    function formatTimeAgo(timestamp) { 
+        const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
+        if (mins < 1) return 'Just now'; 
+        if (mins < 60) return `${mins} min ago`; 
+        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
+        return `${days} day${days > 1 ? 's' : ''} ago`; 
+    }
+    
+    function toggleNotificationDropdown() { 
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) {
+            markAllNotificationsAsRead();
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    // ============================================
+    // PROFILE DROPDOWN FUNCTIONS
+    // ============================================
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        const header = document.getElementById('profileHeader');
+        if (dropdown && header) {
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
+        }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationIcon = document.getElementById('notificationIcon');
+        if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+        
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profileHeader = document.getElementById('profileHeader');
+        if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.remove('show');
+            profileHeader.classList.remove('active');
+        }
+    });
+
+    // ============================================
+    // EMAIL VALIDATION FUNCTION
+    // ============================================
+    function validateEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|yahoo\.com\.ph|outlook\.com|hotmail\.com)$/i;
+        return emailPattern.test(email);
+    }
+
+    function checkEmailValidation() {
+        const emailInput = document.getElementById('customerEmail');
+        const emailError = document.getElementById('emailError');
+        const email = emailInput.value.trim();
+        
+        if (!email) {
+            emailError.textContent = 'Email address is required';
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        if (!validateEmail(email)) {
+            emailError.textContent = 'Please enter a valid email address (e.g., name@gmail.com or name@yahoo.com)';
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        emailError.style.display = 'none';
+        emailInput.style.borderColor = '#28a745';
+        return true;
+    }
+
+    // ============================================
+    // PHONE VALIDATION FUNCTION
+    // ============================================
+    function validatePhone() {
+        if (!phoneInputInstance) return true;
+        
+        const errorDiv = document.getElementById('phoneError');
+        const phoneInput = document.getElementById('customerPhone');
+        
+        if (!phoneInputInstance.isValidNumber()) {
+            errorDiv.textContent = 'Invalid contact number. Please enter a valid international phone number with country code (e.g., +639171234567).';
+            errorDiv.style.display = 'block';
+            phoneInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        errorDiv.style.display = 'none';
+        phoneInput.style.borderColor = '#28a745';
+        return true;
+    }
+
+    // ============================================
+    // CHECKOUT SPECIFIC FUNCTIONS
+    // ============================================
+    function initializePhoneInput() {
+        if (phoneInputInstance) return;
+        
+        const phoneInput = document.querySelector("#customerPhone");
+        if (phoneInput && typeof window.intlTelInput !== 'undefined') {
+            phoneInputInstance = window.intlTelInput(phoneInput, {
+                initialCountry: "ph",
+                separateDialCode: true,
+                preferredCountries: ["ph", "us", "gb", "au", "ca", "sg", "my", "jp", "kr", "cn", "in", "de", "fr", "it", "es", "br", "mx"],
+                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+                formatOnDisplay: true,
+                autoHideDialCode: false,
+                nationalMode: false
+            });
+            
+            phoneInput.addEventListener('blur', validatePhone);
+            phoneInput.addEventListener('countrychange', function() {
+                validatePhone();
+                saveCheckoutInfo();
+            });
+            phoneInput.addEventListener('input', saveCheckoutInfo);
+        }
+    }
+    
+    function toggleAddressField() { 
+        const addressField = document.getElementById('addressField');
+        const addressTextarea = document.getElementById('deliveryAddress');
+        if (document.getElementById('deliveryType').value === 'shipping') {
+            addressField.classList.add('show');
+            addressTextarea.required = true;
+        } else {
+            addressField.classList.remove('show');
+            addressTextarea.required = false;
+        }
+    }
+    
+    function selectPaymentMethod(method) { 
+        document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected')); 
+        document.querySelector(`.payment-method[data-payment="${method}"]`).classList.add('selected'); 
+        document.getElementById('selectedPaymentMethod').value = method; 
+    }
+    
+    function saveCheckoutInfo() {
+        let name = document.getElementById('customerName')?.value || '';
+        let email = document.getElementById('customerEmail')?.value || '';
+        let fullPhone = phoneInputInstance ? phoneInputInstance.getNumber() : '';
+        let delivery = document.getElementById('deliveryType')?.value || 'pickup';
+        let address = document.getElementById('deliveryAddress')?.value || '';
+        let payment = document.getElementById('selectedPaymentMethod')?.value || 'cod';
+        let countryCode = phoneInputInstance ? phoneInputInstance.getSelectedCountryData().iso2 : 'ph';
+        
+        fetch('/cart/save-checkout-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone: fullPhone, countryCode, delivery, address, payment })
+        }).catch(e => console.error('Save error:', e));
+    }
+
+    // ============================================
+    // CHECK ORDER UPDATES
+    // ============================================
+    function checkOrderUpdates() {
+        fetch('{{ path('app_order_check_updates') }}')
+            .then(res => res.json())
+            .then(data => {
+                if (data.updates && data.updates.length > 0) {
+                    updateTrackerBadge();
+                    data.updates.forEach(update => {
+                        let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                        if (!exists) {
+                            let title = '', message = '', type = 'info';
+                            switch(update.newStatus) {
+                                case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                                case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                                case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                                case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                                case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                                case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                                case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
+                                case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
+                                case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                                default: return;
+                            }
+                            addNotification(title, message, update.orderId, type);
+                        }
+                    });
+                }
+            })
+            .catch(e => console.error('Polling error:', e));
+    }
+
+    // ============================================
+    // MOBILE SIDEBAR
+    // ============================================
+    let sidebarInit = false;
+    function initMobileSidebar() {
+        if (sidebarInit) return;
+        let toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+        if (!toggle || !sidebar) return;
+        function open() { sidebar.classList.add('mobile-open'); if (overlay) overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function close() { sidebar.classList.remove('mobile-open'); if (overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
+        toggle.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.contains('mobile-open') ? close() : open(); });
+        if (overlay) overlay.addEventListener('click', close);
+        document.addEventListener('click', e => { if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) close(); });
+        window.addEventListener('resize', () => { if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) close(); });
+        sidebarInit = true;
+    }
+
+    // ============================================
+    // FLASH MESSAGES
+    // ============================================
+    function initFlashMessages() {
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                let msg = '{{ message|escape('js') }}';
+                if (!shownFlashes.includes(msg)) { shownFlashes.push(msg); showToast(msg, '{{ label }}'); }
+            {% endfor %}
+        {% endfor %}
+    }
+
+    // ============================================
+    // PROFILE DROPDOWN
+    // ============================================
+    let dropdownInit = false;
+    function initializeDropdown() {
+        if (dropdownInit) return;
+        let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
+        if (header && dropdown) {
+            header.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleProfileDropdown();
+            });
+            dropdownInit = true;
+        }
+        let changeBtn = document.getElementById('changeProfilePicBtn');
+        if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+    }
+
+    // ============================================
+    // PROFILE PICTURE UPLOAD MODAL
+    // ============================================
+    function showUploadModal() {
+        let existing = document.getElementById('uploadModal'); if (existing) existing.remove();
+        let modal = document.createElement('div'); modal.id = 'uploadModal'; modal.className = 'modal';
+        modal.innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Change Profile Picture</h3><button class="close-modal">&times;</button></div><div class="modal-body"><div class="upload-area" id="uploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload or drag and drop</p><small>PNG, JPG, GIF, WebP up to 2MB</small></div><div class="image-preview" id="imagePreview" style="display:none;"><img src="" alt="Preview"></div><div class="upload-progress" id="uploadProgress" style="display:none;"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></div><div class="modal-footer"><button class="btn-secondary-modal" id="cancelUpload">Cancel</button><button class="btn-primary-modal" id="saveUpload" disabled>Upload</button></div></div>`;
+        document.body.appendChild(modal); setTimeout(() => modal.classList.add('show'), 10);
+        let uploadArea = document.getElementById('uploadArea'), preview = document.getElementById('imagePreview'), previewImg = preview.querySelector('img'), saveBtn = document.getElementById('saveUpload'), cancelBtn = document.getElementById('cancelUpload'), closeBtn = modal.querySelector('.close-modal'), progressContainer = document.getElementById('uploadProgress'), progressFill = document.getElementById('progressFill'), progressText = document.getElementById('progressText');
+        let fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp'; fileInput.style.display = 'none'; modal.appendChild(fileInput);
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => { let file = e.target.files[0]; if (file) { if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)) { showToast('Invalid image type', 'error'); return; } if (file.size > 2*1024*1024) { showToast('File too large (max 2MB)', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; }; reader.readAsDataURL(file); } });
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+        uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
+        saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
+        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+        function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
+        window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
+        cancelBtn.addEventListener('click', closeUploadModal);
+        closeBtn.addEventListener('click', closeUploadModal);
+        modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
+    }
+
+    // ============================================
+    // INIT ALL
+    // ============================================
+    function initAll() {
+        initMobileSidebar(); 
+        initFlashMessages(); 
+        initializeDropdown(); 
+        loadNotifications();
+        
+        checkOrderUpdates(); 
+        setInterval(checkOrderUpdates, 30000);
+        updateCartBadge(); 
+        setInterval(updateCartBadge, 5000);
+        updateTrackerBadge();
+        initializePhoneInput();
+        
+        const deliveryType = document.getElementById('deliveryType');
+        if (deliveryType) {
+            deliveryType.addEventListener('change', toggleAddressField);
+            deliveryType.addEventListener('change', saveCheckoutInfo);
+            toggleAddressField();
+        }
+        
+        // Save checkout info on input change
+        document.getElementById('customerName')?.addEventListener('input', saveCheckoutInfo);
+        document.getElementById('customerEmail')?.addEventListener('input', saveCheckoutInfo);
+        document.getElementById('deliveryAddress')?.addEventListener('input', saveCheckoutInfo);
+        
+        // Email validation
+        const emailInput = document.getElementById('customerEmail');
+        if (emailInput) {
+            emailInput.addEventListener('blur', checkEmailValidation);
+            emailInput.addEventListener('input', function() {
+                if (this.value.trim()) checkEmailValidation();
+            });
+        }
+        
+        // Name validation
+        const nameInput = document.getElementById('customerName');
+        if (nameInput) {
+            nameInput.addEventListener('blur', function() {
+                if (!this.value.trim()) this.style.borderColor = '#dc3545';
+                else this.style.borderColor = '#28a745';
+            });
+            nameInput.addEventListener('input', function() {
+                if (this.value.trim()) this.style.borderColor = '#28a745';
+            });
+        }
+        
+        // Phone input save
+        const phoneInput = document.getElementById('customerPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('blur', saveCheckoutInfo);
+            phoneInput.addEventListener('countrychange', saveCheckoutInfo);
+            phoneInput.addEventListener('input', saveCheckoutInfo);
+        }
+        
+        // Select default payment method
+        selectPaymentMethod('cod');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100));
+    document.addEventListener('turbo:load', () => { sidebarInit = false; dropdownInit = false; setTimeout(initAll, 100); });
+</script>
+{% endblock %}

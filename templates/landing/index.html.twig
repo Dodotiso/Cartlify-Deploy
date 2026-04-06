@@ -13,6 +13,8 @@
   --primary-color: #34495e;
   --primary-dark: #2c3e50;
   --primary-light: #3b5a7a;
+  --accent-color: #e67e22;
+  --accent-dark: #d35400;
   --black: #000000;
   --black-light: #1a1a1a;
   --white: #ffffff;
@@ -25,8 +27,11 @@
   --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
   --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
   --shadow-hover: 0 20px 25px rgba(0,0,0,0.15);
-  --border-radius: 8px;
-  --transition: all 0.3s ease;
+  --shadow-xl: 0 25px 35px rgba(0,0,0,0.2);
+  --border-radius: 12px;
+  --border-radius-lg: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -64,7 +69,7 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: 0.75rem 5%;
   background: var(--white);
   box-shadow: var(--shadow-sm);
   position: sticky;
@@ -77,12 +82,19 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
 
 .logo {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .logo-img {
-  width: 140px;
+  width: 180px;
   height: auto;
-  filter: brightness(0);
+  /* REMOVED filter: brightness(0) - now your original logo colors will show! */
+  transition: var(--transition);
+}
+
+.logo-img:hover {
+  transform: scale(1.02);
 }
 
 .menu-toggle {
@@ -102,6 +114,7 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
 .menu a {
@@ -175,121 +188,73 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   box-shadow: var(--shadow-sm);
 }
 
-/* Hero Section */
-.hero {
+/* ========== SECTION 1: HERO BANNER ========== */
+.hero-banner {
+  position: relative;
+  height: 80vh;
+  min-height: 600px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 4rem 5%;
-  background: linear-gradient(135deg, var(--white) 0%, var(--gray-light) 100%);
-  gap: 4rem;
-  min-height: 600px;
+  justify-content: center;
 }
 
-.hero-content {
-  flex: 1;
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&auto=format') center/cover;
+  opacity: 0.15;
+  animation: slowZoom 20s ease-in-out infinite;
+}
+
+@keyframes slowZoom {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.hero-banner-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: var(--white);
+  max-width: 800px;
+  padding: 0 2rem;
   animation: fadeInUp 0.8s ease-out;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-badge {
-  display: inline-block;
-  background: var(--primary-color);
-  color: var(--white);
-  padding: 0.25rem 1rem;
-  border-radius: 50px;
-  font-size: 0.875rem;
-  font-weight: 600;
+.hero-banner h1 {
+  font-size: 4rem;
   margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
-.hero-content h1 span {
-  color: var(--primary-color);
-  position: relative;
-  display: inline-block;
-}
-
-.hero-content p {
-  font-size: 1.125rem;
-  color: var(--text-light);
+.hero-banner p {
+  font-size: 1.25rem;
   margin-bottom: 2rem;
-  line-height: 1.6;
+  opacity: 0.95;
 }
 
-.hero-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+.hero-banner .btn-large {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  background: var(--accent-color);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-.btn-large {
-  padding: 1rem 2rem;
-  font-size: 1rem;
+.hero-banner .btn-large:hover {
+  background: var(--accent-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-}
-
-.btn-secondary:hover {
-  background: var(--primary-color);
-  color: var(--white);
-}
-
-.hero-image {
-  flex: 1;
-  position: relative;
-  max-width: 500px;
-}
-
-.hero-image img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
-}
-
-/* Stats Section */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  padding: 4rem 5%;
-  background: var(--white);
-  border-bottom: 1px solid var(--gray);
-}
-
-.stat-card {
-  text-align: center;
-  padding: 2rem;
-}
-
-.stat-number {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  color: var(--text-light);
-  font-size: 1rem;
-}
-
-/* Features Section */
-.features {
+/* ========== SECTION 2: CATEGORY SHOWCASE ========== */
+.categories {
   padding: 5rem 5%;
   background: var(--white);
 }
@@ -300,197 +265,266 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   margin: 0 auto 3rem;
 }
 
-.section-header h2 {
-  margin-bottom: 1rem;
-}
-
-.section-header p {
-  color: var(--text-light);
-  font-size: 1.125rem;
-}
-
-.features-grid {
+.category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.feature-card {
+.category-card {
+  position: relative;
+  background: linear-gradient(135deg, var(--gray-light) 0%, var(--white) 100%);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem 1rem;
   text-align: center;
-  padding: 2rem;
-  background: var(--white);
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+  cursor: pointer;
+  transition: var(--transition-slow);
+  overflow: hidden;
   border: 1px solid var(--gray);
 }
 
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.category-card:hover::before {
+  left: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: var(--shadow-xl);
   border-color: var(--primary-color);
 }
 
-.feature-icon {
+.category-icon {
   width: 80px;
   height: 80px;
-  background: var(--gray-light);
+  background: var(--primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  font-size: 2rem;
-  color: var(--primary-color);
+  font-size: 2.5rem;
+  color: var(--white);
   transition: var(--transition);
 }
 
-.feature-card:hover .feature-icon {
-  background: var(--primary-color);
-  color: var(--white);
+.category-card:hover .category-icon {
+  transform: rotateY(180deg);
+  background: var(--accent-color);
 }
 
-.feature-card h3 {
-  margin-bottom: 1rem;
+.category-card h3 {
+  margin-bottom: 0.5rem;
 }
 
-.feature-card p {
+.category-card p {
   color: var(--text-light);
-  line-height: 1.6;
+  font-size: 0.9rem;
 }
 
-/* About Section */
-.about {
-  padding: 5rem 5%;
-  background: var(--gray-light);
+.category-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-.about-container {
-  display: flex;
-  gap: 4rem;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
+/* ========== SECTION 3: FEATURED BANNER (CLICKABLE) ========== */
+.featured-banner {
+  margin: 2rem 5%;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  transition: var(--transition-slow);
 }
 
-.about-content {
-  flex: 1;
+.featured-banner:hover {
+  transform: scale(1.01);
+  box-shadow: var(--shadow-xl);
 }
 
-.about-content h2 {
-  margin-bottom: 1.5rem;
-}
-
-.about-content p {
-  color: var(--text-light);
-  margin-bottom: 1rem;
-  line-height: 1.6;
-}
-
-.about-list {
-  list-style: none;
-  margin-top: 1.5rem;
-}
-
-.about-list li {
-  margin-bottom: 0.75rem;
+.banner-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 3rem 4rem;
+  color: white;
+  position: relative;
+  z-index: 1;
 }
 
-.about-list i {
-  color: var(--primary-color);
-  font-size: 1.25rem;
+.banner-text h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
-.about-image {
-  flex: 1;
+.banner-text p {
+  font-size: 1.1rem;
+  opacity: 0.95;
 }
 
-.about-image img {
-  width: 100%;
-  height: auto;
+.banner-offer {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: rgba(255,255,255,0.2);
+  padding: 1rem 2rem;
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
 }
 
-/* Products/Services Section */
-.products {
+.featured-banner::after {
+  content: '→';
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  opacity: 0;
+  transition: var(--transition);
+  color: white;
+}
+
+.featured-banner:hover::after {
+  opacity: 1;
+  right: 3rem;
+}
+
+/* ========== SECTION 4: HOT DEALS (PRODUCTS WITH COUNTDOWN) ========== */
+.hot-deals {
   padding: 5rem 5%;
-  background: var(--white);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
 }
 
-.products-grid {
+.deals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.product-card {
+.deal-card {
   background: var(--white);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  border: 1px solid var(--gray);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-slow);
+  position: relative;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+.deal-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
 }
 
-.product-image {
+.deal-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #e74c3c;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  z-index: 2;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.deal-image {
   height: 250px;
   overflow: hidden;
+  position: relative;
 }
 
-.product-image img {
+.deal-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 
-.product-card:hover .product-image img {
-  transform: scale(1.05);
+.deal-card:hover .deal-image img {
+  transform: scale(1.1);
 }
 
-.product-info {
+.deal-info {
   padding: 1.5rem;
 }
 
-.product-info h3 {
+.deal-info h3 {
   margin-bottom: 0.5rem;
 }
 
-.product-info p {
+.old-price {
+  text-decoration: line-through;
   color: var(--text-light);
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
 }
 
-.product-price {
+.new-price {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
+  font-weight: 800;
+  color: #e74c3c;
 }
 
-.btn-small {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+.countdown {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
 }
 
-/* Testimonials Section */
-.testimonials {
+.countdown-item {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  flex: 1;
+}
+
+.countdown-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.countdown-label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* ========== SECTION 5: CATEGORY WISHLIST (INTERACTIVE CARDS) ========== */
+.wishlist-categories {
   padding: 5rem 5%;
-  background: var(--gray-light);
+  background: var(--white);
 }
 
-.testimonials-grid {
+.wishlist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
@@ -498,90 +532,210 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   margin: 0 auto;
 }
 
-.testimonial-card {
-  background: var(--white);
-  padding: 2rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  border: 1px solid var(--gray);
+.wishlist-item {
+  position: relative;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-slow);
 }
 
-.testimonial-card:hover {
+.wishlist-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+.wishlist-image {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.wishlist-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.wishlist-item:hover .wishlist-image img {
+  transform: scale(1.1);
+}
+
+.wishlist-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+  padding: 2rem 1.5rem 1.5rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.wishlist-item:hover .wishlist-overlay {
+  transform: translateY(0);
+}
+
+.wishlist-overlay h3 {
+  margin-bottom: 0.5rem;
+}
+
+.wishlist-overlay p {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.wishlist-btn {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.wishlist-btn:hover {
+  background: var(--accent-dark);
+  transform: translateX(5px);
+}
+
+/* ========== SECTION 6: FLASH SALE CAROUSEL - NOW WITH 8 ITEMS ========== */
+.flash-sale {
+  padding: 5rem 5%;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+}
+
+.sale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.sale-timer {
+  background: rgba(255,255,255,0.2);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+}
+
+.sale-timer span {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0.25rem;
+}
+
+.sale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.sale-item {
+  background: white;
+  color: var(--text-dark);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: var(--transition-slow);
+  cursor: pointer;
+}
+
+.sale-item:hover {
+  transform: translateY(-8px) rotate(1deg);
+  box-shadow: var(--shadow-xl);
+}
+
+.sale-item-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.sale-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.sale-item:hover .sale-item-image img {
+  transform: scale(1.1);
+}
+
+.sale-item-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.sale-price {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #e74c3c;
+}
+
+/* ========== SECTION 7: WHY CHOOSE US (FEATURES WITH ICONS) ========== */
+.why-choose-us {
+  padding: 5rem 5%;
+  background: var(--gray-light);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-box {
+  text-align: center;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  transition: var(--transition-slow);
+  cursor: pointer;
+}
+
+.feature-box:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
 }
 
-.testimonial-text {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--text-light);
-  margin-bottom: 1.5rem;
-  position: relative;
-}
-
-.testimonial-text i {
-  color: var(--primary-color);
-  font-size: 2rem;
-  opacity: 0.3;
-  margin-right: 0.5rem;
-}
-
-.testimonial-author {
+.feature-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  transition: var(--transition);
 }
 
-.testimonial-author img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
+.feature-box:hover .feature-icon-wrapper {
+  transform: scale(1.1) rotate(360deg);
 }
 
-.testimonial-author h4 {
-  margin-bottom: 0.25rem;
+.feature-icon-wrapper i {
+  font-size: 2rem;
+  color: white;
 }
 
-.testimonial-author p {
-  color: var(--text-light);
-  font-size: 0.875rem;
-}
-
-/* CTA Section */
-.cta {
-  padding: 5rem 5%;
-  background: var(--primary-color);
-  color: var(--white);
-  text-align: center;
-}
-
-.cta-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.cta h2 {
+.feature-box h3 {
   margin-bottom: 1rem;
 }
 
-.cta p {
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.cta .btn-primary {
-  background: var(--white);
-  color: var(--primary-color);
-  padding: 1rem 2rem;
-  font-size: 1rem;
-}
-
-.cta .btn-primary:hover {
-  background: var(--white);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+.feature-box p {
+  color: var(--text-light);
+  line-height: 1.6;
 }
 
 /* Footer */
@@ -660,25 +814,22 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   font-size: 0.875rem;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 1024px) {
-  .hero {
+  .banner-content {
     flex-direction: column;
     text-align: center;
-    gap: 2rem;
+    gap: 1rem;
+    padding: 2rem;
   }
   
-  .hero-buttons {
-    justify-content: center;
-  }
-  
-  .about-container {
+  .sale-header {
     flex-direction: column;
     text-align: center;
   }
   
-  .about-list li {
-    justify-content: center;
+  .logo-img {
+    width: 150px;
   }
 }
 
@@ -700,52 +851,50 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
     display: flex;
   }
   
-  .menu a {
-    padding: 0.5rem;
-    text-align: center;
-  }
-  
   .nav-buttons {
     width: 100%;
     justify-content: center;
   }
   
-  .stats {
+  .hero-banner {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  .hero-banner h1 {
+    font-size: 2rem;
+  }
+  
+  .category-grid,
+  .deals-grid,
+  .wishlist-grid,
+  .sale-grid,
+  .features-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
   
-  .features-grid,
-  .products-grid,
-  .testimonials-grid {
-    grid-template-columns: 1fr;
+  .banner-offer {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
   }
   
-  .footer-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
-  .social-links {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-buttons {
-    flex-direction: column;
-  }
-  
-  .hero-buttons button {
-    width: 100%;
-  }
-  
-  .product-image {
-    height: 200px;
+  .logo-img {
+    width: 130px;
   }
 }
 
 /* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -758,10 +907,10 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
 }
 </style>
 
-<!-- Navbar -->
+<!-- Navbar - UPDATED: Only Home, Products, About, Contact -->
 <header class="navbar">
   <div class="logo">
-    <img src="images/cart1.png" alt="Cartlify Logo" class="logo-img">
+    <img src="images/cart7-01.png" alt="Cartlify Logo" class="logo-img">
   </div>
 
   <button class="menu-toggle" aria-label="Toggle menu">
@@ -770,10 +919,9 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
 
   <nav class="menu">
     <a href="#home" class="active">Home</a>
-    {# <a href="#about">About</a> #}
-    <a href="{{ path('app_about') }}">About</a>
     <a href="#products">Products</a>
-    <a href="{{ path('app_contact') }}">Contact Us</a>
+    <a href="{{ path('app_about') }}">About</a>
+    <a href="{{ path('app_contact') }}">Contact</a>
   </nav>
   
   <div class="nav-buttons">
@@ -782,217 +930,296 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   </div>
 </header>
 
-<!-- Hero Section -->
-<section id="home" class="hero">
-  <div class="hero-content">
-    <span class="hero-badge">Welcome to Cartlify</span>
-    <h1>Elevate Your <span>Shopping</span> Experience</h1>
-    <p>Discover curated collections, unbeatable deals, and a smarter way to shop — all in one place. Join thousands of satisfied customers who trust Cartlify for their shopping needs.</p>
-    <div class="hero-buttons">
-      <button class="btn-primary btn-large" onclick="window.location.href='{{ path('app_register') }}'">Get Started</button>
-      <button class="btn-outline btn-large">Learn More</button>
+<!-- SECTION 1: Hero Banner -->
+<section id="home" class="hero-banner">
+  <div class="hero-banner-content">
+    <h1>Welcome to Cartlify</h1>
+    <p>Discover amazing products at unbeatable prices. Your one-stop shop for everything you need!</p>
+    <button class="btn-primary btn-large" onclick="window.location.href='{{ path('app_login') }}'">Shop Now →</button>
+  </div>
+</section>
+
+<!-- SECTION 2: Categories Showcase -->
+<section class="categories">
+  <div class="section-header">
+    <h2>Shop by Category</h2>
+    <p>Explore our wide range of products across multiple categories</p>
+  </div>
+  <div class="category-grid">
+    <div class="category-card" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="category-icon"><i class="fas fa-mobile-alt"></i></div>
+      <h3>Electronics</h3>
+      <p>Smartphones, Laptops & More</p>
+      <div class="category-badge">Hot!</div>
+    </div>
+    <div class="category-card" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="category-icon"><i class="fas fa-couch"></i></div>
+      <h3>Furniture</h3>
+      <p>Modern & Classic Designs</p>
+    </div>
+    <div class="category-card" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="category-icon"><i class="fas fa-utensils"></i></div>
+      <h3>Utensils</h3>
+      <p>Kitchen Essentials</p>
+    </div>
+    <div class="category-card" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="category-icon"><i class="fas fa-tshirt"></i></div>
+      <h3>Fashion</h3>
+      <p>Trendy Apparel</p>
+    </div>
+    <div class="category-card" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="category-icon"><i class="fas fa-shoe-prints"></i></div>
+      <h3>Footwear</h3>
+      <p>Comfort & Style</p>
     </div>
   </div>
-  
-  <div class="hero-image">
-    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop" alt="Shopping Experience" loading="lazy">
-  </div>
 </section>
 
-<!-- Stats Section -->
-<section class="stats">
-  <div class="stat-card">
-    <div class="stat-number">10K+</div>
-    <div class="stat-label">Happy Customers</div>
+<!-- SECTION 3: Clickable Featured Banner -->
+<div class="featured-banner" onclick="window.location.href='{{ path('app_login') }}'">
+  <div class="banner-content">
+    <div class="banner-text">
+      <h3>🎉 Mega Electronics Sale</h3>
+      <p>Up to 50% off on latest gadgets & accessories</p>
+    </div>
+    <div class="banner-offer">
+      Limited Time Offer!
+    </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-number">500+</div>
-    <div class="stat-label">Products</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number">50+</div>
-    <div class="stat-label">Categories</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number">24/7</div>
-    <div class="stat-label">Support</div>
-  </div>
-</section>
+</div>
 
-<!-- Features Section -->
-<section class="features">
+<!-- SECTION 4: Hot Deals with Countdown (Prices in PHP) -->
+<section id="products" class="hot-deals">
   <div class="section-header">
-    <h2>Why Choose Cartlify?</h2>
-    <p>Experience the best shopping platform with features designed for your convenience</p>
+    <h2>🔥 Hot Deals of the Day</h2>
+    <p>Grab these amazing offers before they're gone!</p>
+  </div>
+  <div class="deals-grid">
+    <div class="deal-card">
+      <div class="deal-badge">-30% OFF</div>
+      <div class="deal-image">
+        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format" alt="Smart Watch">
+      </div>
+      <div class="deal-info">
+        <h3>Premium Smart Watch</h3>
+        <div class="price">
+          <span class="old-price">₱11,499</span>
+          <span class="new-price">₱8,049</span>
+        </div>
+        <div class="countdown" data-deadline="2026-12-31T23:59:59">
+          <div class="countdown-item"><div class="countdown-number days">00</div><div class="countdown-label">Days</div></div>
+          <div class="countdown-item"><div class="countdown-number hours">00</div><div class="countdown-label">Hours</div></div>
+          <div class="countdown-item"><div class="countdown-number minutes">00</div><div class="countdown-label">Mins</div></div>
+          <div class="countdown-item"><div class="countdown-number seconds">00</div><div class="countdown-label">Secs</div></div>
+        </div>
+        <button class="btn-primary btn-small" style="width:100%; margin-top:1rem;" onclick="window.location.href='{{ path('app_login') }}'">Shop Now →</button>
+      </div>
+    </div>
+    <div class="deal-card">
+      <div class="deal-badge">-25% OFF</div>
+      <div class="deal-image">
+        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format" alt="Headphones">
+      </div>
+      <div class="deal-info">
+        <h3>Wireless Headphones</h3>
+        <div class="price">
+          <span class="old-price">₱5,199</span>
+          <span class="new-price">₱3,899</span>
+        </div>
+        <div class="countdown" data-deadline="2026-12-30T23:59:59">
+          <div class="countdown-item"><div class="countdown-number days">00</div><div class="countdown-label">Days</div></div>
+          <div class="countdown-item"><div class="countdown-number hours">00</div><div class="countdown-label">Hours</div></div>
+          <div class="countdown-item"><div class="countdown-number minutes">00</div><div class="countdown-label">Mins</div></div>
+          <div class="countdown-item"><div class="countdown-number seconds">00</div><div class="countdown-label">Secs</div></div>
+        </div>
+        <button class="btn-primary btn-small" style="width:100%; margin-top:1rem;" onclick="window.location.href='{{ path('app_login') }}'">Shop Now →</button>
+      </div>
+    </div>
+    <div class="deal-card">
+      <div class="deal-badge">-40% OFF</div>
+      <div class="deal-image">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format" alt="Sneakers">
+      </div>
+      <div class="deal-info">
+        <h3>Casual Sneakers</h3>
+        <div class="price">
+          <span class="old-price">₱3,499</span>
+          <span class="new-price">₱2,099</span>
+        </div>
+        <div class="countdown" data-deadline="2026-12-29T23:59:59">
+          <div class="countdown-item"><div class="countdown-number days">00</div><div class="countdown-label">Days</div></div>
+          <div class="countdown-item"><div class="countdown-number hours">00</div><div class="countdown-label">Hours</div></div>
+          <div class="countdown-item"><div class="countdown-number minutes">00</div><div class="countdown-label">Mins</div></div>
+          <div class="countdown-item"><div class="countdown-number seconds">00</div><div class="countdown-label">Secs</div></div>
+        </div>
+        <button class="btn-primary btn-small" style="width:100%; margin-top:1rem;" onclick="window.location.href='{{ path('app_login') }}'">Shop Now →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: Interactive Category Wishlist (UPDATED PHOTOS) -->
+<section class="wishlist-categories">
+  <div class="section-header">
+    <h2>✨ Curated For You</h2>
+    <p>Handpicked collections based on trending preferences</p>
+  </div>
+  <div class="wishlist-grid">
+    <div class="wishlist-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="wishlist-image">
+        <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&auto=format" alt="Gadgets">
+      </div>
+      <div class="wishlist-overlay">
+        <h3>Premium Gadgets</h3>
+        <p>Latest tech & accessories</p>
+        <button class="wishlist-btn">Explore →</button>
+      </div>
+    </div>
+    <div class="wishlist-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="wishlist-image">
+        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&auto=format" alt="Modern Furniture">
+      </div>
+      <div class="wishlist-overlay">
+        <h3>Modern Living</h3>
+        <p>Contemporary furniture designs</p>
+        <button class="wishlist-btn">Explore →</button>
+      </div>
+    </div>
+    <div class="wishlist-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="wishlist-image">
+        <img src="https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=400&auto=format" alt="Kitchen Premium">
+      </div>
+      <div class="wishlist-overlay">
+        <h3>Chef's Choice</h3>
+        <p>Premium kitchen essentials</p>
+        <button class="wishlist-btn">Explore →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: Flash Sale Carousel (NOW WITH 8 ITEMS) -->
+<section class="flash-sale">
+  <div class="sale-header">
+    <h2>⚡ Flash Sale</h2>
+    <div class="sale-timer">
+      <span id="flashDays">00</span>d 
+      <span id="flashHours">00</span>h 
+      <span id="flashMinutes">00</span>m 
+      <span id="flashSeconds">00</span>s
+    </div>
+  </div>
+  <div class="sale-grid">
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=300&auto=format" alt="Gaming Laptop">
+      </div>
+      <div class="sale-item-info">
+        <h4>Gaming Laptop</h4>
+        <div class="sale-price">₱45,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱74,999</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&auto=format" alt="Modern Sofa">
+      </div>
+      <div class="sale-item-info">
+        <h4>Modern Sofa</h4>
+        <div class="sale-price">₱25,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱39,999</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=300&auto=format" alt="Cookware Set">
+      </div>
+      <div class="sale-item-info">
+        <h4>Premium Cookware</h4>
+        <div class="sale-price">₱4,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱8,499</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=300&auto=format" alt="Running Shoes">
+      </div>
+      <div class="sale-item-info">
+        <h4>Running Shoes</h4>
+        <div class="sale-price">₱3,299 <span style="text-decoration:line-through; font-size:0.9rem;">₱5,699</span></div>
+      </div>
+    </div>
+    <!-- 4 Additional Flash Sale Items -->
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&auto=format" alt="Smartwatch">
+      </div>
+      <div class="sale-item-info">
+        <h4>Fitness Smartwatch</h4>
+        <div class="sale-price">₱2,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱5,999</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format" alt="Dining Table">
+      </div>
+      <div class="sale-item-info">
+        <h4>Dining Table Set</h4>
+        <div class="sale-price">₱18,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱29,999</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=300&auto=format" alt="Knife Set">
+      </div>
+      <div class="sale-item-info">
+        <h4>Chef Knife Set</h4>
+        <div class="sale-price">₱1,999 <span style="text-decoration:line-through; font-size:0.9rem;">₱3,499</span></div>
+      </div>
+    </div>
+    <div class="sale-item" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="sale-item-image">
+        <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format" alt="Leather Shoes">
+      </div>
+      <div class="sale-item-info">
+        <h4>Leather Oxfords</h4>
+        <div class="sale-price">₱4,499 <span style="text-decoration:line-through; font-size:0.9rem;">₱7,999</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7: Why Choose Us -->
+<section class="why-choose-us">
+  <div class="section-header">
+    <h2>Why Shop With Us?</h2>
+    <p>We're committed to giving you the best shopping experience</p>
   </div>
   <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">
+    <div class="feature-box" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="feature-icon-wrapper">
         <i class="fas fa-truck-fast"></i>
       </div>
-      <h3>Fast Delivery</h3>
-      <p>Get your items delivered within 24-48 hours with our express shipping network across the country.</p>
+      <h3>Free Delivery</h3>
+      <p>On orders over ₱2,500. Fast shipping across the Philippines.</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">
+    <div class="feature-box" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="feature-icon-wrapper">
         <i class="fas fa-shield-alt"></i>
       </div>
       <h3>Secure Payments</h3>
-      <p>Multiple payment options with bank-grade encryption to ensure your transactions are always safe.</p>
+      <p>100% secure transactions with multiple payment options.</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <i class="fas fa-star"></i>
+    <div class="feature-box" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="feature-icon-wrapper">
+        <i class="fas fa-undo-alt"></i>
       </div>
-      <h3>Curated Picks</h3>
-      <p>Hand-picked products from trusted vendors, ensuring quality and authenticity for every purchase.</p>
+      <h3>Easy Returns</h3>
+      <p>30-day return policy. No questions asked.</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">
+    <div class="feature-box" onclick="window.location.href='{{ path('app_login') }}'">
+      <div class="feature-icon-wrapper">
         <i class="fas fa-headset"></i>
       </div>
       <h3>24/7 Support</h3>
-      <p>Dedicated customer support team available round the clock to assist you with any queries.</p>
-    </div>
-  </div>
-</section>
-
-<!-- About Section -->
-<section id="about" class="about">
-  <div class="about-container">
-    <div class="about-content">
-      <h2>About Cartlify</h2>
-      <p>Cartlify was founded with a simple mission: to make online shopping seamless, secure, and enjoyable for everyone. We believe that everyone deserves access to quality products at fair prices.</p>
-      <p>Our platform connects buyers with trusted sellers, offering a curated selection of products across multiple categories. With a focus on customer satisfaction and innovation, we're redefining the e-commerce experience.</p>
-      <ul class="about-list">
-        <li><i class="fas fa-check-circle"></i> 100% Authentic Products</li>
-        <li><i class="fas fa-check-circle"></i> Hassle-free Returns</li>
-        <li><i class="fas fa-check-circle"></i> Price Match Guarantee</li>
-        <li><i class="fas fa-check-circle"></i> Eco-friendly Packaging</li>
-      </ul>
-    </div>
-    <div class="about-image">
-      <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&auto=format&fit=crop" alt="About Cartlify" loading="lazy">
-    </div>
-  </div>
-</section>
-
-<!-- Products Section -->
-<section id="products" class="products">
-  <div class="section-header">
-    <h2>Featured Products</h2>
-    <p>Discover our most popular items loved by customers</p>
-  </div>
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop" alt="Premium Watch" loading="lazy">
-      </div>
-      <div class="product-info">
-        <h3>Premium Smart Watch</h3>
-        <p>Advanced fitness tracking with heart rate monitor and GPS</p>
-        <div class="product-price">$199.99</div>
-        <button class="btn-primary btn-small">Shop Now</button>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format&fit=crop" alt="Wireless Headphones" loading="lazy">
-      </div>
-      <div class="product-info">
-        <h3>Wireless Headphones</h3>
-        <p>Noise cancellation with 30-hour battery life</p>
-        <div class="product-price">$89.99</div>
-        <button class="btn-primary btn-small">Shop Now</button>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop" alt="Casual Sneakers" loading="lazy">
-      </div>
-      <div class="product-info">
-        <h3>Casual Sneakers</h3>
-        <p>Comfortable and stylish for everyday wear</p>
-        <div class="product-price">$59.99</div>
-        <button class="btn-primary btn-small">Shop Now</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="testimonials">
-  <div class="section-header">
-    <h2>What Our Customers Say</h2>
-    <p>Join thousands of satisfied shoppers who love Cartlify</p>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testimonial-card">
-      <div class="testimonial-text">
-        <i class="fas fa-quote-left"></i>
-        Amazing platform! The products are exactly as described and delivery was super fast. Highly recommend Cartlify for all your shopping needs.
-      </div>
-      <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Customer">
-        <div>
-          <h4>Sarah Johnson</h4>
-          <p>Verified Buyer</p>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-text">
-        <i class="fas fa-quote-left"></i>
-        Excellent customer service! Had an issue with my order and they resolved it within hours. Best shopping experience ever!
-      </div>
-      <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Customer">
-        <div>
-          <h4>Michael Chen</h4>
-          <p>Verified Buyer</p>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-text">
-        <i class="fas fa-quote-left"></i>
-        The curated selection is fantastic! Found products I couldn't find anywhere else. Will definitely shop again.
-      </div>
-      <div class="testimonial-author">
-        <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Customer">
-        <div>
-          <h4>Emily Rodriguez</h4>
-          <p>Verified Buyer</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta">
-  <div class="cta-content">
-    <h2>Ready to Start Shopping?</h2>
-    <p>Join Cartlify today and get exclusive access to deals, discounts, and a premium shopping experience.</p>
-    <button class="btn-primary" onclick="window.location.href='{{ path('app_register') }}'">Create Free Account</button>
-  </div>
-</section>
-
-<!-- Contact Section -->
-<section id="contact" class="about" style="background: var(--white);">
-  <div class="about-container">
-    <div class="about-content">
-      <h2>Contact Us</h2>
-      <p>Have questions? We'd love to hear from you. Our team is here to help with any inquiries about products, orders, or partnerships.</p>
-      <ul class="about-list">
-        <li><i class="fas fa-envelope"></i> support@cartlify.com</li>
-        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-        <li><i class="fas fa-map-marker-alt"></i> 123 Shopping Street, NY 10001</li>
-        <li><i class="fas fa-clock"></i> Mon-Fri: 9AM - 6PM EST</li>
-      </ul>
-    </div>
-    <div class="about-image">
-      <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=600&auto=format&fit=crop" alt="Contact Us" loading="lazy">
+      <p>Dedicated customer support team always ready to help.</p>
     </div>
   </div>
 </section>
@@ -1014,9 +1241,9 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
       <h4>Quick Links</h4>
       <ul>
         <li><a href="#home">Home</a></li>
-        <li><a href="#about">About Us</a></li>
         <li><a href="#products">Products</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="{{ path('app_about') }}">About</a></li>
+        <li><a href="{{ path('app_contact') }}">Contact</a></li>
       </ul>
     </div>
     <div class="footer-section">
@@ -1129,6 +1356,89 @@ window.addEventListener('scroll', () => {
   });
 });
 
+// Countdown Timer Function
+function startCountdown(element, deadline) {
+  const daysSpan = element.querySelector('.days');
+  const hoursSpan = element.querySelector('.hours');
+  const minutesSpan = element.querySelector('.minutes');
+  const secondsSpan = element.querySelector('.seconds');
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const distance = deadline - now;
+
+    if (distance < 0) {
+      daysSpan.textContent = '00';
+      hoursSpan.textContent = '00';
+      minutesSpan.textContent = '00';
+      secondsSpan.textContent = '00';
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    daysSpan.textContent = days.toString().padStart(2, '0');
+    hoursSpan.textContent = hours.toString().padStart(2, '0');
+    minutesSpan.textContent = minutes.toString().padStart(2, '0');
+    secondsSpan.textContent = seconds.toString().padStart(2, '0');
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+}
+
+// Initialize all countdown timers
+document.querySelectorAll('.countdown').forEach(element => {
+  const deadlineStr = element.getAttribute('data-deadline');
+  if (deadlineStr) {
+    const deadline = new Date(deadlineStr).getTime();
+    startCountdown(element, deadline);
+  }
+});
+
+// Flash Sale Timer
+function startFlashSaleTimer() {
+  const flashDays = document.getElementById('flashDays');
+  const flashHours = document.getElementById('flashHours');
+  const flashMinutes = document.getElementById('flashMinutes');
+  const flashSeconds = document.getElementById('flashSeconds');
+  
+  // Set flash sale deadline (48 hours from now)
+  const deadline = new Date();
+  deadline.setHours(deadline.getHours() + 48);
+  
+  function updateFlashTimer() {
+    const now = new Date().getTime();
+    const distance = deadline - now;
+    
+    if (distance < 0) {
+      flashDays.textContent = '00';
+      flashHours.textContent = '00';
+      flashMinutes.textContent = '00';
+      flashSeconds.textContent = '00';
+      return;
+    }
+    
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    flashDays.textContent = days.toString().padStart(2, '0');
+    flashHours.textContent = hours.toString().padStart(2, '0');
+    flashMinutes.textContent = minutes.toString().padStart(2, '0');
+    flashSeconds.textContent = seconds.toString().padStart(2, '0');
+  }
+  
+  updateFlashTimer();
+  setInterval(updateFlashTimer, 1000);
+}
+
+startFlashSaleTimer();
+
 // Newsletter form submission
 const newsletterForm = document.querySelector('.footer-section form');
 if (newsletterForm) {
@@ -1141,18 +1451,5 @@ if (newsletterForm) {
     }
   });
 }
-
-// Add loading animation for images
-document.addEventListener('DOMContentLoaded', () => {
-  const images = document.querySelectorAll('img');
-  images.forEach(img => {
-    img.addEventListener('load', function() {
-      this.style.opacity = '1';
-    });
-    if (img.complete) {
-      img.style.opacity = '1';
-    }
-  });
-});
 </script>
 {% endblock %}

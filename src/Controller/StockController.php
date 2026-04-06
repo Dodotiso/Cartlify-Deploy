@@ -53,6 +53,39 @@ final class StockController extends AbstractController
             $selectedProduct = $stock->getProduct();
             $stockQuantity = $stock->getStock();
             
+            // Validation for stock quantity
+            if ($stockQuantity === null || $stockQuantity === '') {
+                $this->addFlash('error', '❌ Stock quantity is required! Please enter a stock quantity.');
+                return $this->render('stock/new.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => false,
+                ]);
+            }
+            
+            if (!is_numeric($stockQuantity)) {
+                $this->addFlash('error', '❌ Stock quantity must contain numbers only! Please enter a valid number (e.g., 100).');
+                return $this->render('stock/new.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => false,
+                ]);
+            }
+            
+            if ($stockQuantity < 0) {
+                $this->addFlash('error', '❌ Stock quantity cannot be negative! Please enter a quantity of 0 or greater.');
+                return $this->render('stock/new.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => false,
+                ]);
+            }
+            
+            if (empty($selectedProduct)) {
+                $this->addFlash('error', '❌ Product is required! Please select a product.');
+                return $this->render('stock/new.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => false,
+                ]);
+            }
+            
             // Check if stock already exists for this product
             $existingStock = $stockRepository->findOneBy(['product' => $selectedProduct]);
             
@@ -115,8 +148,46 @@ final class StockController extends AbstractController
         $form = $this->createForm(StockType::class, $stock);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $stockQuantity = $stock->getStock();
+            
+            // Validation for stock quantity
+            if ($stockQuantity === null || $stockQuantity === '') {
+                $this->addFlash('error', '❌ Stock quantity is required! Please enter a stock quantity.');
+                return $this->render('stock/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => true,
+                    'stock' => $stock,
+                ]);
+            }
+            
+            if (!is_numeric($stockQuantity)) {
+                $this->addFlash('error', '❌ Stock quantity must contain numbers only! Please enter a valid number (e.g., 100).');
+                return $this->render('stock/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => true,
+                    'stock' => $stock,
+                ]);
+            }
+            
+            if ($stockQuantity < 0) {
+                $this->addFlash('error', '❌ Stock quantity cannot be negative! Please enter a quantity of 0 or greater.');
+                return $this->render('stock/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => true,
+                    'stock' => $stock,
+                ]);
+            }
+            
+            if (empty($stock->getProduct())) {
+                $this->addFlash('error', '❌ Product is required! Please select a product.');
+                return $this->render('stock/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'edit' => true,
+                    'stock' => $stock,
+                ]);
+            }
+            
             $stock->setCreatedAt(new \DateTime());
             $entityManager->flush();
             $this->addFlash('success', '✅ Stock for "' . $stock->getProduct()->getName() . '" updated successfully! New quantity: ' . $stockQuantity . ' units.');

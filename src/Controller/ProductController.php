@@ -83,8 +83,26 @@ class ProductController extends AbstractController
                 ]);
             }
             
+            // Check if description contains numbers
+            if (preg_match('/\d/', $product->getDescription())) {
+                $this->addFlash('error', '❌ Numbers are not allowed in Product Description! Please use words only.');
+                return $this->render('product/new.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
             if (empty($product->getPrice()) || $product->getPrice() <= 0) {
                 $this->addFlash('error', '❌ Product price is required. Please enter a valid price greater than 0.');
+                return $this->render('product/new.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            // Check if price contains letters
+            if (is_string($product->getPrice()) && preg_match('/[a-zA-Z]/', $product->getPrice())) {
+                $this->addFlash('error', '❌ Product price must contain numbers only! Please enter a valid price (e.g., 99.99).');
                 return $this->render('product/new.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -107,7 +125,35 @@ class ProductController extends AbstractController
                 ]);
             }
             
+            // Validate URL format if provided
+            if (!empty($imageUrl) && !filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                $this->addFlash('error', '❌ Invalid image URL! Please enter a valid URL starting with http:// or https://');
+                return $this->render('product/new.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
             if ($imageFile) {
+                // Validate file type
+                $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/avif'];
+                if (!in_array($imageFile->getMimeType(), $allowedTypes)) {
+                    $this->addFlash('error', '❌ Invalid file type! Only PNG, JPEG, JPG, GIF, WEBP, and AVIF images are allowed.');
+                    return $this->render('product/new.html.twig', [
+                        'product' => $product,
+                        'form' => $form->createView(),
+                    ]);
+                }
+                
+                // Validate file size (max 5MB)
+                if ($imageFile->getSize() > 5 * 1024 * 1024) {
+                    $this->addFlash('error', '❌ Image file is too large! Maximum size is 5MB.');
+                    return $this->render('product/new.html.twig', [
+                        'product' => $product,
+                        'form' => $form->createView(),
+                    ]);
+                }
+                
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
@@ -163,18 +209,20 @@ class ProductController extends AbstractController
     #[IsGranted('ROLE_STAFF')]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $oldImage = $product->getImage();
+        // Store the current image BEFORE form binding
+        $currentImage = $product->getImage();
         
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $imageFile = $form->get('imageFile')->getData();
             $imageUrl = $form->get('image')->getData();
             
             // Check if both image file and image URL are provided
             if ($imageFile && !empty($imageUrl)) {
                 $this->addFlash('error', '⚠️ Please use ONLY ONE image source. Either upload a file OR provide an image URL, not both.');
+                $product->setImage($currentImage);
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -184,6 +232,7 @@ class ProductController extends AbstractController
             // Validation for required fields
             if (empty($product->getName())) {
                 $this->addFlash('error', '❌ Product name is required. Please fill in the product name field.');
+                $product->setImage($currentImage);
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -192,6 +241,17 @@ class ProductController extends AbstractController
             
             if (empty($product->getDescription())) {
                 $this->addFlash('error', '❌ Product description is required. Please fill in the product description field.');
+                $product->setImage($currentImage);
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            // Check if description contains numbers
+            if (preg_match('/\d/', $product->getDescription())) {
+                $this->addFlash('error', '❌ Numbers are not allowed in Product Description! Please use words only.');
+                $product->setImage($currentImage);
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -200,6 +260,17 @@ class ProductController extends AbstractController
             
             if (empty($product->getPrice()) || $product->getPrice() <= 0) {
                 $this->addFlash('error', '❌ Product price is required. Please enter a valid price greater than 0.');
+                $product->setImage($currentImage);
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            // Check if price contains letters
+            if (is_string($product->getPrice()) && preg_match('/[a-zA-Z]/', $product->getPrice())) {
+                $this->addFlash('error', '❌ Product price must contain numbers only! Please enter a valid price (e.g., 99.99).');
+                $product->setImage($currentImage);
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
@@ -208,13 +279,65 @@ class ProductController extends AbstractController
             
             if (empty($product->getCategory())) {
                 $this->addFlash('error', '❌ Category is required. Please select a category for the product.');
+                $product->setImage($currentImage);
                 return $this->render('product/edit.html.twig', [
                     'product' => $product,
                     'form' => $form->createView(),
                 ]);
             }
             
+            // CHECK IF IMAGE IS EMPTY - SHOW FLASH MESSAGE
+            // If no file uploaded AND no URL provided AND no existing image
+            if (!$imageFile && (empty($imageUrl) || $imageUrl === '') && empty($currentImage)) {
+                $this->addFlash('error', '❌ Image is required! Please upload an image file OR enter an image URL.');
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            // If no file uploaded AND no URL provided BUT has existing image - keep existing image (no error)
+            if (!$imageFile && (empty($imageUrl) || $imageUrl === '') && !empty($currentImage)) {
+                // Keep existing image - this is fine, no error needed
+                $product->setImage($currentImage);
+                $entityManager->flush();
+                $this->addFlash('success', '✅ Product "' . $product->getName() . '" updated successfully!');
+                return $this->redirectToRoute('app_product_index');
+            }
+            
+            // Validate URL format if provided
+            if (!empty($imageUrl) && !filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                $this->addFlash('error', '❌ Invalid image URL! Please enter a valid URL starting with http:// or https://');
+                $product->setImage($currentImage);
+                return $this->render('product/edit.html.twig', [
+                    'product' => $product,
+                    'form' => $form->createView(),
+                ]);
+            }
+            
+            // Handle image upload
             if ($imageFile) {
+                // Validate file type
+                $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/avif'];
+                if (!in_array($imageFile->getMimeType(), $allowedTypes)) {
+                    $this->addFlash('error', '❌ Invalid file type! Only PNG, JPEG, JPG, GIF, WEBP, and AVIF images are allowed.');
+                    $product->setImage($currentImage);
+                    return $this->render('product/edit.html.twig', [
+                        'product' => $product,
+                        'form' => $form->createView(),
+                    ]);
+                }
+                
+                // Validate file size (max 5MB)
+                if ($imageFile->getSize() > 5 * 1024 * 1024) {
+                    $this->addFlash('error', '❌ Image file is too large! Maximum size is 5MB.');
+                    $product->setImage($currentImage);
+                    return $this->render('product/edit.html.twig', [
+                        'product' => $product,
+                        'form' => $form->createView(),
+                    ]);
+                }
+                
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
@@ -228,8 +351,9 @@ class ProductController extends AbstractController
                     $imageFile->move($uploadDir, $newFilename);
                     $product->setImage($newFilename);
                     
-                    if ($oldImage && !filter_var($oldImage, FILTER_VALIDATE_URL)) {
-                        $oldFilePath = $uploadDir . '/' . $oldImage;
+                    // Delete old image file if it exists and is not a URL
+                    if ($currentImage && !filter_var($currentImage, FILTER_VALIDATE_URL)) {
+                        $oldFilePath = $uploadDir . '/' . $currentImage;
                         if (file_exists($oldFilePath)) {
                             unlink($oldFilePath);
                         }
@@ -241,25 +365,24 @@ class ProductController extends AbstractController
                     
                 } catch (FileException $e) {
                     $this->addFlash('error', '❌ Failed to upload image: ' . $e->getMessage());
+                    $product->setImage($currentImage);
                     return $this->render('product/edit.html.twig', [
                         'product' => $product,
                         'form' => $form->createView(),
                     ]);
                 }
-            } elseif (!empty($imageUrl) && $imageUrl !== $oldImage) {
+            } elseif (!empty($imageUrl)) {
+                // URL provided - use it
                 $product->setImage($imageUrl);
                 
-                if ($oldImage && !filter_var($oldImage, FILTER_VALIDATE_URL)) {
-                    $oldFilePath = $this->getParameter('uploads_directory') . '/' . $oldImage;
+                // Delete old image file if it exists and is not a URL
+                if ($currentImage && !filter_var($currentImage, FILTER_VALIDATE_URL)) {
+                    $oldFilePath = $this->getParameter('uploads_directory') . '/' . $currentImage;
                     if (file_exists($oldFilePath)) {
                         unlink($oldFilePath);
                     }
                 }
                 
-                $entityManager->flush();
-                $this->addFlash('success', '✅ Product "' . $product->getName() . '" updated successfully!');
-                return $this->redirectToRoute('app_product_index');
-            } else {
                 $entityManager->flush();
                 $this->addFlash('success', '✅ Product "' . $product->getName() . '" updated successfully!');
                 return $this->redirectToRoute('app_product_index');

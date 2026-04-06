@@ -1,1010 +1,1369 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cartlify | Create Order{% endblock %}
+{% block title %}Cartlify | Marketplace{% endblock %}
 
 {% block body %}
 <style>
-/* --- Sidebar & Header --- */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #343a40;
-    padding-top: 80px;
-}
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 60px;
-    background-color: #1f2a44;
-    padding-top: 30px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: width 0.3s;
-    z-index: 100;
-}
-.sidebar:hover { 
-    width: 220px; 
-}
-.sidebar .logo { 
-    display:flex; 
-    justify-content:center; 
-    margin-bottom:40px; 
-}
-.sidebar .logo img { 
-    height:48px; 
-    transition: height 0.3s; 
-}
-.sidebar:hover .logo img { 
-    height:128px; 
-}
-.sidebar a {
-    display:flex;
-    align-items:center;
-    padding:15px 15px;
-    text-decoration:none;
-    color:#fff;
-    font-weight:500;
-    border-left:4px solid transparent;
-    transition: all 0.3s;
-}
-.sidebar a i {
-    font-size: 18px;
-    width: 24px;
-    text-align: center;
-}
-.sidebar a span { 
-    display:none; 
-    margin-left: 20px;
-    white-space: nowrap;
-}
-.sidebar:hover a span { 
-    display:inline; 
-    opacity:1;
-}
-.sidebar a:hover { 
-    background-color:#34495e; 
-    border-left:4px solid #E64C3C; 
-}
-
-/* Mobile Sidebar Toggle Button */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #343a40;
-    cursor: pointer;
-    padding: 8px;
-    margin-right: 10px;
-    transition: all 0.3s;
-}
-
-.menu-toggle:hover {
-    background-color: #f0f0f0;
-    border-radius: 8px;
-}
-
-/* Sidebar Overlay for Mobile */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 99;
-    transition: all 0.3s;
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
-
-/* --- Sticky Header --- */
-.header {
-    position: fixed;
-    top: 0;
-    left: 60px;
-    right: 0;
-    height: 80px;
-    background-color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    padding:0 30px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
-    transition: left 0.3s;
-    z-index: 99;
-}
-.sidebar:hover ~ .header { 
-    left: 220px; 
-}
-
-/* --- Main Content --- */
-.main-content {
-    margin-left: 60px;
-    padding:30px;
-    transition: margin-left 0.3s;
-    min-height: calc(100vh - 80px);
-}
-.sidebar:hover ~ .main-content { 
-    margin-left:220px; 
-}
-
-/* --- Profile Dropdown --- */
-.profile-wrapper {
-    position: relative;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 20px;
-    transition: background-color 0.3s;
-}
-
-.profile-header:hover {
-    background-color: #f0f0f0;
-}
-
-.profile-header.active {
-    background-color: #e9ecef;
-}
-
-.profile-avatar {
-    width: 38px;
-    height: 38px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-    overflow: hidden;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.profile-name {
-    font-weight: 500;
-    color: #333;
-    user-select: none;
-}
-
-.dropdown-icon {
-    font-size: 12px;
-    color: #6c757d;
-    transition: transform 0.3s;
-}
-
-.profile-header.active .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    width: 200px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: none;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 1000;
-    overflow: hidden;
-}
-
-.profile-dropdown.show {
-    display: flex;
-}
-
-.dropdown-role-header {
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.dropdown-role-header i {
-    margin-right: 5px;
-    font-size: 12px;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
-}
-
-.dropdown-item {
-    padding: 12px 16px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background-color 0.2s;
-}
-
-.dropdown-item i {
-    width: 18px;
-    color: #6c757d;
-}
-
-.dropdown-item:hover {
-    background-color: #f8f9fa;
-}
-
-.dropdown-item.logout-item {
-    color: #dc3545;
-    border-top: 1px solid #eee;
-}
-
-.dropdown-item.logout-item i {
-    color: #dc3545;
-}
-
-/* Toast Notifications */
-.toast-container {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    z-index: 9999;
-}
-
-.toast {
-    background: white;
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 300px;
-    animation: slideInRight 0.3s ease;
-    border-left: 4px solid;
-}
-
-.toast-success {
-    border-left-color: #28a745;
-    background: #f0f9f0;
-}
-
-.toast-error {
-    border-left-color: #dc3545;
-    background: #fff5f5;
-}
-
-.toast-warning {
-    border-left-color: #ffc107;
-    background: #fffbf0;
-}
-
-.toast-info {
-    border-left-color: #17a2b8;
-    background: #f0f9ff;
-}
-
-.toast-icon {
-    font-size: 20px;
-}
-
-.toast-success .toast-icon { color: #28a745; }
-.toast-error .toast-icon { color: #dc3545; }
-.toast-warning .toast-icon { color: #ffc107; }
-.toast-info .toast-icon { color: #17a2b8; }
-
-.toast-content {
-    flex: 1;
-    color: #333;
-    font-size: 14px;
-}
-
-.toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    background: rgba(0,0,0,0.1);
-    width: 100%;
-    animation: progress 3s linear forwards;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+    /* --- Base Reset --- */
+    * {
+        box-sizing: border-box;
     }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
 
-@keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
-}
-
-/* Upload Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #e9ecef;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #343a40;
-    font-size: 18px;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6c757d;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.upload-area {
-    border: 2px dashed #ced4da;
-    border-radius: 8px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.3s;
-}
-
-.upload-area:hover {
-    border-color: #007bff;
-}
-
-.upload-area i {
-    font-size: 48px;
-    color: #6c757d;
-    margin-bottom: 10px;
-}
-
-.upload-area p {
-    margin: 0;
-    color: #6c757d;
-}
-
-.upload-area small {
-    color: #adb5bd;
-    font-size: 12px;
-}
-
-.image-preview {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.image-preview img {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-}
-
-.upload-progress {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 5px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #007bff;
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-#progressText {
-    font-size: 12px;
-    color: #6c757d;
-}
-
-.modal-footer {
-    padding: 20px;
-    border-top: 1px solid #e9ecef;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-primary-modal {
-    background: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.btn-primary-modal:hover:not(:disabled) {
-    opacity: 0.9;
-}
-
-.btn-primary-modal:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary-modal {
-    background: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.btn-secondary-modal:hover {
-    opacity: 0.9;
-}
-
-/* --- Grid for products --- */
-.products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
-}
-.product-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-.product-image-container {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-}
-.product-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 10px;
-    max-height: 200px;
-}
-.card-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-.card-body h3 { 
-    margin: 0 0 10px; 
-    font-size: 18px; 
-    color: #343a40;
-    font-weight: 600;
-}
-.card-body .description { 
-    margin: 0 0 10px; 
-    font-size: 14px; 
-    color: #6c757d;
-    flex-grow: 1;
-    line-height: 1.4;
-}
-.card-body .price {
-    font-size: 20px;
-    font-weight: bold;
-    color: #28a745;
-    margin: 10px 0;
-}
-.card-body .stock {
-    font-size: 14px;
-    margin-bottom: 15px;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-.qty {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-.qty:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-}
-
-.btn-buy {
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: 500;
-    transition: background 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-.btn-buy:hover { 
-    background: #218838; 
-}
-.btn-buy:disabled { 
-    background: #6c757d; 
-    cursor: not-allowed; 
-}
-
-.btn-delete {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: 500;
-    transition: background 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 8px;
-}
-.btn-delete:hover { 
-    background: #c82333; 
-}
-
-/* --- Search Bar --- */
-.search-container {
-    margin-bottom: 25px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.search-form-wrapper {
-    flex: 1;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    max-width: 500px;
-}
-
-.search-form {
-    display: flex;
-    gap: 10px;
-    flex: 1;
-}
-
-.search-form input {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    flex: 1;
-    font-size: 14px;
-    min-width: 0;
-}
-
-.search-form input:focus {
-    outline: none;
-    border-color: #007bff;
-}
-
-.search-form button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.search-form button:hover {
-    background: #0056b3;
-}
-
-.clear-btn {
-    padding: 10px 20px;
-    font-size: 14px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    background-color: #6c757d;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.clear-btn:hover {
-    background-color: #5a6268;
-}
-
-.view-transactions-btn {
-    padding: 10px 20px;
-    font-size: 14px;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.text-muted {
-    color: #6c757d;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.no-products {
-    text-align: center;
-    padding: 60px 20px;
-    color: #6c757d;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
-    grid-column: 1 / -1;
-}
-
-.no-products h3 {
-    margin-bottom: 10px;
-    color: #343a40;
-}
-
-.no-products p {
-    margin-bottom: 20px;
-}
-
-.btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-}
-.btn-primary { background: #007bff; color: white; }
-.btn-primary:hover { background: #0056b3; }
-.btn-success { background: #28a745; color: white; }
-.btn-success:hover { background: #218838; }
-
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
-
-/* Tablet Devices - 768px and below */
-@media (max-width: 768px) {
+    /* --- Body & Sidebar --- */
     body {
-        padding-top: 70px;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        color: #343a40;
+        padding-top: 80px;
     }
-    
-    .menu-toggle {
-        display: block;
-    }
-    
-    .header {
-        left: 0 !important;
-        height: 70px;
-        padding: 0 15px;
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 60px;
+        background: #1f2a44;
+        padding-top: 30px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: width 0.3s, transform 0.3s ease;
         z-index: 100;
     }
-    
-    .header h1 {
-        font-size: 16px;
+
+    .sidebar:hover {
+        width: 220px;
+    }
+
+    .sidebar .logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+    }
+
+    .sidebar .logo img {
+        height: 48px;
+        transition: height 0.3s;
+    }
+
+    .sidebar:hover .logo img {
+        height: 128px;
+    }
+
+    .sidebar a {
         display: flex;
         align-items: center;
-        gap: 8px;
+        padding: 15px 15px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 500;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
     }
-    
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        width: 260px;
-        z-index: 1000;
+
+    .sidebar a i {
+        min-width: 24px;
+        font-size: 18px;
+        text-align: center;
     }
-    
-    .sidebar.mobile-open {
-        transform: translateX(0);
+
+    .sidebar a span {
+        display: none;
+        margin-left: 20px;
+        white-space: nowrap;
+        transition: opacity 0.3s;
     }
-    
-    .sidebar.mobile-open:hover {
-        width: 260px;
-    }
-    
-    .sidebar.mobile-open a span {
+
+    .sidebar:hover a span {
         display: inline;
+        opacity: 1;
     }
-    
-    .sidebar.mobile-open .logo img {
+
+    .sidebar a:hover {
+        background-color: #34495e;
+        border-left: 4px solid #E64C3C;
+    }
+
+    /* Mobile Sidebar Toggle Button */
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #343a40;
+        cursor: pointer;
+        padding: 8px;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+
+    .menu-toggle:hover {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+    }
+
+    /* Sidebar Overlay for Mobile */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
+        transition: all 0.3s;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* --- Sticky Header --- */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 60px;
+        right: 0;
         height: 80px;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: left 0.3s;
+        z-index: 99;
     }
-    
-    .main-content {
-        margin-left: 0 !important;
-        padding: 15px;
+
+    .sidebar:hover ~ .header {
+        left: 220px;
     }
-    
-    .sidebar:hover ~ .main-content {
-        margin-left: 0;
+
+    .header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1a1a2e;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        flex-shrink: 0;
     }
-    
-    .profile-name, .dropdown-icon {
+
+    /* Header Right Icons */
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-shrink: 0;
+    }
+
+    .tracker-icon-link, .cart-icon-link {
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i {
+        font-size: 22px;
+        color: #1a1a2e;
+        transition: color 0.3s;
+    }
+
+    .tracker-icon-link:hover i, .cart-icon-link:hover i, .notification-icon:hover i {
+        color: #007bff;
+    }
+
+    .tracker-badge, .cart-badge, .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 5px;
+        font-size: 9px;
+        font-weight: bold;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 2px white;
         display: none;
     }
-    
-    .search-container {
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px;
+
+    .tracker-badge.show, .cart-badge.show, .notification-badge.show {
+        display: flex;
     }
-    
-    .search-form-wrapper {
-        max-width: 100%;
-        width: 100%;
+
+    .notification-badge.show, .tracker-badge.show {
+        animation: pulse 0.5s ease;
     }
-    
-    .search-form {
-        width: 100%;
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
     }
-    
-    .search-form input {
-        font-size: 13px;
-        padding: 8px 12px;
-    }
-    
-    .search-form button {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-    
-    .clear-btn, .view-transactions-btn {
-        width: 100%;
+
+    /* Notification Dropdown */
+    .notification-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        padding: 8px 16px;
-        font-size: 13px;
     }
-    
-    .products-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .product-image-container {
-        height: 180px;
-    }
-    
-    .card-body h3 {
-        font-size: 16px;
-    }
-    
-    .card-body .description {
-        font-size: 13px;
-    }
-    
-    .card-body .price {
-        font-size: 18px;
-    }
-    
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
-}
 
-/* Mobile Devices - 480px and below */
-@media (max-width: 480px) {
-    body {
-        padding-top: 60px;
+    .notification-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    
-    .header {
-        height: 60px;
-        padding: 0 12px;
-    }
-    
-    .header h1 {
-        font-size: 14px;
-    }
-    
-    .main-content {
-        padding: 10px;
-    }
-    
-    .product-image-container {
-        height: 160px;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-    
-    .card-body h3 {
-        font-size: 15px;
-    }
-    
-    .card-body .description {
-        font-size: 12px;
-    }
-    
-    .card-body .price {
-        font-size: 16px;
-    }
-    
-    .card-body .stock {
-        font-size: 12px;
-    }
-    
-    .qty {
-        padding: 8px;
-        font-size: 13px;
-    }
-    
-    .btn-buy, .btn-delete {
-        padding: 10px;
-        font-size: 13px;
-    }
-    
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    
-    .toast {
-        min-width: auto;
-        width: 100%;
-    }
-}
 
-/* Extra Small Mobile - 375px and below */
-@media (max-width: 375px) {
-    .product-image-container {
-        height: 140px;
+    .notification-icon i {
+        font-size: 22px;
+        color: #1a1a2e;
     }
-    
-    .card-body {
-        padding: 12px;
-    }
-    
-    .card-body h3 {
-        font-size: 14px;
-    }
-}
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
+    .notification-dropdown {
+        display: none;
+        position: absolute;
+        top: 45px;
+        right: -80px;
+        width: 350px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        z-index: 1000;
+        max-height: 450px;
         overflow-y: auto;
     }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .products-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
-/* Desktop: Ensure sidebar always visible */
-@media (min-width: 769px) {
-    .sidebar {
-        transform: translateX(0) !important;
+    .notification-dropdown.show {
+        display: block;
+        animation: slideDown 0.3s ease;
     }
-    
-    .menu-toggle {
-        display: none !important;
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    
-    .sidebar-overlay {
-        display: none !important;
+
+    .notification-header {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #1a1a2e;
+        position: sticky;
+        top: 0;
+        background: white;
+        border-radius: 12px 12px 0 0;
+        font-family: Arial, sans-serif;
     }
-}
+
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: Arial, sans-serif;
+    }
+
+    .notification-item:hover {
+        background: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background: #e3f2fd;
+        border-left: 3px solid #3498db;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: #1a1a2e;
+        margin-bottom: 4px;
+    }
+
+    .notification-message {
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .notification-time {
+        font-size: 10px;
+        color: #adb5bd;
+    }
+
+    .notification-footer {
+        padding: 10px;
+        border-top: 1px solid #e9ecef;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .clear-notif-btn {
+        background: none;
+        border: none;
+        color: #3498db;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+    }
+
+    .view-all-link {
+        background: none;
+        border: none;
+        color: #28a745;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Profile Dropdown */
+    .profile-wrapper {
+        position: relative;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .profile-header:hover {
+        background-color: #f0f0f0;
+    }
+
+    .profile-header.active {
+        background-color: #e9ecef;
+    }
+
+    .profile-avatar {
+        width: 38px;
+        height: 38px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        overflow: hidden;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .profile-name {
+        font-weight: 500;
+        color: #333;
+        user-select: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .dropdown-icon {
+        font-size: 12px;
+        color: #6c757d;
+        transition: transform 0.3s;
+    }
+
+    .profile-header.active .dropdown-icon {
+        transform: rotate(180deg);
+    }
+
+    .profile-dropdown {
+        position: absolute;
+        top: 55px;
+        right: 0;
+        width: 240px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+        display: flex;
+    }
+
+    .dropdown-role-header {
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .dropdown-item {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1a1a2e;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background: #f8f9fa;
+    }
+
+    .dropdown-item i {
+        width: 18px;
+        color: #6c757d;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #e9ecef;
+        margin: 5px 0;
+    }
+
+    .logout-item {
+        color: #e74c3c;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast {
+        background: white;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease;
+        border-left: 4px solid;
+        font-family: Arial, sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .toast-success {
+        border-left-color: #28a745;
+        background: #f0f9f0;
+    }
+
+    .toast-error {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .toast-warning {
+        border-left-color: #ffc107;
+        background: #fffbf0;
+    }
+
+    .toast-info {
+        border-left-color: #17a2b8;
+        background: #f0f9ff;
+    }
+
+    .toast-icon {
+        font-size: 20px;
+    }
+
+    .toast-success .toast-icon { color: #28a745; }
+    .toast-error .toast-icon { color: #dc3545; }
+    .toast-warning .toast-icon { color: #ffc107; }
+    .toast-info .toast-icon { color: #17a2b8; }
+
+    .toast-content {
+        flex: 1;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: rgba(0,0,0,0.1);
+        width: 100%;
+        animation: progress 3s linear forwards;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+
+    @keyframes progress {
+        from { width: 100%; }
+        to { width: 0%; }
+    }
+
+    /* Upload Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #343a40;
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .upload-area:hover {
+        border-color: #007bff;
+    }
+
+    .upload-area i {
+        font-size: 48px;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+
+    .upload-area p {
+        margin: 0;
+        color: #6c757d;
+        font-family: Arial, sans-serif;
+    }
+
+    .upload-area small {
+        color: #adb5bd;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+    }
+
+    .image-preview {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+    }
+
+    .upload-progress {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #007bff;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    #progressText {
+        font-size: 12px;
+        color: #6c757d;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-primary-modal {
+        background: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-primary-modal:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+
+    .btn-primary-modal:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary-modal {
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-secondary-modal:hover {
+        opacity: 0.9;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 60px;
+        padding: 30px;
+        transition: margin-left 0.3s;
+        min-height: calc(100vh - 80px);
+    }
+
+    .sidebar:hover ~ .main-content {
+        margin-left: 220px;
+    }
+
+    /* Search & Filter Section */
+    .search-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .search-form-wrapper {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .search-form input {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        width: 300px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .search-form input:focus {
+        outline: none;
+        border-color: #007bff;
+    }
+
+    .search-form button {
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .search-form button:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+    }
+
+    .clear-btn {
+        padding: 10px 20px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .clear-btn:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: white;
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        border-top: 1px solid #e9ecef;
+        padding-top: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .filter-group select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .filter-reset {
+        padding: 8px 16px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .filter-reset:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+    }
+
+    /* Products Grid */
+    .products-container {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 20px;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-image-container {
+        width: 100%;
+        height: 160px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .card-body h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: Arial, sans-serif;
+    }
+
+    .description {
+        font-size: 11px;
+        color: #6c757d;
+        line-height: 1.3;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 28px;
+        font-family: Arial, sans-serif;
+    }
+
+    .price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 6px;
+        font-family: Arial, sans-serif;
+    }
+
+    .stock {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: inline-block;
+        font-family: Arial, sans-serif;
+    }
+
+    .stock-low { color: #dc3545; font-weight: bold; }
+    .stock-medium { color: #ffc107; font-weight: bold; }
+    .stock-high { color: #28a745; font-weight: bold; }
+
+    .product-actions {
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+        margin-top: auto;
+    }
+
+    .btn-add-to-cart {
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-buy-now {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-add-to-cart:hover, .btn-buy-now:hover {
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 12px;
+        max-width: 550px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #1a1a2e;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .modal-product-image {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-product-image img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 8px;
+        object-fit: contain;
+    }
+
+    .modal-product-name {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-product-price {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 15px;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .quantity-input {
+        width: 80px;
+        height: 44px;
+        text-align: center;
+        font-size: 18px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        -moz-appearance: textfield;
+        font-family: Arial, sans-serif;
+    }
+
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .quantity-btn {
+        width: 44px;
+        height: 44px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: bold;
+        transition: all 0.2s;
+        font-family: Arial, sans-serif;
+    }
+
+    .quantity-btn:hover {
+        background: #f0f0f0;
+        border-color: #007bff;
+    }
+
+    .modal-total {
+        background: #e8f5e9;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .modal-total span:first-child {
+        font-size: 16px;
+        font-weight: 600;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-total span:last-child {
+        font-size: 20px;
+        font-weight: 700;
+        color: #28a745;
+        margin-left: 5px;
+        font-family: Arial, sans-serif;
+    }
+
+    .payment-methods {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .payment-method {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        max-width: 200px;
+    }
+
+    .payment-method.selected {
+        border-color: #28a745;
+        background: #e8f5e9;
+    }
+
+    .payment-method i {
+        font-size: 24px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .payment-method span {
+        font-size: 13px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+    }
+
+    .btn-confirm {
+        background: #28a745;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s;
+    }
+
+    .btn-confirm:hover {
+        background: #218838;
+        transform: translateY(-1px);
+    }
+
+    .no-products {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        grid-column: 1 / -1;
+    }
+
+    .no-products h3 {
+        font-family: Arial, sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .no-products p {
+        font-family: Arial, sans-serif;
+        color: #6c757d;
+    }
+
+    /* intl-tel-input styles */
+    .iti {
+        width: 100%;
+    }
+
+    .iti__flag-container {
+        z-index: 1;
+    }
+
+    .phone-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .email-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Responsive */
+    @media (max-width: 1400px) {
+        .products-container { grid-template-columns: repeat(5, 1fr); }
+    }
+
+    @media (max-width: 1200px) {
+        .products-container { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 992px) {
+        .products-container { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+        body { padding-top: 70px; }
+        .menu-toggle { display: block; }
+        .header { left: 0 !important; height: 70px; padding: 0 15px; }
+        .header h1 { font-size: 16px; }
+        .sidebar { transform: translateX(-100%); width: 260px; }
+        .sidebar.mobile-open { transform: translateX(0); }
+        .sidebar.mobile-open:hover { width: 260px; }
+        .sidebar.mobile-open a span { display: inline; }
+        .sidebar.mobile-open .logo img { height: 80px; }
+        .main-content { margin-left: 0 !important; padding: 15px; }
+        .profile-name, .dropdown-icon { display: none; }
+        .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 18px; }
+        
+        .search-section { padding: 15px; }
+        .search-container { flex-direction: column; align-items: stretch; gap: 12px; }
+        .search-form-wrapper { flex-direction: column; width: 100%; }
+        .search-form { flex-direction: column; width: 100%; }
+        .search-form input { width: 100%; }
+        .search-form button { width: 100%; justify-content: center; }
+        .clear-btn { width: 100%; justify-content: center; }
+        .filter-container { flex-direction: column; align-items: stretch; gap: 10px; }
+        .filter-group { justify-content: space-between; }
+        .filter-reset { width: 100%; justify-content: center; }
+        
+        .products-container { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        
+        .toast-container { top: 80px; right: 10px; left: 10px; }
+        .toast { min-width: auto; width: 100%; }
+        .notification-dropdown { position: fixed; top: 70px; left: 10px; right: 10px; width: auto; max-width: none; border-radius: 12px; }
+        .profile-dropdown { position: fixed; top: 70px; right: 10px; left: 10px; width: auto; max-width: none; }
+        .payment-method { max-width: 100%; }
+    }
+
+    @media (max-width: 576px) {
+        body { padding-top: 60px; }
+        .header { height: 60px; padding: 0 12px; }
+        .header h1 { font-size: 14px; }
+        .header-right { gap: 10px; }
+        .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 16px; }
+        .profile-avatar { width: 32px; height: 32px; font-size: 14px; }
+        .main-content { padding: 12px; }
+        .products-container { grid-template-columns: 1fr; }
+        .notification-dropdown { top: 60px; }
+        .profile-dropdown { top: 60px; }
+    }
+
+    @media (min-width: 769px) {
+        .sidebar { transform: translateX(0) !important; }
+        .menu-toggle { display: none !important; }
+        .sidebar-overlay { display: none !important; }
+    }
 </style>
 
+<!-- ============================================ -->
+<!-- SIDEBAR
+<!-- ============================================ -->
 {% if is_granted('ROLE_ADMIN') %}
-<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
@@ -1022,7 +1381,7 @@ body {
         <span>Stocks</span>
     </a>
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-store"></i>
         <span>Marketplace</span>
     </a>
     <a href="{{ path('app_order_index') }}">
@@ -1046,7 +1405,6 @@ body {
         <span>Logout</span>
     </a>
 </div>
-
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
@@ -1065,7 +1423,7 @@ body {
         <span>Stocks</span>
     </a>
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-store"></i>
         <span>Marketplace</span>
     </a>
     <a href="{{ path('app_order_index') }}">
@@ -1083,551 +1441,905 @@ body {
 </div>
 {% endif %}
 
-<!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-{# Profile Section #}
+<!-- ============================================ -->
+<!-- PROFILE VARIABLES
+<!-- ============================================ -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
-{% set userRoleName = 
-    role == 'ROLE_ADMIN' ? 'Administrator' :
-    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
-%}
-{% set userRoleIcon = 
-    role == 'ROLE_ADMIN' ? 'crown' :
-    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
-%}
+{% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'Customer') %}
+{% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 
-<!-- Sticky Header -->
+<!-- ============================================ -->
+<!-- HEADER
+<!-- ============================================ -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <i class="fas fa-shopping-cart"></i> Marketplace
+        <i class="fas fa-store"></i> Marketplace
     </h1>
-    
-    <div class="profile-wrapper">
-        <div class="profile-header" id="profileHeader">
-            <div class="profile-avatar">
-                {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                {% else %}
-                    {{ app.user.username|first|upper }}
-                {% endif %}
+
+    <div class="header-right">
+        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="tracker-badge" id="trackerBadge">0</span>
+        </a>
+        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <div class="notification-wrapper">
+            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                </div>
             </div>
-            <span class="profile-name">{{ app.user.username }}</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-        
-        <div class="profile-dropdown" id="profileDropdown">
-            <div class="dropdown-role-header">
-                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+        <div class="profile-wrapper">
+            <div class="profile-header" id="profileHeader">
+                <div class="profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ app.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <span class="profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
-            <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user-circle"></i>
-                <span>My Profile</span>
-            </a>
-            <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                <i class="fas fa-camera"></i>
-                <span>Change Picture</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-role-header">
+                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                </div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Picture</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
-
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- Main Content -->
+<!-- ============================================ -->
+<!-- MAIN CONTENT
+<!-- ============================================ -->
 <div class="main-content">
-    <!-- Search Bar -->
-    <div class="search-container">
-        <div class="search-form-wrapper">
-            <form method="get" action="{{ path('app_order_new') }}" class="search-form">
-                <input type="text" name="search" value="{{ search|default('') }}" placeholder="Search products by name or description..." />
-                <button type="submit">
-                    <i class="fas fa-search"></i> <span>Search</span>
-                </button>
-            </form>
-            {% if search %}
-                <a href="{{ path('app_order_new') }}" class="clear-btn">
-                    <i class="fas fa-times"></i> <span>Clear</span>
-                </a>
-            {% endif %}
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-form-wrapper">
+                <form method="get" action="{{ path('app_order_new') }}" class="search-form" id="searchForm">
+                    <input type="text" name="search" id="searchInput" value="{{ search|default('') }}" placeholder="Search products...">
+                    <button type="submit"><i class="fas fa-search"></i> Search</button>
+                </form>
+                {% if search %}<a href="{{ path('app_order_new') }}" class="clear-btn"><i class="fas fa-times"></i> Clear</a>{% endif %}
+            </div>
         </div>
-        
-        <a href="{{ path('app_order_index') }}" class="btn btn-success view-transactions-btn">
-            <i class="fas fa-receipt"></i> <span>View Transactions</span>
-        </a>
+
+        <div class="filter-container">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Category:</label>
+                <select id="categoryFilter" onchange="filterProducts()">
+                    <option value="all">All Categories</option>
+                    {% set categories = [] %}
+                    {% for stock in stocks %}
+                        {% if stock.product.category and stock.product.category.category not in categories %}
+                            {% set categories = categories|merge([stock.product.category.category]) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for category in categories|sort %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-tag"></i> Sort by:</label>
+                <select id="sortFilter" onchange="filterProducts()">
+                    <option value="default">Default</option>
+                    <option value="price_asc">Price: Low to High</option>
+                    <option value="price_desc">Price: High to Low</option>
+                    <option value="name_asc">Name: A to Z</option>
+                    <option value="name_desc">Name: Z to A</option>
+                    <option value="stock_asc">Stock: Low to High</option>
+                </select>
+            </div>
+            <button class="filter-reset" onclick="resetFilters()"><i class="fas fa-undo-alt"></i> Reset Filters</button>
+        </div>
     </div>
 
-    <div class="products-container">
+    <!-- Products Grid -->
+    <div class="products-container" id="productsContainer">
         {% if stocks|length > 0 %}
             {% for stock in stocks %}
-                <div class="product-card">
+                <div class="product-card" data-category="{{ stock.product.category ? stock.product.category.category : 'Uncategorized' }}" data-price="{{ stock.product.price }}" data-name="{{ stock.product.name }}" data-stock="{{ stock.stock }}">
                     <div class="product-image-container">
                         {% if stock.product.image %}
                             {% set imagePath = stock.product.image %}
-                            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
-                                {% set imagePath = '/uploads/' ~ imagePath %}
-                            {% endif %}
-                            <img src="{{ imagePath }}" 
-                                 alt="{{ stock.product.name }}"
-                                 onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; this.alt='Image not available';">
+                            {% if not (imagePath starts with 'http' or imagePath starts with '/') %}{% set imagePath = '/uploads/' ~ imagePath %}{% endif %}
+                            <img src="{{ imagePath }}" alt="{{ stock.product.name }}" onerror="this.src='{{ asset('images/placeholder.png') }}'">
                         {% else %}
-                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #6c757d;">
-                                <i class="fas fa-image" style="font-size: 48px; opacity: 0.5;"></i>
-                            </div>
+                            <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f8f9fa;"><i class="fas fa-image" style="font-size:48px;color:#bdc3c7;"></i></div>
                         {% endif %}
                     </div>
                     <div class="card-body">
-                        <h3>{{ stock.product.name }}</h3>
-                        <div class="description">{{ stock.product.description|length > 100 ? stock.product.description|slice(0, 100) ~ '...' : stock.product.description }}</div>
+                        <h3 title="{{ stock.product.name }}">{{ stock.product.name|length > 40 ? stock.product.name|slice(0, 40) ~ '...' : stock.product.name }}</h3>
+                        <div class="description">{{ stock.product.description|length > 60 ? stock.product.description|slice(0, 60) ~ '...' : stock.product.description }}</div>
                         <div class="price">₱{{ stock.product.price|number_format(2, '.', ',') }}</div>
-                        <div class="stock">
-                            <i class="fas fa-boxes"></i> Available: 
-                            {% if stock.stock < 10 %}
-                                <span style="color: #dc3545; font-weight: bold;">{{ stock.stock }} (Low Stock)</span>
-                            {% elseif stock.stock < 20 %}
-                                <span style="color: #ffc107; font-weight: bold;">{{ stock.stock }}</span>
-                            {% else %}
-                                <span style="color: #28a745; font-weight: bold;">{{ stock.stock }}</span>
-                            {% endif %}
+                        <div class="stock"><i class="fas fa-boxes"></i> Available: {% if stock.stock < 10 %}<span class="stock-low">{{ stock.stock }} (Low Stock)</span>{% elseif stock.stock < 20 %}<span class="stock-medium">{{ stock.stock }}</span>{% else %}<span class="stock-high">{{ stock.stock }}</span>{% endif %}</div>
+                        <div class="product-actions">
+                            <button type="button" class="btn-add-to-cart" onclick="openAddToCartModal({{ stock.id }}, '{{ stock.product.name|escape('js') }}', {{ stock.product.price }}, {{ stock.stock }}, '{{ stock.product.image ? stock.product.image|escape('js') : '' }}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn-buy-now" onclick="openBuyNowModal({{ stock.id }}, '{{ stock.product.name|escape('js') }}', {{ stock.product.price }}, {{ stock.stock }}, '{{ stock.product.image ? stock.product.image|escape('js') : '' }}')"><i class="fas fa-bolt"></i> Buy Now</button>
                         </div>
-
-                        {% set activeOrder = null %}
-                        {% if orders is defined %}
-                            {% for order in orders %}
-                                {% if order.stock.id == stock.id %}
-                                    {% set activeOrder = order %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-
-                        <form method="post" action="{{ path('app_order_new') }}">
-                            <input type="hidden" name="stock_id" value="{{ stock.id }}">
-                            <input type="number" name="quantity" class="qty" min="1" max="{{ stock.stock }}" value="1" required
-                                {% if activeOrder %} disabled {% endif %}>
-                            <button type="submit" class="btn-buy"
-                                {% if activeOrder %} disabled {% endif %}>
-                                <i class="fas fa-shopping-cart"></i> {% if activeOrder %}Already Ordered{% else %}Place Order{% endif %}
-                            </button>
-                        </form>
-
-                        {% if activeOrder %}
-                            <form method="post" action="{{ path('app_order_delete', {'id': activeOrder.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activeOrder.id) }}">
-                                <button type="submit" class="btn-delete">
-                                    <i class="fas fa-times"></i> Cancel Order
-                                </button>
-                            </form>
-                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <div class="no-products">
-                <i class="fas fa-shopping-bag" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
-                <h3>No Products Available</h3>
-                <p>
-                    {% if search %}
-                        No products found for "{{ search }}"
-                    {% else %}
-                        There are no products available in the marketplace at the moment.
-                    {% endif %}
-                </p>
-                {% if search %}
-                    <a href="{{ path('app_order_new') }}" class="btn btn-primary">View All Products</a>
-                {% endif %}
-            </div>
+            <div class="no-products"><i class="fas fa-store-slash"></i><h3>No Products Available</h3><p>{% if search %}No products found for "{{ search }}"{% else %}There are no products available at the moment.{% endif %}</p></div>
         {% endif %}
     </div>
 </div>
 
-<!-- Add Font Awesome -->
+<!-- ADD TO CART MODAL -->
+<div id="addToCartModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header"><h3><i class="fas fa-cart-plus"></i> Add to Cart</h3><button class="modal-close" onclick="closeAddToCartModal()">&times;</button></div>
+        <div class="modal-body">
+            <div class="modal-product-image"><img id="addCartProductImage" src=""></div>
+            <div class="modal-product-name" id="addCartProductName"></div>
+            <div class="modal-product-price" id="addCartProductPrice"></div>
+            <div class="form-group" style="text-align:center;background:#f8f9fa;padding:12px;border-radius:8px;"><i class="fas fa-boxes"></i> Available Stock: <strong id="addCartStockAmount">0</strong></div>
+            <div class="quantity-selector"><button class="quantity-btn" onclick="decrementAddCartQuantity()">-</button><input type="number" id="addCartQuantity" class="quantity-input" value="1" min="1"><button class="quantity-btn" onclick="incrementAddCartQuantity()">+</button></div>
+            <div class="modal-total"><strong>Total: ₱</strong><span id="addCartTotalAmount">0.00</span></div>
+        </div>
+        <div class="modal-footer"><button class="btn-cancel" onclick="closeAddToCartModal()">Cancel</button><button class="btn-confirm" onclick="confirmAddToCart()">Add to Cart</button></div>
+    </div>
+</div>
+
+<!-- BUY NOW MODAL -->
+<div id="buyNowModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-bolt"></i> Complete Your Purchase</h3>
+            <button class="modal-close" onclick="closeBuyNowModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; align-items: center;">
+                <div style="flex: 0 0 100px; text-align: center;">
+                    <img id="buyNowProductImage" style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px;">
+                </div>
+                <div style="flex: 2;">
+                    <div class="modal-product-name" id="buyNowProductName" style="text-align: left; font-size: 18px; font-weight: 600; margin-bottom: 8px;"></div>
+                    <div class="modal-product-price" id="buyNowProductPrice" style="text-align: left; font-size: 22px; font-weight: 700; color: #28a745;"></div>
+                    <div style="margin-top: 5px; font-size: 13px; color: #6c757d;">
+                        <i class="fas fa-boxes"></i> Available Stock: <strong id="buyNowStockAmount">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #e9ecef; padding-top: 20px;">
+                <h4 style="margin-bottom: 15px; font-size: 16px;"><i class="fas fa-user"></i> Customer Information</h4>
+
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="customerName" placeholder="Enter your full name" value="" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="customerEmail" placeholder="Enter your email" value="{{ app.user.email ?? '' }}" required>
+                    <div id="emailError" class="email-error"></div>
+                    <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Use valid email like name@gmail.com or name@yahoo.com</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Number *</label>
+                    <input type="tel" id="customerPhone" class="phone-input" placeholder="e.g., +639171234567 or +14155552671" maxlength="20" required>
+                    <div id="phoneError" class="phone-error"></div>
+                    <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Select your country flag and enter your phone number with country code</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Delivery Method *</label>
+                    <select id="deliveryMethod" onchange="toggleAddressField()" required>
+                        <option value="pickup">🏪 Pickup (In-Store)</option>
+                        <option value="shipping">🚚 Ship / Delivery</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="addressField" style="display: none;">
+                    <label>Delivery Address *</label>
+                    <textarea id="deliveryAddress" rows="3" placeholder="House #, Street, Barangay, City, Province, Postal Code" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <div class="quantity-selector" style="justify-content: flex-start;">
+                        <button type="button" class="quantity-btn" onclick="decrementBuyNowQuantity()" style="width: 40px; height: 40px;">-</button>
+                        <input type="number" id="buyNowQuantity" class="quantity-input" value="1" min="1" style="width: 70px; height: 40px;">
+                        <button type="button" class="quantity-btn" onclick="incrementBuyNowQuantity()" style="width: 40px; height: 40px;">+</button>
+                    </div>
+                </div>
+
+                <div class="modal-total">
+                    <span>Total Amount: ₱</span>
+                    <span id="buyNowTotalAmount">0.00</span>
+                </div>
+
+                <h4 style="margin: 20px 0 15px 0; font-size: 16px;"><i class="fas fa-credit-card"></i> Payment Method</h4>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-payment="cod" onclick="selectPaymentMethod('cod')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Cash on Delivery</span>
+                    </div>
+                </div>
+                <input type="hidden" id="selectedPaymentMethod" value="cod">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeBuyNowModal()">Cancel</button>
+            <button class="btn-confirm" onclick="confirmBuyNow()">Place Order</button>
+        </div>
+    </div>
+</div>
+
+<!-- intl-tel-input CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// Toast Notification System
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+    // ============================================
+    // GLOBAL VARIABLES
+    // ============================================
+    let addCartStockId = null, addCartMaxStock = 0, addCartPrice = 0;
+    let buyNowStockId = null, buyNowMaxStock = 0, buyNowPrice = 0;
+    let notifications = [];
+    let phoneInputInstance = null;
 
-// Mobile Sidebar Toggle - Fixed version
-let sidebarInitialized = false;
+    // ============================================
+    // FILTER FUNCTIONS
+    // ============================================
+    function filterProducts() {
+        const category = document.getElementById('categoryFilter').value;
+        const sort = document.getElementById('sortFilter').value;
+        const products = document.querySelectorAll('.product-card');
+        let visibleProducts = [];
 
-function initMobileSidebar() {
-    if (sidebarInitialized) return;
-    
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (!menuToggle || !sidebar) return;
-    
-    function openSidebar() {
-        sidebar.classList.add('mobile-open');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove('mobile-open');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    const newToggle = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-    const newMenuToggle = document.getElementById('menuToggle');
-    
-    newMenuToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl.classList.contains('mobile-open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-    
-    if (overlay) {
-        const newOverlay = overlay.cloneNode(true);
-        overlay.parentNode.replaceChild(newOverlay, overlay);
-        const newOverlayEl = document.getElementById('sidebarOverlay');
-        newOverlayEl.addEventListener('click', closeSidebar);
-    }
-    
-    document.addEventListener('click', function(e) {
-        const currentSidebar = document.getElementById('sidebar');
-        const currentMenuToggle = document.getElementById('menuToggle');
-        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
-                closeSidebar();
-            }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        const currentSidebar = document.getElementById('sidebar');
-        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            closeSidebar();
-        }
-    });
-    
-    sidebarInitialized = true;
-}
-
-// Display flash messages
-function initFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
-        {% endfor %}
-    {% endfor %}
-}
-
-// Profile dropdown
-let dropdownInitialized = false;
-
-function initializeDropdown() {
-    if (dropdownInitialized) return;
-    
-    const profileHeader = document.getElementById('profileHeader');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const changePicBtn = document.getElementById('changeProfilePicBtn');
-    
-    if (profileHeader && profileDropdown) {
-        const newHeader = profileHeader.cloneNode(true);
-        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
-        const newProfileHeader = document.getElementById('profileHeader');
-        
-        newProfileHeader.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.toggle('active');
-            const dropdown = document.getElementById('profileDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            const header = document.getElementById('profileHeader');
-            const dropdown = document.getElementById('profileDropdown');
-            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
-                header.classList.remove('active');
-                dropdown.classList.remove('show');
+        products.forEach(product => {
+            const productCategory = product.getAttribute('data-category');
+            if (category === 'all' || productCategory === category) {
+                product.style.display = '';
+                visibleProducts.push(product);
+            } else {
+                product.style.display = 'none';
             }
         });
+
+        if (sort !== 'default') {
+            const container = document.getElementById('productsContainer');
+            const sortedProducts = [...visibleProducts].sort((a, b) => {
+                if (sort === 'price_asc') return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                if (sort === 'price_desc') return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+                if (sort === 'name_asc') return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                if (sort === 'name_desc') return b.getAttribute('data-name').localeCompare(a.getAttribute('data-name'));
+                if (sort === 'stock_asc') return parseInt(a.getAttribute('data-stock')) - parseInt(b.getAttribute('data-stock'));
+                return 0;
+            });
+            sortedProducts.forEach(product => container.appendChild(product));
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('categoryFilter').value = 'all';
+        document.getElementById('sortFilter').value = 'default';
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchForm').submit();
+    }
+
+    // ============================================
+    // EMAIL VALIDATION FUNCTION
+    // ============================================
+    function validateEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|yahoo\.com\.ph|outlook\.com|hotmail\.com)$/i;
+        return emailPattern.test(email);
+    }
+
+    function checkEmailValidation() {
+        const emailInput = document.getElementById('customerEmail');
+        const emailError = document.getElementById('emailError');
+        const email = emailInput.value.trim();
         
-        dropdownInitialized = true;
+        if (!email) {
+            emailError.textContent = 'Email address is required';
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        if (!validateEmail(email)) {
+            emailError.textContent = 'Please enter a valid email address (e.g., name@gmail.com or name@yahoo.com)';
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        emailError.style.display = 'none';
+        emailInput.style.borderColor = '#28a745';
+        return true;
+    }
+
+    // ============================================
+    // PHONE VALIDATION FUNCTION
+    // ============================================
+    function validatePhone() {
+        if (!phoneInputInstance) return true;
+        
+        const errorDiv = document.getElementById('phoneError');
+        const phoneInput = document.getElementById('customerPhone');
+        
+        if (!phoneInputInstance.isValidNumber()) {
+            errorDiv.textContent = 'Invalid contact number. Please enter a valid international phone number with country code (e.g., +639171234567).';
+            errorDiv.style.display = 'block';
+            phoneInput.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        errorDiv.style.display = 'none';
+        phoneInput.style.borderColor = '#28a745';
+        return true;
+    }
+
+    // ============================================
+    // BADGE UPDATE FUNCTIONS
+    // ============================================
+    function updateCartBadge() {
+        fetch('/cart/count')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('cartBadge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
+                }
+            })
+            .catch(e => console.log('Cart update error:', e));
+    }
+
+    function updateTrackerBadge() {
+        fetch('{{ path('app_new_orders_count') }}')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('trackerBadge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
+                }
+            })
+            .catch(e => console.log('Tracker update error:', e));
+    }
+
+    // ============================================
+    // TOAST NOTIFICATION
+    // ============================================
+    function showToast(message, type = 'success') {
+        let container = document.getElementById('toastContainer');
+        if (!container) { 
+            container = document.createElement('div'); 
+            container.id = 'toastContainer'; 
+            container.className = 'toast-container'; 
+            document.body.appendChild(container); 
+        }
+        const toast = document.createElement('div'); 
+        toast.className = `toast toast-${type}`;
+        let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
+        toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // NOTIFICATION SYSTEM
+    // ============================================
+    function loadNotifications() { 
+        const saved = localStorage.getItem('order_notifications'); 
+        notifications = saved ? JSON.parse(saved) : []; 
+        updateNotificationUI(); 
+        updateNotificationBadge();
     }
     
-    if (changePicBtn) {
-        const newChangeBtn = changePicBtn.cloneNode(true);
-        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
-        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
-        if (newChangePicBtn) {
-            newChangePicBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showUploadModal();
+    function saveNotifications() { 
+        localStorage.setItem('order_notifications', JSON.stringify(notifications)); 
+        updateNotificationUI(); 
+        updateNotificationBadge();
+    }
+    
+    function addNotification(title, message, orderId, type) {
+        const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
+        notifications.unshift(notification);
+        if (notifications.length > 100) notifications = notifications.slice(0, 100);
+        saveNotifications();
+        showToast(message, type);
+        updateTrackerBadge();
+    }
+    
+    function updateNotificationBadge() {
+        const unreadCount = notifications.filter(n => !n.read).length;
+        const badge = document.getElementById('notificationBadge');
+        if (badge) { 
+            if (unreadCount > 0) { 
+                badge.classList.add('show'); 
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+            } else { 
+                badge.classList.remove('show'); 
+            } 
+        }
+    }
+    
+    function markAllNotificationsAsRead() {
+        if (notifications.length > 0) {
+            let hasUnread = notifications.some(n => !n.read);
+            if (hasUnread) {
+                notifications.forEach(n => n.read = true);
+                saveNotifications();
+                updateNotificationBadge();
+            }
+        }
+    }
+    
+    function markAllNotificationsAsReadBeforeRedirect() {
+        markAllNotificationsAsRead();
+        window.location.href = '{{ path('app_notifications_index') }}';
+    }
+    
+    function updateNotificationUI() {
+        const list = document.getElementById('notificationList');
+        if (!list) return;
+        
+        if (notifications.length === 0) { 
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+        } else { 
+            const recentNotifications = notifications.slice(0, 5);
+            list.innerHTML = recentNotifications.map(n => `
+                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
+                    <div class="notification-title">${n.title}</div>
+                    <div class="notification-message">${n.message}</div>
+                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+                </div>
+            `).join('');
+            
+            if (notifications.length > 5) {
+                list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
+            }
+        }
+    }
+    
+    function markNotificationAsRead(id) { 
+        const notification = notifications.find(n => n.id === id); 
+        if (notification) { 
+            notification.read = true; 
+            saveNotifications(); 
+        } 
+    }
+    
+    function clearAllNotifications() { 
+        if (confirm('Clear all notifications?')) { 
+            notifications = []; 
+            saveNotifications(); 
+            showToast('All notifications cleared', 'info'); 
+        } 
+    }
+    
+    function formatTimeAgo(timestamp) { 
+        const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
+        if (mins < 1) return 'Just now'; 
+        if (mins < 60) return `${mins} min ago`; 
+        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
+        return `${days} day${days > 1 ? 's' : ''} ago`; 
+    }
+    
+    function toggleNotificationDropdown() { 
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) {
+            markAllNotificationsAsRead();
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    // ============================================
+    // PROFILE DROPDOWN FUNCTIONS
+    // ============================================
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        const header = document.getElementById('profileHeader');
+        if (dropdown && header) {
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
+        }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationIcon = document.getElementById('notificationIcon');
+        if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+        
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profileHeader = document.getElementById('profileHeader');
+        if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.remove('show');
+            profileHeader.classList.remove('active');
+        }
+    });
+
+    // ============================================
+    // ADD TO CART FUNCTIONS
+    // ============================================
+    function openAddToCartModal(id, name, price, stock, img) {
+        addCartStockId = id; addCartMaxStock = stock; addCartPrice = price;
+        document.getElementById('addCartProductName').textContent = name;
+        document.getElementById('addCartProductPrice').textContent = '₱' + price.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('addCartStockAmount').textContent = stock;
+        let imgEl = document.getElementById('addCartProductImage');
+        if (img) { let path = img; if (!path.startsWith('http') && !path.startsWith('/')) path = '/uploads/' + path; imgEl.src = path; imgEl.onerror = () => imgEl.src = '{{ asset('images/placeholder.png') }}'; }
+        else imgEl.src = '{{ asset('images/placeholder.png') }}';
+        document.getElementById('addCartQuantity').value = 1; updateAddCartTotal();
+        document.getElementById('addToCartModal').classList.add('show');
+    }
+    
+    function closeAddToCartModal() { document.getElementById('addToCartModal').classList.remove('show'); addCartStockId = null; }
+    
+    function incrementAddCartQuantity() { let input = document.getElementById('addCartQuantity'), val = parseInt(input.value) || 1; if (val < addCartMaxStock) { input.value = val + 1; updateAddCartTotal(); } else showToast('Maximum stock is ' + addCartMaxStock, 'warning'); }
+    
+    function decrementAddCartQuantity() { let input = document.getElementById('addCartQuantity'), val = parseInt(input.value) || 1; if (val > 1) { input.value = val - 1; updateAddCartTotal(); } }
+    
+    function updateAddCartTotal() { let qty = parseInt(document.getElementById('addCartQuantity').value) || 1; document.getElementById('addCartTotalAmount').textContent = (addCartPrice * qty).toLocaleString('en-US', {minimumFractionDigits: 2}); }
+    
+    function confirmAddToCart() {
+        if (!addCartStockId) return;
+        let qty = parseInt(document.getElementById('addCartQuantity').value) || 1;
+        if (qty > addCartMaxStock) { showToast('Not enough stock', 'error'); return; }
+        let form = document.createElement('form'); form.method = 'POST'; form.action = '{{ path('app_cart_add', {'stockId': '__ID__'}) }}'.replace('__ID__', addCartStockId);
+        let qtyField = document.createElement('input'); qtyField.type = 'hidden'; qtyField.name = 'quantity'; qtyField.value = qty; form.appendChild(qtyField);
+        document.body.appendChild(form); form.submit();
+        closeAddToCartModal();
+        showToast('✓ Product added to cart!', 'success');
+        setTimeout(() => updateCartBadge(), 500);
+    }
+
+    // ============================================
+    // BUY NOW FUNCTIONS
+    // ============================================
+    function initializePhoneInput() {
+        if (phoneInputInstance) return;
+        
+        const phoneInput = document.querySelector("#customerPhone");
+        if (phoneInput && typeof window.intlTelInput !== 'undefined') {
+            phoneInputInstance = window.intlTelInput(phoneInput, {
+                initialCountry: "ph",
+                separateDialCode: true,
+                preferredCountries: ["ph", "us", "gb", "au", "ca", "sg", "my", "jp", "kr", "cn", "in", "de", "fr", "it", "es", "br", "mx"],
+                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+                formatOnDisplay: true,
+                autoHideDialCode: false,
+                nationalMode: false
+            });
+            
+            phoneInput.addEventListener('blur', validatePhone);
+            phoneInput.addEventListener('countrychange', function() {
+                validatePhone();
+                saveCheckoutInfo();
+            });
+            phoneInput.addEventListener('input', saveCheckoutInfo);
+        }
+    }
+    
+    function openBuyNowModal(id, name, price, stock, img) {
+        buyNowStockId = id; 
+        buyNowMaxStock = stock; 
+        buyNowPrice = price;
+        
+        document.getElementById('buyNowProductName').textContent = name;
+        document.getElementById('buyNowProductPrice').textContent = '₱' + price.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('buyNowStockAmount').textContent = stock;
+        
+        let imgEl = document.getElementById('buyNowProductImage');
+        if (img) { 
+            let path = img; 
+            if (!path.startsWith('http') && !path.startsWith('/')) path = '/uploads/' + path; 
+            imgEl.src = path; 
+            imgEl.onerror = () => imgEl.src = '{{ asset('images/placeholder.png') }}'; 
+        } else { 
+            imgEl.src = '{{ asset('images/placeholder.png') }}'; 
+        }
+        
+        document.getElementById('buyNowQuantity').value = 1; 
+        updateBuyNowTotal();
+        document.getElementById('buyNowModal').classList.add('show');
+        
+        initializePhoneInput();
+        
+        const emailInput = document.getElementById('customerEmail');
+        if (emailInput) {
+            emailInput.addEventListener('blur', checkEmailValidation);
+            emailInput.addEventListener('input', function() {
+                if (this.value.trim()) checkEmailValidation();
             });
         }
+        
+        const loggedInEmail = '{{ app.user.email ?? '' }}';
+        if (loggedInEmail && emailInput && !emailInput.value) {
+            emailInput.value = loggedInEmail;
+        }
     }
-}
-
-function showUploadModal() {
-    const existingModal = document.getElementById('uploadModal');
-    if (existingModal) existingModal.remove();
     
-    const modal = document.createElement('div');
-    modal.id = 'uploadModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Change Profile Picture</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Click to upload or drag and drop</p>
-                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
-                </div>
-                <div class="image-preview" id="imagePreview" style="display: none;">
-                    <img src="" alt="Preview">
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
-                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
-            </div>
-        </div>
-    `;
+    function closeBuyNowModal() { 
+        document.getElementById('buyNowModal').classList.remove('show'); 
+        buyNowStockId = null;
+    }
     
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('show'), 10);
+    function incrementBuyNowQuantity() { 
+        let input = document.getElementById('buyNowQuantity'), val = parseInt(input.value) || 1; 
+        if (val < buyNowMaxStock) { 
+            input.value = val + 1; 
+            updateBuyNowTotal(); 
+        } else { 
+            showToast('Maximum stock is ' + buyNowMaxStock, 'warning'); 
+        } 
+    }
     
-    const uploadArea = document.getElementById('uploadArea');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImg = imagePreview.querySelector('img');
-    const saveBtn = document.getElementById('saveUpload');
-    const cancelBtn = document.getElementById('cancelUpload');
-    const closeBtn = modal.querySelector('.close-modal');
-    const progressContainer = document.getElementById('uploadProgress');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
+    function decrementBuyNowQuantity() { 
+        let input = document.getElementById('buyNowQuantity'), val = parseInt(input.value) || 1; 
+        if (val > 1) { 
+            input.value = val - 1; 
+            updateBuyNowTotal(); 
+        } 
+    }
     
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
-    fileInput.style.display = 'none';
-    modal.appendChild(fileInput);
+    function updateBuyNowTotal() { 
+        let qty = parseInt(document.getElementById('buyNowQuantity').value) || 1; 
+        document.getElementById('buyNowTotalAmount').textContent = (buyNowPrice * qty).toLocaleString('en-US', {minimumFractionDigits: 2}); 
+    }
     
-    uploadArea.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
+    function toggleAddressField() { 
+        const addressField = document.getElementById('addressField');
+        const addressTextarea = document.getElementById('deliveryAddress');
+        if (document.getElementById('deliveryMethod').value === 'shipping') {
+            addressField.style.display = 'block';
+            addressTextarea.required = true;
+        } else {
+            addressField.style.display = 'none';
+            addressTextarea.required = false;
         }
-    });
+    }
     
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#007bff';
-        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
-    });
+    function selectPaymentMethod(method) { 
+        document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected')); 
+        document.querySelector(`.payment-method[data-payment="${method}"]`).classList.add('selected'); 
+        document.getElementById('selectedPaymentMethod').value = method; 
+    }
     
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-    });
+    function getFullPhoneNumber() {
+        if (phoneInputInstance) return phoneInputInstance.getNumber();
+        return '';
+    }
     
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
+    function saveCheckoutInfo() {
+        let name = document.getElementById('customerName')?.value || '';
+        let email = document.getElementById('customerEmail')?.value || '';
+        let fullPhone = phoneInputInstance ? phoneInputInstance.getNumber() : '';
+        let delivery = document.getElementById('deliveryMethod')?.value || 'pickup';
+        let address = document.getElementById('deliveryAddress')?.value || '';
+        let payment = document.getElementById('selectedPaymentMethod')?.value || 'cod';
+        let countryCode = phoneInputInstance ? phoneInputInstance.getSelectedCountryData().iso2 : 'ph';
         
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+        fetch('/cart/save-checkout-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone: fullPhone, countryCode, delivery, address, payment })
+        }).catch(e => console.error('Save error:', e));
+    }
     
-    saveBtn.addEventListener('click', function() {
-        if (fileInput.files.length > 0) {
-            uploadProfilePicture(fileInput.files[0]);
-        }
-    });
-    
-    function uploadProfilePicture(file) {
-        const formData = new FormData();
-        formData.append('profile_picture', file);
+    function confirmBuyNow() {
+        if (!buyNowStockId) return;
         
-        progressContainer.style.display = 'block';
-        saveBtn.disabled = true;
+        let qty = parseInt(document.getElementById('buyNowQuantity').value) || 1;
+        if (qty > buyNowMaxStock) { showToast('Not enough stock', 'error'); return; }
         
-        const xhr = new XMLHttpRequest();
+        let name = document.getElementById('customerName').value.trim();
+        let email = document.getElementById('customerEmail').value.trim();
+        let fullPhone = getFullPhoneNumber();
+        let delivery = document.getElementById('deliveryMethod').value;
+        let address = document.getElementById('deliveryAddress').value.trim();
+        let payment = document.getElementById('selectedPaymentMethod').value;
         
-        xhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const percentComplete = Math.round((e.loaded / e.total) * 100);
-                progressFill.style.width = percentComplete + '%';
-                progressText.textContent = percentComplete + '%';
-            }
-        });
+        if (!name) { showToast('Please enter your full name', 'error'); return; }
+        if (!email) { showToast('Please enter your email address', 'error'); return; }
+        if (!validateEmail(email)) { showToast('Please enter a valid email address', 'error'); return; }
+        if (!fullPhone) { showToast('Please enter your contact number', 'error'); return; }
+        if (phoneInputInstance && !phoneInputInstance.isValidNumber()) { showToast('Invalid contact number', 'error'); return; }
+        if (delivery === 'shipping' && !address) { showToast('Please enter delivery address', 'error'); return; }
         
-        xhr.addEventListener('load', function() {
-            if (xhr.status === 200) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
-                        modal.classList.remove('show');
-                        setTimeout(() => modal.remove(), 300);
-                    } else {
-                        showToast(response.message || 'Upload failed', 'error');
-                        resetUpload();
-                    }
-                } catch (e) {
-                    showToast('Invalid server response', 'error');
-                    resetUpload();
-                }
+        fetch('/cart/save-checkout-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone: fullPhone, delivery, address, payment })
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                let form = document.createElement('form'); 
+                form.method = 'POST'; 
+                form.action = '{{ path('app_buy_now', {'stockId': '__ID__'}) }}'.replace('__ID__', buyNowStockId);
+                let qtyField = document.createElement('input'); 
+                qtyField.type = 'hidden'; 
+                qtyField.name = 'quantity'; 
+                qtyField.value = qty; 
+                form.appendChild(qtyField);
+                document.body.appendChild(form); 
+                form.submit();
             } else {
-                showToast('Upload failed. Please try again.', 'error');
-                resetUpload();
+                showToast(data.message || 'Error saving info', 'error');
             }
-        });
+        }).catch(() => { showToast('Error saving info', 'error'); });
+    }
+
+    // ============================================
+    // CHECK ORDER UPDATES
+    // ============================================
+    function checkOrderUpdates() {
+        fetch('{{ path('app_order_check_updates') }}')
+            .then(res => res.json())
+            .then(data => {
+                if (data.updates && data.updates.length > 0) {
+                    updateTrackerBadge();
+                    data.updates.forEach(update => {
+                        let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                        if (!exists) {
+                            let title = '', message = '', type = 'info';
+                            switch(update.newStatus) {
+                                case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                                case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                                case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                                case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                                case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                                case 'complete': title = '✅ Order Complete'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                                case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                                default: return;
+                            }
+                            addNotification(title, message, update.orderId, type);
+                        }
+                    });
+                }
+            })
+            .catch(e => console.error('Polling error:', e));
+    }
+
+    // ============================================
+    // MOBILE SIDEBAR
+    // ============================================
+    let sidebarInit = false;
+    function initMobileSidebar() {
+        if (sidebarInit) return;
+        let toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+        if (!toggle || !sidebar) return;
+        function open() { sidebar.classList.add('mobile-open'); if (overlay) overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function close() { sidebar.classList.remove('mobile-open'); if (overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
+        toggle.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.contains('mobile-open') ? close() : open(); });
+        if (overlay) overlay.addEventListener('click', close);
+        document.addEventListener('click', e => { if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) close(); });
+        window.addEventListener('resize', () => { if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) close(); });
+        sidebarInit = true;
+    }
+
+    let shownFlashes = [];
+    function initFlashMessages() {
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                let msg = '{{ message|escape('js') }}';
+                if (!shownFlashes.includes(msg)) { shownFlashes.push(msg); showToast(msg, '{{ label }}'); }
+            {% endfor %}
+        {% endfor %}
+    }
+
+    let dropdownInit = false;
+    function initializeDropdown() {
+        if (dropdownInit) return;
+        let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
+        if (header && dropdown) {
+            header.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleProfileDropdown();
+            });
+            dropdownInit = true;
+        }
+        let changeBtn = document.getElementById('changeProfilePicBtn');
+        if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+    }
+
+    function showUploadModal() {
+        let existing = document.getElementById('uploadModal'); if (existing) existing.remove();
+        let modal = document.createElement('div'); modal.id = 'uploadModal'; modal.className = 'modal';
+        modal.innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Change Profile Picture</h3><button class="close-modal">&times;</button></div><div class="modal-body"><div class="upload-area" id="uploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload or drag and drop</p><small>PNG, JPG, GIF, WebP up to 2MB</small></div><div class="image-preview" id="imagePreview" style="display:none;"><img src="" alt="Preview"></div><div class="upload-progress" id="uploadProgress" style="display:none;"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></div><div class="modal-footer"><button class="btn-secondary-modal" id="cancelUpload">Cancel</button><button class="btn-primary-modal" id="saveUpload" disabled>Upload</button></div></div>`;
+        document.body.appendChild(modal); setTimeout(() => modal.classList.add('show'), 10);
+        let uploadArea = document.getElementById('uploadArea'), preview = document.getElementById('imagePreview'), previewImg = preview.querySelector('img'), saveBtn = document.getElementById('saveUpload'), cancelBtn = document.getElementById('cancelUpload'), closeBtn = modal.querySelector('.close-modal'), progressContainer = document.getElementById('uploadProgress'), progressFill = document.getElementById('progressFill'), progressText = document.getElementById('progressText');
+        let fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp'; fileInput.style.display = 'none'; modal.appendChild(fileInput);
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => { let file = e.target.files[0]; if (file) { if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)) { showToast('Invalid image type', 'error'); return; } if (file.size > 2*1024*1024) { showToast('File too large (max 2MB)', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; }; reader.readAsDataURL(file); } });
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+        uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
+        saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
+        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+        function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
+        window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
+        cancelBtn.addEventListener('click', closeUploadModal);
+        closeBtn.addEventListener('click', closeUploadModal);
+        modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
+    }
+
+    function initAll() {
+        initMobileSidebar(); 
+        initFlashMessages(); 
+        initializeDropdown(); 
+        loadNotifications();
         
-        xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
-            resetUpload();
-        });
+        checkOrderUpdates(); 
+        setInterval(checkOrderUpdates, 30000);
+        updateCartBadge(); 
+        setInterval(updateCartBadge, 5000);
+        updateTrackerBadge();
+        initializePhoneInput();
         
-        xhr.open('POST', '/dashboard/upload-profile-picture', true);
-        xhr.send(formData);
+        document.getElementById('addCartQuantity')?.addEventListener('change', function() { let val = parseInt(this.value) || 1; if (val < 1) val = 1; if (val > addCartMaxStock) val = addCartMaxStock; this.value = val; updateAddCartTotal(); });
+        document.getElementById('buyNowQuantity')?.addEventListener('change', function() { let val = parseInt(this.value) || 1; if (val < 1) val = 1; if (val > buyNowMaxStock) val = buyNowMaxStock; this.value = val; updateBuyNowTotal(); });
+        document.getElementById('customerName')?.addEventListener('input', saveCheckoutInfo);
+        document.getElementById('customerEmail')?.addEventListener('input', saveCheckoutInfo);
+        document.getElementById('deliveryMethod')?.addEventListener('change', saveCheckoutInfo);
+        document.getElementById('deliveryAddress')?.addEventListener('input', saveCheckoutInfo);
+        
+        const phoneInput = document.getElementById('customerPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('blur', saveCheckoutInfo);
+            phoneInput.addEventListener('countrychange', saveCheckoutInfo);
+            phoneInput.addEventListener('input', saveCheckoutInfo);
+        }
     }
-    
-    function resetUpload() {
-        progressContainer.style.display = 'none';
-        progressFill.style.width = '0%';
-        progressText.textContent = '0%';
-        saveBtn.disabled = false;
-    }
-    
-    function updateProfilePicture(imageUrl) {
-        const avatar = document.querySelector('.profile-avatar');
-        const url = imageUrl + '?t=' + new Date().getTime();
-        avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
-    }
-    
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    cancelBtn.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
-}
 
-// Initialize all
-function initAll() {
-    initMobileSidebar();
-    initFlashMessages();
-    initializeDropdown();
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initAll, 100);
-});
-
-// Handle Turbo navigation
-document.addEventListener('turbo:load', function() {
-    sidebarInitialized = false;
-    dropdownInitialized = false;
-    setTimeout(initAll, 100);
-});
+    document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100));
+    document.addEventListener('turbo:load', () => { sidebarInit = false; dropdownInit = false; setTimeout(initAll, 100); });
 </script>
 {% endblock %}

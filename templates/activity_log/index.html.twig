@@ -2,9 +2,13 @@
 
 {% block title %}Cartlify | Activity Logs{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
 <style>
-/* --- Sidebar & Header --- */
+/* --- Base Reset --- */
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -12,55 +16,77 @@ body {
     color: #343a40;
     padding-top: 80px;
 }
+
+/* --- Sidebar --- */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100%;
     width: 60px;
-    background-color: #1f2a44;
+    background: #1f2a44;
     padding-top: 30px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: width 0.3s;
+    transition: width 0.3s, transform 0.3s ease;
     z-index: 100;
 }
-.sidebar:hover { width: 220px; }
-.sidebar .logo { display:flex; justify-content:center; margin-bottom:40px; }
-.sidebar .logo img { height:48px; transition: height 0.3s; }
-.sidebar:hover .logo img { height:128px; }
+
+.sidebar:hover {
+    width: 220px;
+}
+
+.sidebar .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+    height: 48px;
+    transition: height 0.3s;
+}
+
+.sidebar:hover .logo img {
+    height: 128px;
+}
+
 .sidebar a {
-    display:flex;
-    align-items:center;
-    padding:15px 15px;
-    text-decoration:none;
-    color:#fff;
-    font-weight:500;
-    border-left:4px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    border-left: 4px solid transparent;
     transition: all 0.3s;
 }
+
 .sidebar a i {
     min-width: 24px;
     font-size: 18px;
     text-align: center;
 }
-.sidebar a span { 
-    display:none; 
+
+.sidebar a span {
+    display: none;
     margin-left: 20px;
     white-space: nowrap;
-    transition: opacity 0.3s; 
-}
-.sidebar:hover a span { 
-    display:inline; 
-    opacity:1;
-}
-.sidebar a:hover { 
-    background-color:#34495e; 
-    border-left:4px solid #E64C3C; 
+    transition: opacity 0.3s;
 }
 
-/* Mobile Sidebar Toggle Button */
+.sidebar:hover a span {
+    display: inline;
+    opacity: 1;
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+    border-left: 4px solid #E64C3C;
+}
+
+/* Mobile Sidebar */
 .menu-toggle {
     display: none;
     background: none;
@@ -78,7 +104,6 @@ body {
     border-radius: 8px;
 }
 
-/* Sidebar Overlay for Mobile */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -95,165 +120,219 @@ body {
     display: block;
 }
 
-/* --- Sticky Header --- */
+/* --- Header --- */
 .header {
     position: fixed;
     top: 0;
     left: 60px;
     right: 0;
     height: 80px;
-    background-color:#fff;
-    display:flex;
-    align-items:center;
+    background: #fff;
+    display: flex;
     justify-content: space-between;
-    padding:0 30px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: left 0.3s;
     z-index: 99;
 }
-.sidebar:hover ~ .header { left: 220px; }
 
-/* --- Main Content --- */
-.main-content {
-    margin-left: 60px;
-    padding:30px;
-    transition: margin-left 0.3s;
-    min-height: calc(100vh - 80px);
-}
-.sidebar:hover ~ .main-content { margin-left:220px; }
-
-/* --- Profile Dropdown (Complete with Role) --- */
-.profile-wrapper {
-    position: relative;
+.sidebar:hover ~ .header {
+    left: 220px;
 }
 
-.profile-header {
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
     display: flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 20px;
-    transition: background-color 0.3s;
+    gap: 12px;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    flex-shrink: 0;
 }
 
-.profile-header:hover {
-    background-color: #f0f0f0;
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
 }
 
-.profile-header.active {
-    background-color: #e9ecef;
-}
-
-.profile-avatar {
-    width: 38px;
-    height: 38px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
+/* Icon Styles */
+.tracker-icon-link, .cart-icon-link {
+    position: relative;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-    overflow: hidden;
 }
 
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+.tracker-icon-link i, .cart-icon-link i, .notification-icon i {
+    font-size: 22px;
+    color: #1a1a2e;
+    transition: color 0.3s;
 }
 
-.profile-name {
-    font-weight: 500;
-    color: #333;
-    user-select: none;
+.tracker-icon-link:hover i, .cart-icon-link:hover i, .notification-icon:hover i {
+    color: #007bff;
 }
 
-.dropdown-icon {
-    font-size: 12px;
-    color: #6c757d;
-    transition: transform 0.3s;
-}
-
-.profile-header.active .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.profile-dropdown {
+/* Badge Styles */
+.tracker-badge, .cart-badge, .notification-badge {
     position: absolute;
-    top: 50px;
-    right: 0;
-    width: 200px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: none;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 1000;
-    overflow: hidden;
-}
-
-.profile-dropdown.show {
-    display: flex;
-}
-
-.dropdown-role-header {
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    top: -8px;
+    right: -10px;
+    background: #e74c3c;
     color: white;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.dropdown-role-header i {
-    margin-right: 5px;
-    font-size: 12px;
-}
-
-.dropdown-item {
-    padding: 12px 16px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: background-color 0.2s;
-    border: none;
+    justify-content: center;
+    box-shadow: 0 0 0 2px white;
+    display: none;
+}
+
+.tracker-badge.show, .cart-badge.show, .notification-badge.show {
+    display: flex;
+}
+
+.notification-badge.show, .tracker-badge.show {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Notification Dropdown */
+.notification-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-icon {
     background: none;
-    width: 100%;
-    text-align: left;
+    border: none;
     cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.dropdown-item i {
-    width: 18px;
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: -80px;
+    width: 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.notification-dropdown.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-header {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #1a1a2e;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    font-family: Arial, sans-serif;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: Arial, sans-serif;
+}
+
+.notification-item:hover {
+    background: #f8f9fa;
+}
+
+.notification-item.unread {
+    background: #e3f2fd;
+    border-left: 3px solid #3498db;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+
+.notification-message {
+    font-size: 12px;
     color: #6c757d;
+    margin-bottom: 4px;
 }
 
-.dropdown-item:hover {
-    background-color: #f8f9fa;
+.notification-time {
+    font-size: 10px;
+    color: #adb5bd;
 }
 
-.dropdown-item.logout-item {
-    color: #dc3545;
-    border-top: 1px solid #eee;
+.notification-footer {
+    padding: 10px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.dropdown-item.logout-item i {
-    color: #dc3545;
+.clear-notif-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
 }
 
-.dropdown-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
+.view-all-link {
+    background: none;
+    border: none;
+    color: #28a745;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
 }
 
 /* Toast Notifications */
@@ -276,42 +355,23 @@ body {
     min-width: 300px;
     animation: slideInRight 0.3s ease;
     border-left: 4px solid;
+    font-family: Arial, sans-serif;
+    position: relative;
+    overflow: hidden;
 }
 
-.toast-success {
-    border-left-color: #28a745;
-    background: #f0f9f0;
-}
+.toast-success { border-left-color: #28a745; background: #f0f9f0; }
+.toast-error { border-left-color: #dc3545; background: #fff5f5; }
+.toast-warning { border-left-color: #ffc107; background: #fffbf0; }
+.toast-info { border-left-color: #17a2b8; background: #f0f9ff; }
 
-.toast-error {
-    border-left-color: #dc3545;
-    background: #fff5f5;
-}
-
-.toast-warning {
-    border-left-color: #ffc107;
-    background: #fffbf0;
-}
-
-.toast-info {
-    border-left-color: #17a2b8;
-    background: #f0f9ff;
-}
-
-.toast-icon {
-    font-size: 20px;
-}
-
+.toast-icon { font-size: 20px; }
 .toast-success .toast-icon { color: #28a745; }
 .toast-error .toast-icon { color: #dc3545; }
 .toast-warning .toast-icon { color: #ffc107; }
 .toast-info .toast-icon { color: #17a2b8; }
 
-.toast-content {
-    flex: 1;
-    color: #333;
-    font-size: 14px;
-}
+.toast-content { flex: 1; color: #333; font-size: 14px; }
 
 .toast-progress {
     position: absolute;
@@ -324,24 +384,91 @@ body {
 }
 
 @keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
 }
 
 @keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
+    from { width: 100%; }
+    to { width: 0%; }
 }
+
+/* Profile Dropdown */
+.profile-wrapper { position: relative; }
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+.profile-header:hover { background-color: #f0f0f0; }
+.profile-header.active { background-color: #e9ecef; }
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    overflow: hidden;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.profile-name { font-weight: 500; color: #333; font-family: Arial, sans-serif; }
+.dropdown-icon { font-size: 12px; color: #6c757d; transition: transform 0.3s; }
+.profile-header.active .dropdown-icon { transform: rotate(180deg); }
+
+.profile-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    width: 240px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+.profile-dropdown.show { display: flex; }
+
+.dropdown-role-header {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1a1a2e;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.2s;
+}
+.dropdown-item i { width: 18px; color: #6c757d; }
+.dropdown-item:hover { background: #f8f9fa; }
+.dropdown-divider { height: 1px; background: #e9ecef; margin: 5px 0; }
+.logout-item { color: #e74c3c; }
 
 /* Upload Modal */
 .modal {
@@ -356,11 +483,7 @@ body {
     align-items: center;
     justify-content: center;
 }
-
-.modal.show {
-    display: flex;
-}
-
+.modal.show { display: flex; }
 .modal-content {
     background: white;
     border-radius: 12px;
@@ -368,7 +491,6 @@ body {
     max-width: 400px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
-
 .modal-header {
     padding: 20px;
     border-bottom: 1px solid #e9ecef;
@@ -376,24 +498,9 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-.modal-header h3 {
-    margin: 0;
-    color: #343a40;
-    font-size: 18px;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6c757d;
-}
-
-.modal-body {
-    padding: 20px;
-}
+.modal-header h3 { margin: 0; font-size: 18px; font-family: Arial, sans-serif; }
+.close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d; }
+.modal-body { padding: 20px; }
 
 .upload-area {
     border: 2px dashed #ced4da;
@@ -403,43 +510,15 @@ body {
     cursor: pointer;
     transition: border-color 0.3s;
 }
+.upload-area:hover { border-color: #007bff; }
+.upload-area i { font-size: 48px; color: #6c757d; margin-bottom: 10px; }
+.upload-area p { margin: 0; color: #6c757d; font-family: Arial, sans-serif; }
+.upload-area small { color: #adb5bd; font-size: 12px; }
 
-.upload-area:hover {
-    border-color: #007bff;
-}
+.image-preview { margin-top: 20px; text-align: center; }
+.image-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; }
 
-.upload-area i {
-    font-size: 48px;
-    color: #6c757d;
-    margin-bottom: 10px;
-}
-
-.upload-area p {
-    margin: 0;
-    color: #6c757d;
-}
-
-.upload-area small {
-    color: #adb5bd;
-    font-size: 12px;
-}
-
-.image-preview {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.image-preview img {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-}
-
-.upload-progress {
-    margin-top: 20px;
-    text-align: center;
-}
-
+.upload-progress { margin-top: 20px; text-align: center; }
 .progress-bar {
     width: 100%;
     height: 8px;
@@ -448,18 +527,8 @@ body {
     overflow: hidden;
     margin-bottom: 5px;
 }
-
-.progress-fill {
-    height: 100%;
-    background: #007bff;
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-#progressText {
-    font-size: 12px;
-    color: #6c757d;
-}
+.progress-fill { height: 100%; background: #007bff; width: 0%; transition: width 0.3s ease; }
+#progressText { font-size: 12px; color: #6c757d; }
 
 .modal-footer {
     padding: 20px;
@@ -468,43 +537,29 @@ body {
     justify-content: flex-end;
     gap: 10px;
 }
-
-.btn-primary-modal {
-    background: #007bff;
-    color: white;
+.btn-primary-modal, .btn-secondary-modal {
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
+    font-family: Arial, sans-serif;
 }
+.btn-primary-modal { background: #007bff; color: white; }
+.btn-primary-modal:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary-modal { background: #6c757d; color: white; }
 
-.btn-primary-modal:hover:not(:disabled) {
-    opacity: 0.9;
+/* Main Content */
+.main-content {
+    margin-left: 60px;
+    padding: 30px;
+    transition: margin-left 0.3s;
+    min-height: calc(100vh - 80px);
 }
+.sidebar:hover ~ .main-content { margin-left: 220px; }
 
-.btn-primary-modal:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary-modal {
-    background: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.btn-secondary-modal:hover {
-    opacity: 0.9;
-}
-
-/* --- Table View (Desktop) --- */
+/* Table View */
 .table-view {
     display: block;
 }
@@ -516,29 +571,35 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     -webkit-overflow-scrolling: touch;
 }
+
 table {
-    width:100%;
-    border-collapse:collapse;
+    width: 100%;
+    border-collapse: collapse;
     min-width: 1000px;
 }
-table th { 
-    background:#343a40; 
-    color:white; 
-    padding:12px; 
-    text-align:left; 
+
+table th {
+    background: #343a40;
+    color: white;
+    padding: 12px;
+    text-align: left;
     font-size: 13px;
-}
-table td { 
-    padding:12px; 
-    border-bottom:1px solid #ddd; 
-    vertical-align: middle; 
-    font-size: 13px;
-}
-tr:hover { 
-    background:#f1f1f1; 
+    font-family: Arial, sans-serif;
 }
 
-/* --- Card View (Mobile) --- */
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+}
+
+tr:hover {
+    background: #f1f1f1;
+}
+
+/* Card View */
 .activity-cards-view {
     display: none;
     gap: 15px;
@@ -575,11 +636,13 @@ tr:hover {
     font-weight: bold;
     color: #007bff;
     font-size: 14px;
+    font-family: Arial, sans-serif;
 }
 
 .activity-card-date {
     font-size: 11px;
     color: #6c757d;
+    font-family: Arial, sans-serif;
 }
 
 .activity-card-row {
@@ -594,6 +657,7 @@ tr:hover {
     width: 100px;
     flex-shrink: 0;
     font-size: 13px;
+    font-family: Arial, sans-serif;
 }
 
 .activity-card-value {
@@ -601,18 +665,10 @@ tr:hover {
     color: #343a40;
     font-size: 13px;
     word-break: break-word;
+    font-family: Arial, sans-serif;
 }
 
-.activity-card-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-}
-
-/* --- Badges --- */
+/* Badges */
 .badge {
     padding: 6px 12px;
     border-radius: 20px;
@@ -621,61 +677,51 @@ tr:hover {
     text-transform: uppercase;
     display: inline-block;
     letter-spacing: 0.5px;
+    font-family: Arial, sans-serif;
 }
 
-/* User Authentication */
 .badge-LOGIN { background: #28a745; color: #fff; }
 .badge-LOGOUT { background: #6c757d; color: #fff; }
-
-/* Admin User Management */
 .badge-ADMIN_CREATES_USER { background: #17a2b8; color: #fff; }
 .badge-ADMIN_DELETES_USER { background: #dc3545; color: #fff; }
 .badge-ADMIN_UPDATES_USER { background: #9c27b0; color: #fff; }
-
-/* Profile Updates */
 .badge-USER_UPDATES_PROFILE { background: #20c997; color: #fff; }
-
-/* Admin Record Actions */
 .badge-ADMIN_CREATES_RECORD { background: #20c997; color: #fff; }
 .badge-ADMIN_UPDATES_RECORD { background: #9c27b0; color: #fff; }
 .badge-ADMIN_DELETES_RECORD { background: #dc3545; color: #fff; }
-
-/* Staff Actions */
 .badge-STAFF_CREATES_RECORD { background: #28a745; color: #fff; }
 .badge-STAFF_EDITS_RECORD { background: #ffc107; color: #000; }
 .badge-STAFF_DELETES_RECORD { background: #fd7e14; color: #fff; }
 
-/* --- Search Form --- */
+/* Search Container - Normal width */
 .search-container {
     margin-bottom: 25px;
     display: flex;
     gap: 15px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
 .search-form-wrapper {
-    flex: 1;
     display: flex;
     gap: 10px;
     align-items: center;
-    max-width: 500px;
 }
 
 .search-form {
     display: flex;
     gap: 10px;
-    flex: 1;
+    align-items: center;
 }
 
 .search-form input {
     padding: 10px 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    flex: 1;
+    width: 300px;
     font-size: 14px;
-    min-width: 0;
+    font-family: Arial, sans-serif;
 }
 
 .search-form input:focus {
@@ -695,10 +741,12 @@ tr:hover {
     align-items: center;
     gap: 8px;
     white-space: nowrap;
+    font-family: Arial, sans-serif;
 }
 
 .search-form button:hover {
     background: #0056b3;
+    transform: translateY(-1px);
 }
 
 .clear-btn {
@@ -713,10 +761,14 @@ tr:hover {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    transition: all 0.3s;
 }
 
 .clear-btn:hover {
     background-color: #5a6268;
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
 }
 
 /* Statistics Summary */
@@ -738,26 +790,22 @@ tr:hover {
     font-size: 24px;
     font-weight: bold;
     color: #007bff;
+    font-family: Arial, sans-serif;
 }
 
 .stat-label {
     color: #6c757d;
     margin-left: 8px;
+    font-family: Arial, sans-serif;
 }
 
 .text-center { text-align: center; }
 .text-muted { color: #6c757d; }
 
-/* ===== ENHANCED RESPONSIVE STYLES ===== */
-
-/* Tablet Devices - 992px and below - Switch to Card View */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 992px) {
     .table-view {
         display: none;
-    }
-    
-    .activity-cards-view {
-        display: flex;
     }
     
     .activity-cards-view {
@@ -767,98 +815,49 @@ tr:hover {
     }
 }
 
-/* Tablet Devices - 768px and below */
 @media (max-width: 768px) {
-    body {
-        padding-top: 70px;
-    }
-    
-    .menu-toggle {
-        display: block;
-    }
-    
-    .header {
-        left: 0 !important;
-        height: 70px;
-        padding: 0 15px;
-        z-index: 100;
-    }
-    
-    .header h1 {
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        width: 260px;
-        z-index: 1000;
-    }
-    
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-    
-    .sidebar.mobile-open:hover {
-        width: 260px;
-    }
-    
-    .sidebar.mobile-open a span {
-        display: inline;
-    }
-    
-    .sidebar.mobile-open .logo img {
-        height: 80px;
-    }
-    
-    .main-content {
-        margin-left: 0 !important;
-        padding: 15px;
-    }
-    
-    .sidebar:hover ~ .header,
-    .sidebar:hover ~ .main-content {
-        left: 0;
-        margin-left: 0;
-    }
-    
-    .profile-name, .dropdown-icon {
-        display: none;
-    }
+    body { padding-top: 70px; }
+    .menu-toggle { display: block; }
+    .header { left: 0 !important; height: 70px; padding: 0 15px; z-index: 100; }
+    .header h1 { font-size: 16px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; width: 260px; z-index: 1000; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .sidebar.mobile-open:hover { width: 260px; }
+    .sidebar.mobile-open a span { display: inline; }
+    .sidebar.mobile-open .logo img { height: 80px; }
+    .main-content { margin-left: 0 !important; padding: 15px; }
+    .sidebar:hover ~ .header, .sidebar:hover ~ .main-content { left: 0; margin-left: 0; }
+    .profile-name, .dropdown-icon { display: none; }
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 18px; }
     
     .search-container {
         flex-direction: column;
+        align-items: stretch;
         gap: 12px;
-        margin-bottom: 20px;
     }
     
     .search-form-wrapper {
-        max-width: 100%;
+        flex-direction: column;
         width: 100%;
     }
     
     .search-form {
+        flex-direction: column;
         width: 100%;
     }
     
     .search-form input {
-        font-size: 13px;
-        padding: 8px 12px;
+        width: 100%;
     }
     
     .search-form button {
-        padding: 8px 16px;
-        font-size: 13px;
+        width: 100%;
+        justify-content: center;
     }
     
     .clear-btn {
         width: 100%;
         justify-content: center;
-        padding: 8px 16px;
-        font-size: 13px;
     }
     
     .stats-container {
@@ -879,130 +878,40 @@ tr:hover {
         gap: 15px;
     }
     
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
+    .toast-container { top: 80px; right: 10px; left: 10px; }
+    .toast { min-width: auto; width: 100%; }
+    .notification-dropdown { position: fixed; top: 70px; left: 10px; right: 10px; width: auto; max-width: none; border-radius: 12px; }
+    .profile-dropdown { position: fixed; top: 70px; right: 10px; left: 10px; width: auto; max-width: none; }
 }
 
-/* Mobile Devices - 480px and below */
-@media (max-width: 480px) {
-    body {
-        padding-top: 60px;
-    }
-    
-    .header {
-        height: 60px;
-        padding: 0 12px;
-    }
-    
-    .header h1 {
-        font-size: 14px;
-    }
-    
-    .main-content {
-        padding: 10px;
-    }
-    
-    .search-form input {
-        font-size: 12px;
-        padding: 8px 10px;
-    }
-    
-    .search-form button {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    
-    .clear-btn {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    
-    .stat-number {
-        font-size: 18px;
-    }
-    
-    .stat-label {
-        font-size: 12px;
-    }
-    
-    .activity-card-content {
-        padding: 12px;
-    }
-    
-    .activity-card-label {
-        width: 80px;
-        font-size: 12px;
-    }
-    
-    .activity-card-value {
-        font-size: 12px;
-    }
-    
-    .activity-card-badge {
-        font-size: 10px;
-        padding: 3px 8px;
-    }
-    
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    
-    .toast {
-        min-width: auto;
-        width: 100%;
-    }
+@media (max-width: 576px) {
+    body { padding-top: 60px; }
+    .header { height: 60px; padding: 0 12px; }
+    .header h1 { font-size: 14px; }
+    .header-right { gap: 10px; }
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 16px; }
+    .profile-avatar { width: 32px; height: 32px; font-size: 14px; }
+    .main-content { padding: 10px; }
+    .search-form input { font-size: 12px; padding: 8px 10px; }
+    .search-form button { padding: 8px 12px; font-size: 12px; }
+    .clear-btn { padding: 8px 12px; font-size: 12px; }
+    .stat-number { font-size: 18px; }
+    .stat-label { font-size: 12px; }
+    .activity-card-content { padding: 12px; }
+    .activity-card-label { width: 80px; font-size: 12px; }
+    .activity-card-value { font-size: 12px; }
+    .notification-dropdown { top: 60px; }
+    .profile-dropdown { top: 60px; }
 }
 
-/* Landscape orientation on mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.mobile-open {
-        overflow-y: auto;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .stats-container {
-        flex-direction: row;
-    }
-    
-    .stat-box {
-        flex: 1;
-    }
-    
-    .activity-cards-view {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Desktop: Ensure sidebar always visible */
 @media (min-width: 769px) {
-    .sidebar {
-        transform: translateX(0) !important;
-    }
-    
-    .menu-toggle {
-        display: none !important;
-    }
-    
-    .sidebar-overlay {
-        display: none !important;
-    }
+    .sidebar { transform: translateX(0) !important; }
+    .menu-toggle { display: none !important; }
+    .sidebar-overlay { display: none !important; }
 }
 </style>
 
 {% if is_granted('ROLE_ADMIN') %}
-
 <div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
@@ -1044,29 +953,17 @@ tr:hover {
         <span>Logout</span>
     </a>
 </div>
+{% endif %}
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {# Profile Section #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
-{% set userRoleName = 
-    role == 'ROLE_ADMIN' ? 'Administrator' :
-    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
-%}
-{% set userRoleIcon = 
-    role == 'ROLE_ADMIN' ? 'crown' :
-    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
-%}
-{% set avatarLetter = 
-    role == 'ROLE_ADMIN' ? 'A' :
-    (role == 'ROLE_STAFF' ? 'S' :
-    (role == 'ROLE_USER' ? 'U' :
-    app.user.username|first|upper))
-%}
+{% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'User') %}
+{% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
+{% set avatarLetter = role == 'ROLE_ADMIN' ? 'A' : (role == 'ROLE_STAFF' ? 'S' : (role == 'ROLE_USER' ? 'U' : app.user.username|first|upper)) %}
 
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Sticky Header -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle">
@@ -1075,47 +972,73 @@ tr:hover {
         <i class="fas fa-clipboard-list"></i> Activity Logs
     </h1>
     
-    <div class="profile-wrapper">
-        <div class="profile-header" id="profileHeader">
-            <div class="profile-avatar">
-                {% if hasProfilePic %}
-                    <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                {% else %}
-                    {{ avatarLetter }}
-                {% endif %}
+    <div class="header-right">
+        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="tracker-badge" id="trackerBadge">0</span>
+        </a>
+        
+        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        
+        <div class="notification-wrapper">
+            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                </div>
             </div>
-            <span class="profile-name">{{ app.user.username }}</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
         
-        <div class="profile-dropdown" id="profileDropdown">
-            <div class="dropdown-role-header">
-                <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+        <div class="profile-wrapper">
+            <div class="profile-header" id="profileHeader">
+                <div class="profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ avatarLetter }}
+                    {% endif %}
+                </div>
+                <span class="profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
-            <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                <i class="fas fa-user-circle"></i> My Profile
-            </a>
-            <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                <i class="fas fa-camera"></i> Change Picture
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-role-header">
+                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                </div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Picture</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Hidden File Upload Form -->
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
 </form>
-
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
 <div class="main-content">
-    <!-- Search Bar -->
+    <!-- Search Bar - Normal width -->
     <div class="search-container">
         <div class="search-form-wrapper">
             <form method="get" action="{{ path('app_activity_log_index') }}" class="search-form">
@@ -1147,9 +1070,9 @@ tr:hover {
     <!-- Desktop Table View -->
     <div class="table-view">
         <div class="table-container">
-              <table>
+            <table>
                 <thead>
-                      <tr>
+                    <tr>
                         <th>ID</th>
                         <th>User ID</th>
                         <th>Username</th>
@@ -1157,45 +1080,23 @@ tr:hover {
                         <th>Action</th>
                         <th>Target Data</th>
                         <th>Date & Time</th>
-                      </tr>
+                    </tr>
                 </thead>
                 <tbody>
                 {% for log in activity_logs %}
-                      <tr>
+                    <tr>
                         <td style="font-weight: 500;">{{ log.id }}</td>
                         <td>{{ log.userId }}</td>
                         <td><strong>{{ log.username }}</strong></td>
                         <td>
-                            {% set roleClass = 
-                                log.role == 'ROLE_ADMIN' ? 'admin' :
-                                (log.role == 'ROLE_STAFF' ? 'staff' : 'user')
-                            %}
-                            <span style="
-                                display: inline-block;
-                                padding: 4px 12px;
-                                border-radius: 20px;
-                                font-size: 12px;
-                                font-weight: 600;
-                                background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }};
-                                color: white;
-                            ">
+                            {% set roleClass = log.role == 'ROLE_ADMIN' ? 'admin' : (log.role == 'ROLE_STAFF' ? 'staff' : 'user') %}
+                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }}; color: white;">
                                 {{ log.role|replace({'ROLE_': ''}) }}
                             </span>
                         </td>
                         <td>
                             <span class="badge badge-{{ log.action }}">
-                                <i class="fas fa-{{ 
-                                    log.action == 'LOGIN' ? 'sign-in-alt' : 
-                                    (log.action == 'LOGOUT' ? 'sign-out-alt' : 
-                                    (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' :
-                                    (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' :
-                                    (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' :
-                                    (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' :
-                                    (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : 
-                                    (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : 
-                                    (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 
-                                    'info-circle')))))))) 
-                                }}"></i>
+                                <i class="fas fa-{{ log.action == 'LOGIN' ? 'sign-in-alt' : (log.action == 'LOGOUT' ? 'sign-out-alt' : (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' : (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' : (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' : (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' : (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 'info-circle')))))))) }}"></i>
                                 {{ log.action|replace({'_': ' '})|title }}
                             </span>
                         </td>
@@ -1210,20 +1111,18 @@ tr:hover {
                             <i class="fas fa-calendar-alt" style="color: #6c757d; margin-right: 5px;"></i>
                             {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '' }}
                         </td>
-                      </tr>
+                    </tr>
                 {% else %}
-                      <tr>
+                    <tr>
                         <td colspan="7" class="text-center text-muted" style="text-align: center; padding: 60px 20px;">
                             <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block;"></i>
                             No activity logs found
-                            {% if search %}
-                                for "{{ search }}"
-                            {% endif %}
+                            {% if search %} for "{{ search }}"{% endif %}
                         </td>
-                      </tr>
+                    </tr>
                 {% endfor %}
                 </tbody>
-              </table>
+            </table>
         </div>
     </div>
     
@@ -1249,19 +1148,8 @@ tr:hover {
                     <div class="activity-card-row">
                         <div class="activity-card-label">Role:</div>
                         <div class="activity-card-value">
-                            {% set roleClass = 
-                                log.role == 'ROLE_ADMIN' ? 'admin' :
-                                (log.role == 'ROLE_STAFF' ? 'staff' : 'user')
-                            %}
-                            <span style="
-                                display: inline-block;
-                                padding: 4px 12px;
-                                border-radius: 20px;
-                                font-size: 11px;
-                                font-weight: 600;
-                                background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }};
-                                color: white;
-                            ">
+                            {% set roleClass = log.role == 'ROLE_ADMIN' ? 'admin' : (log.role == 'ROLE_STAFF' ? 'staff' : 'user') %}
+                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: {{ roleClass == 'admin' ? '#dc3545' : (roleClass == 'staff' ? '#007bff' : '#6c757d') }}; color: white;">
                                 {{ log.role|replace({'ROLE_': ''}) }}
                             </span>
                         </div>
@@ -1270,18 +1158,7 @@ tr:hover {
                         <div class="activity-card-label">Action:</div>
                         <div class="activity-card-value">
                             <span class="badge badge-{{ log.action }}" style="display: inline-block;">
-                                <i class="fas fa-{{ 
-                                    log.action == 'LOGIN' ? 'sign-in-alt' : 
-                                    (log.action == 'LOGOUT' ? 'sign-out-alt' : 
-                                    (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' :
-                                    (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' :
-                                    (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' :
-                                    (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' :
-                                    (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : 
-                                    (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : 
-                                    (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 
-                                    'info-circle')))))))) 
-                                }}"></i>
+                                <i class="fas fa-{{ log.action == 'LOGIN' ? 'sign-in-alt' : (log.action == 'LOGOUT' ? 'sign-out-alt' : (log.action == 'ADMIN_CREATES_USER' ? 'user-plus' : (log.action == 'ADMIN_DELETES_USER' ? 'user-minus' : (log.action == 'ADMIN_UPDATES_USER' ? 'user-edit' : (log.action == 'USER_UPDATES_PROFILE' ? 'user-edit' : (log.action == 'ADMIN_CREATES_RECORD' or log.action == 'STAFF_CREATES_RECORD' ? 'plus-circle' : (log.action == 'ADMIN_UPDATES_RECORD' or log.action == 'STAFF_EDITS_RECORD' ? 'edit' : (log.action == 'ADMIN_DELETES_RECORD' or log.action == 'STAFF_DELETES_RECORD' ? 'trash-alt' : 'info-circle')))))))) }}"></i>
                                 {{ log.action|replace({'_': ' '})|title }}
                             </span>
                         </div>
@@ -1296,20 +1173,68 @@ tr:hover {
             <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px;">
                 <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; display: block; color: #6c757d; opacity: 0.3;"></i>
                 <p style="margin: 0; color: #6c757d; font-size: 16px;">No activity logs found</p>
-                {% if search %}
-                    <p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">for "{{ search }}"</p>
-                {% endif %}
+                {% if search %}<p style="margin: 10px 0 0 0; color: #adb5bd; font-size: 14px;">for "{{ search }}"</p>{% endif %}
             </div>
         {% endfor %}
     </div>
 </div>
-{% endif %}
 
-<!-- Add Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// Toast Notification System
+let notifications = [];
+let shownFlashes = [];
+
+function markAllNotificationsAsRead() {
+    if (notifications.length > 0) {
+        let hasUnread = notifications.some(n => !n.read);
+        if (hasUnread) {
+            notifications.forEach(n => n.read = true);
+            saveNotifications();
+            updateNotificationBadge();
+        }
+    }
+}
+
+function markAllNotificationsAsReadBeforeRedirect() {
+    markAllNotificationsAsRead();
+    window.location.href = '{{ path('app_notifications_index') }}';
+}
+
+function updateCartBadge() {
+    fetch('/cart/count')
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            }
+        })
+        .catch(e => console.log('Cart update error:', e));
+}
+
+function updateTrackerBadge() {
+    fetch('{{ path('app_new_orders_count') }}')
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById('trackerBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            }
+        })
+        .catch(e => console.log('Tracker update error:', e));
+}
+
 function showToast(message, type = 'success') {
     let container = document.getElementById('toastContainer');
     if (!container) {
@@ -1318,366 +1243,231 @@ function showToast(message, type = 'success') {
         container.className = 'toast-container';
         document.body.appendChild(container);
     }
-    
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
+    let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
+    toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
     container.appendChild(toast);
-    
     setTimeout(() => {
         toast.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
-// Mobile Sidebar Toggle - Fixed version
-let sidebarInitialized = false;
-
-function initMobileSidebar() {
-    if (sidebarInitialized) return;
-    
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (!menuToggle || !sidebar) return;
-    
-    function openSidebar() {
-        sidebar.classList.add('mobile-open');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove('mobile-open');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    const newToggle = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-    const newMenuToggle = document.getElementById('menuToggle');
-    
-    newMenuToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl.classList.contains('mobile-open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-    
-    if (overlay) {
-        const newOverlay = overlay.cloneNode(true);
-        overlay.parentNode.replaceChild(newOverlay, overlay);
-        const newOverlayEl = document.getElementById('sidebarOverlay');
-        newOverlayEl.addEventListener('click', closeSidebar);
-    }
-    
-    document.addEventListener('click', function(e) {
-        const currentSidebar = document.getElementById('sidebar');
-        const currentMenuToggle = document.getElementById('menuToggle');
-        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
-                closeSidebar();
-            }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        const currentSidebar = document.getElementById('sidebar');
-        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            closeSidebar();
-        }
-    });
-    
-    sidebarInitialized = true;
+function loadNotifications() {
+    const saved = localStorage.getItem('order_notifications');
+    notifications = saved ? JSON.parse(saved) : [];
+    updateNotificationUI();
+    updateNotificationBadge();
 }
 
-// Display flash messages
-function initFlashMessages() {
+function saveNotifications() {
+    localStorage.setItem('order_notifications', JSON.stringify(notifications));
+    updateNotificationUI();
+    updateNotificationBadge();
+}
+
+function addNotification(title, message, orderId, type) {
+    const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
+    notifications.unshift(notification);
+    if (notifications.length > 100) notifications = notifications.slice(0, 100);
+    saveNotifications();
+    showToast(message, type);
+    updateTrackerBadge();
+}
+
+function updateNotificationBadge() {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    if (badge) { 
+        if (unreadCount > 0) { 
+            badge.classList.add('show'); 
+            badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+        } else { 
+            badge.classList.remove('show'); 
+        } 
+    }
+}
+
+function updateNotificationUI() {
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+    
+    if (notifications.length === 0) { 
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+    } else { 
+        const recentNotifications = notifications.slice(0, 5);
+        list.innerHTML = recentNotifications.map(n => `
+            <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
+                <div class="notification-title">${n.title}</div>
+                <div class="notification-message">${n.message}</div>
+                <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+            </div>
+        `).join('');
+        
+        if (notifications.length > 5) {
+            list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
+        }
+    }
+}
+
+function markNotificationAsRead(id) { 
+    const notification = notifications.find(n => n.id === id); 
+    if (notification) { 
+        notification.read = true; 
+        saveNotifications(); 
+    } 
+}
+
+function clearAllNotifications() { 
+    if (confirm('Clear all notifications?')) { 
+        notifications = []; 
+        saveNotifications(); 
+        showToast('All notifications cleared', 'info'); 
+    } 
+}
+
+function formatTimeAgo(timestamp) { 
+    const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
+    if (mins < 1) return 'Just now'; 
+    if (mins < 60) return `${mins} min ago`; 
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
+    return `${days} day${days > 1 ? 's' : ''} ago`; 
+}
+
+function toggleNotificationDropdown() { 
+    const dropdown = document.getElementById('notificationDropdown');
+    if (dropdown) {
+        markAllNotificationsAsRead();
+        dropdown.classList.toggle('show');
+    }
+}
+
+function checkOrderUpdates() {
+    fetch('{{ path('app_order_check_updates') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (data.updates && data.updates.length > 0) {
+                updateTrackerBadge();
+                data.updates.forEach(update => {
+                    let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                    if (!exists) {
+                        let title = '', message = '', type = 'info';
+                        switch(update.newStatus) {
+                            case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                            case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                            case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                            case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                            case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                            case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                            case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
+                            case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
+                            case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                            default: return;
+                        }
+                        addNotification(title, message, update.orderId, type);
+                    }
+                });
+            }
+        })
+        .catch(e => console.error('Polling error:', e));
+}
+
+let sidebarInit = false;
+function initMobileSidebar() {
+    if (sidebarInit) return;
+    let toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !sidebar) return;
+    function open() { sidebar.classList.add('mobile-open'); if (overlay) overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function close() { sidebar.classList.remove('mobile-open'); if (overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
+    toggle.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.contains('mobile-open') ? close() : open(); });
+    if (overlay) overlay.addEventListener('click', close);
+    document.addEventListener('click', e => { if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) close(); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) close(); });
+    sidebarInit = true;
+}
+
+function displayFlashMessages() {
     {% for label, messages in app.flashes %}
         {% for message in messages %}
-            showToast('{{ message|escape('js') }}', '{{ label }}');
+            let msg = '{{ message|escape('js') }}';
+            if (!shownFlashes.includes(msg)) { shownFlashes.push(msg); showToast(msg, '{{ label }}'); }
         {% endfor %}
     {% endfor %}
 }
 
-// Profile dropdown
-let dropdownInitialized = false;
-
+let dropdownInit = false;
 function initializeDropdown() {
-    if (dropdownInitialized) return;
-    
-    const profileHeader = document.getElementById('profileHeader');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const changePicBtn = document.getElementById('changeProfilePicBtn');
-    
-    if (profileHeader && profileDropdown) {
-        const newHeader = profileHeader.cloneNode(true);
-        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
-        const newProfileHeader = document.getElementById('profileHeader');
-        
-        newProfileHeader.addEventListener('click', function(e) {
+    if (dropdownInit) return;
+    let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
+    if (header && dropdown) {
+        header.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.classList.toggle('active');
-            const dropdown = document.getElementById('profileDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
         });
-        
-        document.addEventListener('click', function(e) {
-            const header = document.getElementById('profileHeader');
-            const dropdown = document.getElementById('profileDropdown');
-            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
-                header.classList.remove('active');
-                dropdown.classList.remove('show');
-            }
-        });
-        
-        dropdownInitialized = true;
+        dropdownInit = true;
+    }
+    let changeBtn = document.getElementById('changeProfilePicBtn');
+    if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+}
+
+document.addEventListener('click', function(event) {
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationIcon = document.getElementById('notificationIcon');
+    if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+        notificationDropdown.classList.remove('show');
     }
     
-    if (changePicBtn) {
-        const newChangeBtn = changePicBtn.cloneNode(true);
-        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
-        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
-        if (newChangePicBtn) {
-            newChangePicBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showUploadModal();
-            });
-        }
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileHeader = document.getElementById('profileHeader');
+    if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+        profileDropdown.classList.remove('show');
+        profileHeader.classList.remove('active');
     }
-}
+});
 
 function showUploadModal() {
-    const existingModal = document.getElementById('uploadModal');
-    if (existingModal) existingModal.remove();
-    
-    const modal = document.createElement('div');
-    modal.id = 'uploadModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Change Profile Picture</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Click to upload or drag and drop</p>
-                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
-                </div>
-                <div class="image-preview" id="imagePreview" style="display: none;">
-                    <img src="" alt="Preview">
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
-                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('show'), 10);
-    
-    const uploadArea = document.getElementById('uploadArea');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImg = imagePreview.querySelector('img');
-    const saveBtn = document.getElementById('saveUpload');
-    const cancelBtn = document.getElementById('cancelUpload');
-    const closeBtn = modal.querySelector('.close-modal');
-    const progressContainer = document.getElementById('uploadProgress');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
-    fileInput.style.display = 'none';
-    modal.appendChild(fileInput);
-    
+    let existing = document.getElementById('uploadModal'); if (existing) existing.remove();
+    let modal = document.createElement('div'); modal.id = 'uploadModal'; modal.className = 'modal';
+    modal.innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Change Profile Picture</h3><button class="close-modal">&times;</button></div><div class="modal-body"><div class="upload-area" id="uploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload or drag and drop</p><small>PNG, JPG, GIF, WebP up to 2MB</small></div><div class="image-preview" id="imagePreview" style="display:none;"><img src="" alt="Preview"></div><div class="upload-progress" id="uploadProgress" style="display:none;"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></div><div class="modal-footer"><button class="btn-secondary-modal" id="cancelUpload">Cancel</button><button class="btn-primary-modal" id="saveUpload" disabled>Upload</button></div></div>`;
+    document.body.appendChild(modal); setTimeout(() => modal.classList.add('show'), 10);
+    let uploadArea = document.getElementById('uploadArea'), preview = document.getElementById('imagePreview'), previewImg = preview.querySelector('img'), saveBtn = document.getElementById('saveUpload'), cancelBtn = document.getElementById('cancelUpload'), closeBtn = modal.querySelector('.close-modal'), progressContainer = document.getElementById('uploadProgress'), progressFill = document.getElementById('progressFill'), progressText = document.getElementById('progressText');
+    let fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp'; fileInput.style.display = 'none'; modal.appendChild(fileInput);
     uploadArea.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#007bff';
-        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-        
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    saveBtn.addEventListener('click', function() {
-        if (fileInput.files.length > 0) {
-            uploadProfilePicture(fileInput.files[0]);
-        }
-    });
-    
-    function uploadProfilePicture(file) {
-        const formData = new FormData();
-        formData.append('profile_picture', file);
-        
-        progressContainer.style.display = 'block';
-        saveBtn.disabled = true;
-        
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const percentComplete = Math.round((e.loaded / e.total) * 100);
-                progressFill.style.width = percentComplete + '%';
-                progressText.textContent = percentComplete + '%';
-            }
-        });
-        
-        xhr.addEventListener('load', function() {
-            if (xhr.status === 200) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
-                        modal.classList.remove('show');
-                        setTimeout(() => modal.remove(), 300);
-                    } else {
-                        showToast(response.message || 'Upload failed', 'error');
-                        resetUpload();
-                    }
-                } catch (e) {
-                    showToast('Invalid server response', 'error');
-                    resetUpload();
-                }
-            } else {
-                showToast('Upload failed. Please try again.', 'error');
-                resetUpload();
-            }
-        });
-        
-        xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
-            resetUpload();
-        });
-        
-        xhr.open('POST', '/dashboard/upload-profile-picture', true);
-        xhr.send(formData);
-    }
-    
-    function resetUpload() {
-        progressContainer.style.display = 'none';
-        progressFill.style.width = '0%';
-        progressText.textContent = '0%';
-        saveBtn.disabled = false;
-    }
-    
-    function updateProfilePicture(imageUrl) {
-        const avatar = document.querySelector('.profile-avatar');
-        const url = imageUrl + '?t=' + new Date().getTime();
-        avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
-    }
-    
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    cancelBtn.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
+    fileInput.addEventListener('change', e => { let file = e.target.files[0]; if (file) { if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)) { showToast('Invalid image type', 'error'); return; } if (file.size > 2*1024*1024) { showToast('File too large (max 2MB)', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; }; reader.readAsDataURL(file); } });
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+    uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
+    saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
+    function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+    function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
+    window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
+    cancelBtn.addEventListener('click', closeUploadModal);
+    closeBtn.addEventListener('click', closeUploadModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
 }
 
-// Initialize all
+function markNotificationsAsReadOnPageLoad() {
+    markAllNotificationsAsRead();
+}
+
 function initAll() {
-    initMobileSidebar();
-    initFlashMessages();
-    initializeDropdown();
+    initMobileSidebar(); 
+    displayFlashMessages(); 
+    initializeDropdown(); 
+    loadNotifications();
+    markNotificationsAsReadOnPageLoad();
+    
+    checkOrderUpdates(); 
+    setInterval(checkOrderUpdates, 30000);
+    updateCartBadge(); 
+    setInterval(updateCartBadge, 5000);
+    updateTrackerBadge();
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initAll, 100);
-});
+document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100));
+document.addEventListener('turbo:load', () => { sidebarInit = false; dropdownInit = false; setTimeout(initAll, 100); });
 
-// Handle Turbo navigation
-document.addEventListener('turbo:load', function() {
-    sidebarInitialized = false;
-    dropdownInitialized = false;
-    setTimeout(initAll, 100);
-});
+window.showToast = showToast;
 </script>
 {% endblock %}
