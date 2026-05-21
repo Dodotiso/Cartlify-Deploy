@@ -9,10 +9,6 @@ RUN docker-php-ext-install pdo pdo_mysql zip
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Symfony CLI (fixes symfony-cmd error)
-RUN curl -sS https://get.symfony.com/cli/installer | bash && \
-    mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
-
 WORKDIR /app
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -20,9 +16,12 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
-# Fix for running as root
+# Fix: Disable symfony-cmd auto-scripts and run as root
 RUN composer config --global allow-plugins true
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix --no-scripts
+
+# Run Symfony scripts manually after install
+RUN php bin/console cache:clear --env=prod --no-debug || true
 
 RUN mkdir -p config/jwt var/cache var/log public/uploads && \
     chmod -R 777 var/cache var/log public/uploads config/jwt
