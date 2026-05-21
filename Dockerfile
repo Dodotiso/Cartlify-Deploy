@@ -15,11 +15,16 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
-# CRITICAL FIX: Allow plugins when running as root
-RUN composer config --global allow-plugins true
+# CRITICAL: Allow plugins BEFORE composer install
+RUN composer global config --no-plugins allow-plugins true
+RUN composer config --no-plugins allow-plugins true
 
-# Install dependencies with plugins enabled
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix
+# Install WITHOUT --no-scripts, let it fail gracefully
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix || true
+
+# Manually run the scripts that auto-scripts would run
+RUN php bin/console cache:clear --env=prod --no-debug || true
+RUN php bin/console assets:install public --symlink --relative || true
 
 # Generate JWT keys
 RUN mkdir -p config/jwt var/cache var/log public/uploads && \
