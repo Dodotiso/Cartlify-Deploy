@@ -15,14 +15,13 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
-# Install dependencies including runtime
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix --no-scripts
+# FIX: Install dependencies WITH scripts (don't use --no-scripts)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix
 
-# Manually run Symfony post-install scripts
-RUN composer require symfony/runtime --no-interaction --no-scripts || true
-RUN php bin/console cache:clear --env=prod --no-debug || true
-
+# Generate JWT keys
 RUN mkdir -p config/jwt var/cache var/log public/uploads && \
+    openssl genrsa -out config/jwt/private.pem 4096 && \
+    openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem && \
     chmod -R 777 var/cache var/log public/uploads config/jwt
 
 COPY nginx.conf /etc/nginx/sites-enabled/default
