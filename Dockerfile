@@ -1,8 +1,5 @@
 FROM php:8.3-fpm
 
-# Create a non-root user
-RUN useradd -m -u 1000 -s /bin/bash appuser
-
 RUN apt-get update && apt-get install -y \
     nginx \
     curl \
@@ -13,30 +10,21 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Force allow plugins globally
+RUN composer global config --no-plugins allow-plugins true
+
 WORKDIR /app
 
-# Copy composer files first and install as root (but without scripts)
-COPY composer.json composer.lock ./
+COPY . .
 
-# Install as root first to create vendor directory
-RUN composer install --no-interaction --optimize-autoloader --no-scripts --ignore-platform-req=ext-posix
+# Run composer as root but allow plugins
+RUN composer install --no-interaction --optimize-autoloader --ignore-platform-req=ext-posix || true
 
-# Now copy all files
-COPY --chown=appuser:appuser . .
+# Run the scripts manually
+RUN php bin/console cache:clear --env=prod --no-debug || true
+RUN php bin/console assets:install public --symlink --relative || true
 
-# Fix permissions
-RUN chown -R appuser:appuser /app
-
-# Switch to non-root user for the rest
-USER appuser
-
-# Now run the full install (scripts will run as non-root)
-RUN composer install --no-interaction --optimize-autoloader --ignore-platform-req=ext-posix
-
-RUN mkdir -p var/cache var/log
-
-# Switch back to root for nginx
-USER root
+RUN mkdir -p var/cache var/log && chmod -R 777 var
 
 COPY nginx-main.conf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
