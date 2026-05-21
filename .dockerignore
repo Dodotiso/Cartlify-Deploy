@@ -5,8 +5,8 @@ var/
 vendor/
 node_modules/
 .git/
-.gitignore
 Dockerfile
 docker-compose.yaml
 .railway/
-README.md
+.gitignore
+*.md
