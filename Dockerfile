@@ -6,7 +6,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo pdo_mysql zip
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
@@ -16,11 +15,11 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
-# Fix: Disable symfony-cmd auto-scripts and run as root
-RUN composer config --global allow-plugins true
+# Install dependencies including runtime
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix --no-scripts
 
-# Run Symfony scripts manually after install
+# Manually run Symfony post-install scripts
+RUN composer require symfony/runtime --no-interaction --no-scripts || true
 RUN php bin/console cache:clear --env=prod --no-debug || true
 
 RUN mkdir -p config/jwt var/cache var/log public/uploads && \
