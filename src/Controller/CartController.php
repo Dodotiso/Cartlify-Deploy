@@ -8,6 +8,7 @@ use App\Entity\Order;
 use App\Repository\StockRepository;
 use App\Repository\CartRepository;
 use App\Service\PhoneNumberHelper;
+use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -128,7 +129,8 @@ class CartController extends AbstractController
         Request $request,
         StockRepository $stockRepo,
         EntityManagerInterface $em,
-        SessionInterface $session
+        SessionInterface $session,
+        OrderService $orderService
     ): Response {
         $stock = $stockRepo->find($stockId);
         $quantity = (int) $request->request->get('quantity', 1);
@@ -213,6 +215,14 @@ class CartController extends AbstractController
         $em->persist($order);
         $em->flush();
 
+        // Send email notifications
+        try {
+            $orderService->sendOrderConfirmation($order);
+            $orderService->sendAdminOrderNotification($order);
+        } catch (\Exception $e) {
+            error_log('Failed to send order email for Order #' . $order->getId() . ': ' . $e->getMessage());
+        }
+
         // Clear session data
         $session->remove('checkout_customer_name');
         $session->remove('checkout_customer_email');
@@ -221,7 +231,7 @@ class CartController extends AbstractController
         $session->remove('checkout_delivery_address');
         $session->remove('checkout_payment_method');
 
-        $this->addFlash('success', 'Order placed successfully!');
+        $this->addFlash('success', 'Order #' . $order->getId() . ' placed successfully! A confirmation email has been sent to ' . htmlspecialchars($customerEmail) . '.');
         return $this->redirectToRoute('app_order_index');
     }
 

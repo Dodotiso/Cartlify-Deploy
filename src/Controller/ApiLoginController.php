@@ -60,7 +60,9 @@ class ApiLoginController extends AbstractController
                 'user' => [
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
-                    'roles' => $user->getRoles()
+                    'email' => $user->getEmail(),
+                    'roles' => $user->getRoles(),
+                    'profilePicture' => $user->getProfilePicture(),
                 ]
             ], Response::HTTP_OK);
             

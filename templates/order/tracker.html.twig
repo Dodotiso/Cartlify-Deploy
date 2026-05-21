@@ -9,102 +9,139 @@
         box-sizing: border-box;
     }
 
-    /* --- Body & Sidebar --- */
     body {
         margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-        color: #343a40;
-        padding-top: 80px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        padding-top: 72px;
     }
 
+    /* --- MODERN SIDEBAR - No Hover Compression --- */
     .sidebar {
         position: fixed;
         top: 0;
         left: 0;
         height: 100%;
-        width: 60px;
-        background: #1f2a44;
-        padding-top: 30px;
+        width: 260px;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        padding: 24px 0;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        transition: width 0.3s, transform 0.3s ease;
         z-index: 100;
-    }
-
-    .sidebar:hover {
-        width: 220px;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
     }
 
     .sidebar .logo {
         display: flex;
         justify-content: center;
-        margin-bottom: 40px;
+        padding: 0 32px 28px 32px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 20px;
     }
 
     .sidebar .logo img {
-        height: 48px;
-        transition: height 0.3s;
+        height: 120px;
+        width: auto;
+        transition: transform 0.2s ease;
     }
 
-    .sidebar:hover .logo img {
-        height: 128px;
+    .sidebar .logo img:hover { transform: scale(1.05); }
+
+    .sidebar .nav-section {
+        padding: 0 20px 8px 20px;
+        margin-top: 16px;
     }
+
+    .sidebar .nav-section span {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: #64748b;
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0 12px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .sidebar nav::-webkit-scrollbar { width: 4px; }
+    .sidebar nav::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
 
     .sidebar a {
         display: flex;
         align-items: center;
-        padding: 15px 15px;
+        padding: 12px 16px;
         text-decoration: none;
-        color: #fff;
+        color: #94a3b8;
         font-weight: 500;
-        border-left: 4px solid transparent;
-        transition: all 0.3s;
+        font-size: 14px;
+        border-radius: 10px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        gap: 14px;
     }
 
-    .sidebar a i {
-        min-width: 24px;
-        font-size: 18px;
-        text-align: center;
+    .sidebar a i { width: 20px; font-size: 18px; text-align: center; transition: transform 0.2s ease; }
+    .sidebar a span { white-space: nowrap; opacity: 0.9; }
+
+    .sidebar a:hover { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; transform: translateX(2px); }
+    .sidebar a:hover i { transform: scale(1.1); }
+
+    .sidebar a.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        font-weight: 600;
     }
 
-    .sidebar a span {
-        display: none;
-        margin-left: 20px;
-        white-space: nowrap;
-        transition: opacity 0.3s;
+    .sidebar a.active::before {
+        content: '';
+        position: absolute;
+        left: -2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 24px;
+        background: #60a5fa;
+        border-radius: 4px;
     }
 
-    .sidebar:hover a span {
-        display: inline;
-        opacity: 1;
+    .sidebar .logout-section {
+        padding: 0 12px;
+        margin-top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 16px;
     }
 
-    .sidebar a:hover {
-        background-color: #34495e;
-        border-left: 4px solid #E64C3C;
-    }
+    .sidebar .logout-section a { color: #ef4444; }
+    .sidebar .logout-section a:hover { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
 
-    /* Mobile Sidebar Toggle Button */
+    /* Mobile Sidebar */
     .menu-toggle {
         display: none;
         background: none;
         border: none;
-        font-size: 20px;
-        color: #343a40;
+        font-size: 22px;
+        color: #64748b;
         cursor: pointer;
         padding: 8px;
-        margin-right: 10px;
-        transition: all 0.3s;
-    }
-
-    .menu-toggle:hover {
-        background-color: #f0f0f0;
+        margin-right: 8px;
+        transition: all 0.2s ease;
         border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* Sidebar Overlay for Mobile */
+    .menu-toggle:hover { background-color: #f1f5f9; color: #0f172a; }
+
     .sidebar-overlay {
         display: none;
         position: fixed;
@@ -112,116 +149,173 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
         z-index: 99;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
     }
 
-    .sidebar-overlay.active {
-        display: block;
-    }
+    .sidebar-overlay.active { display: block; }
 
-    /* --- Sticky Header --- */
-    .header {
+    /* Header for Admin & Staff */
+    .admin-header {
         position: fixed;
         top: 0;
-        left: 60px;
+        left: 260px;
         right: 0;
-        height: 80px;
-        background: #fff;
+        height: 72px;
+        background: #ffffff;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 30px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        transition: left 0.3s;
+        padding: 0 32px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: left 0.3s ease;
         z-index: 99;
+        backdrop-filter: blur(10px);
     }
 
-    .sidebar:hover ~ .header {
-        left: 220px;
-    }
-
-    .header h1 {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1a1a2e;
+    .admin-header-left {
         display: flex;
         align-items: center;
         gap: 12px;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        flex-shrink: 0;
     }
 
-    /* Header Right Icons */
-    .header-right {
+    .admin-header-left h1 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
+        letter-spacing: -0.3px;
+    }
+
+    .admin-header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         flex-shrink: 0;
     }
 
-    .tracker-icon-link, .cart-icon-link {
+    /* Header for Regular Users */
+    .user-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 72px;
+        background: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 32px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        z-index: 99;
+        backdrop-filter: blur(10px);
+    }
+
+    .user-logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        gap: 10px;
+    }
+
+    .user-logo-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .user-logo-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: brightness(0) saturate(100%);
+    }
+
+    .user-header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    /* Icon Styles - TIGHTER SPACING */
+    .user-tracker-icon-link, .admin-tracker-icon-link,
+    .user-cart-icon-link, .admin-cart-icon-link {
         position: relative;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
     }
 
-    .tracker-icon-link i, .cart-icon-link i, .notification-icon i {
-        font-size: 22px;
-        color: #1a1a2e;
-        transition: color 0.3s;
+    .user-tracker-icon-link:hover, .admin-tracker-icon-link:hover,
+    .user-cart-icon-link:hover, .admin-cart-icon-link:hover { background: #f1f5f9; }
+
+    .user-tracker-icon-link i, .admin-tracker-icon-link i,
+    .user-cart-icon-link i, .admin-cart-icon-link i,
+    .user-notification-icon i, .admin-notification-icon i {
+        font-size: 20px;
+        color: #64748b;
+        transition: color 0.2s ease;
     }
 
-    .tracker-icon-link:hover i, .cart-icon-link:hover i, .notification-icon:hover i {
-        color: #007bff;
-    }
+    .user-tracker-icon-link:hover i, .admin-tracker-icon-link:hover i,
+    .user-cart-icon-link:hover i, .admin-cart-icon-link:hover i,
+    .user-notification-icon:hover i, .admin-notification-icon:hover i { color: #3b82f6; }
 
-    .tracker-badge, .cart-badge, .notification-badge {
+    /* Badge Styles */
+    .user-tracker-badge, .admin-tracker-badge,
+    .user-cart-badge, .admin-cart-badge,
+    .user-notification-badge, .admin-notification-badge {
         position: absolute;
-        top: -8px;
-        right: -10px;
-        background: #e74c3c;
+        top: -4px;
+        right: -6px;
+        background: #ef4444;
         color: white;
         border-radius: 50%;
-        padding: 2px 5px;
-        font-size: 9px;
-        font-weight: bold;
-        min-width: 16px;
-        height: 16px;
+        padding: 2px 6px;
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 18px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 0 0 2px white;
         display: none;
+        letter-spacing: 0;
     }
 
-    .tracker-badge.show, .cart-badge.show, .notification-badge.show {
-        display: flex;
-    }
+    .user-tracker-badge.show, .admin-tracker-badge.show,
+    .user-cart-badge.show, .admin-cart-badge.show,
+    .user-notification-badge.show, .admin-notification-badge.show { display: flex; }
 
-    .notification-badge.show, .tracker-badge.show {
-        animation: pulse 0.5s ease;
-    }
+    .user-notification-badge.show, .admin-notification-badge.show,
+    .user-tracker-badge.show, .admin-tracker-badge.show { animation: pulse 0.5s ease; }
 
     @keyframes pulse {
         0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
+        50% { transform: scale(1.25); }
         100% { transform: scale(1); }
     }
 
-    /* Notification Dropdown */
-    .notification-wrapper {
+    /* Notification */
+    .user-notification-wrapper, .admin-notification-wrapper {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .notification-icon {
+    .user-notification-icon, .admin-notification-icon {
         background: none;
         border: none;
         cursor: pointer;
@@ -230,234 +324,215 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        transition: background 0.2s ease;
     }
 
-    .notification-icon i {
-        font-size: 22px;
-        color: #1a1a2e;
-    }
+    .user-notification-icon:hover, .admin-notification-icon:hover { background: #f1f5f9; }
 
-    .notification-dropdown {
+    .user-notification-dropdown, .admin-notification-dropdown {
         display: none;
         position: absolute;
-        top: 45px;
+        top: 48px;
         right: -80px;
-        width: 350px;
+        width: 380px;
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
         z-index: 1000;
-        max-height: 450px;
+        max-height: 480px;
         overflow-y: auto;
+        border: 1px solid #e2e8f0;
     }
 
-    .notification-dropdown.show {
+    .user-notification-dropdown.show, .admin-notification-dropdown.show {
         display: block;
-        animation: slideDown 0.3s ease;
+        animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
+        from { opacity: 0; transform: translateY(-12px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
     .notification-header {
-        padding: 15px;
-        border-bottom: 1px solid #e9ecef;
-        font-weight: 600;
-        color: #1a1a2e;
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        font-weight: 700;
+        color: #0f172a;
         position: sticky;
         top: 0;
         background: white;
-        border-radius: 12px 12px 0 0;
-        font-family: Arial, sans-serif;
+        border-radius: 16px 16px 0 0;
+        font-size: 15px;
+        letter-spacing: -0.2px;
     }
 
     .notification-item {
-        padding: 12px 15px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 14px 20px;
+        border-bottom: 1px solid #f8fafc;
         cursor: pointer;
-        transition: background 0.2s;
-        font-family: Arial, sans-serif;
+        transition: background 0.2s ease;
     }
 
-    .notification-item:hover {
-        background: #f8f9fa;
-    }
+    .notification-item:hover { background: #f8fafc; }
 
     .notification-item.unread {
-        background: #e3f2fd;
-        border-left: 3px solid #3498db;
+        background: #eff6ff;
+        border-left: 3px solid #3b82f6;
     }
 
-    .notification-title {
-        font-weight: 600;
-        font-size: 13px;
-        color: #1a1a2e;
-        margin-bottom: 4px;
-    }
-
-    .notification-message {
-        font-size: 12px;
-        color: #6c757d;
-        margin-bottom: 4px;
-    }
-
-    .notification-time {
-        font-size: 10px;
-        color: #adb5bd;
-    }
+    .notification-title { font-weight: 600; font-size: 13px; color: #0f172a; margin-bottom: 4px; }
+    .notification-message { font-size: 12px; color: #64748b; margin-bottom: 4px; line-height: 1.5; }
+    .notification-time { font-size: 11px; color: #94a3b8; font-weight: 500; }
 
     .notification-footer {
-        padding: 10px;
-        border-top: 1px solid #e9ecef;
+        padding: 12px 20px;
+        border-top: 1px solid #f1f5f9;
         text-align: center;
         display: flex;
         justify-content: center;
-        gap: 10px;
+        gap: 16px;
         flex-wrap: wrap;
+        background: #fafafa;
+        border-radius: 0 0 16px 16px;
     }
 
-    .clear-notif-btn {
-        background: none;
-        border: none;
-        color: #3498db;
-        cursor: pointer;
-        font-size: 12px;
-        font-family: Arial, sans-serif;
-    }
+    .clear-notif-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .view-all-link { background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 13px; font-weight: 500; text-decoration: none; }
+    .view-all-link:hover { text-decoration: underline; }
 
-    .view-all-link {
-        background: none;
-        border: none;
-        color: #28a745;
-        cursor: pointer;
-        font-size: 12px;
-        font-family: Arial, sans-serif;
-        text-decoration: none;
-    }
+    /* Profile Dropdown - CIRCULAR AVATAR */
+    .user-profile-wrapper, .admin-profile-wrapper { position: relative; margin-left: 12px; }
 
-    .view-all-link:hover {
-        text-decoration: underline;
-    }
-
-    /* Profile Dropdown */
-    .profile-wrapper {
-        position: relative;
-    }
-
-    .profile-header {
+    .user-profile-header, .admin-profile-header {
         display: flex;
         align-items: center;
         gap: 10px;
         cursor: pointer;
-        padding: 5px 10px;
-        border-radius: 20px;
-        transition: background-color 0.3s;
+        padding: 4px;
+        border-radius: 50%;
+        transition: background-color 0.2s ease;
     }
 
-    .profile-header:hover {
-        background-color: #f0f0f0;
-    }
+    .user-profile-header:hover, .admin-profile-header:hover { background-color: #f1f5f9; }
+    .user-profile-header.active, .admin-profile-header.active { background-color: #e2e8f0; }
 
-    .profile-header.active {
-        background-color: #e9ecef;
-    }
-
-    .profile-avatar {
-        width: 38px;
-        height: 38px;
-        background: #007bff;
+    .user-profile-avatar, .admin-profile-avatar {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 700;
         font-size: 18px;
         overflow: hidden;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        border: 2px solid #ffffff;
     }
 
-    .profile-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+    .user-profile-avatar img, .admin-profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-    .profile-name {
-        font-weight: 500;
-        color: #333;
-        user-select: none;
-        font-family: Arial, sans-serif;
-    }
-
-    .dropdown-icon {
-        font-size: 12px;
-        color: #6c757d;
-        transition: transform 0.3s;
-    }
-
-    .profile-header.active .dropdown-icon {
-        transform: rotate(180deg);
-    }
-
-    .profile-dropdown {
+    .user-profile-dropdown, .admin-profile-dropdown {
         position: absolute;
-        top: 55px;
+        top: 56px;
         right: 0;
-        width: 240px;
+        width: 260px;
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
         display: none;
         flex-direction: column;
         overflow: hidden;
         z-index: 1000;
+        border: 1px solid #e2e8f0;
     }
 
-    .profile-dropdown.show {
-        display: flex;
-    }
+    .user-profile-dropdown.show, .admin-profile-dropdown.show { display: flex; animation: slideDown 0.2s ease; }
 
     .dropdown-role-header {
-        padding: 12px 16px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 14px 18px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         color: white;
         font-size: 12px;
         font-weight: 600;
         text-align: center;
+        letter-spacing: 0.5px;
     }
 
     .dropdown-item {
-        padding: 12px 16px;
+        padding: 12px 18px;
         text-decoration: none;
-        color: #1a1a2e;
+        color: #0f172a;
         font-size: 14px;
         display: flex;
         align-items: center;
         gap: 12px;
-        transition: background 0.2s;
+        transition: background 0.2s ease;
     }
 
-    .dropdown-item:hover {
-        background: #f8f9fa;
+    .dropdown-item i { width: 18px; color: #64748b; font-size: 16px; }
+    .dropdown-item:hover { background: #f8fafc; color: #3b82f6; }
+    .dropdown-item:hover i { color: #3b82f6; }
+    .dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+    .logout-item { color: #ef4444; }
+    .logout-item:hover { background: #fef2f2; color: #dc2626; }
+
+    /* Toast Notifications */
+    .toast-container {
+        position: fixed;
+        top: 88px;
+        right: 24px;
+        z-index: 9999;
     }
 
-    .dropdown-item i {
-        width: 18px;
-        color: #6c757d;
+    .toast {
+        background: white;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 320px;
+        animation: slideInRight 0.3s ease;
+        border-left: 4px solid;
+        position: relative;
+        overflow: hidden;
     }
 
-    .dropdown-divider {
-        height: 1px;
-        background: #e9ecef;
-        margin: 5px 0;
+    .toast-success { border-left-color: #10b981; background: #f0fdf4; }
+    .toast-error { border-left-color: #ef4444; background: #fef2f2; }
+    .toast-warning { border-left-color: #f59e0b; background: #fffbeb; }
+    .toast-info { border-left-color: #3b82f6; background: #eff6ff; }
+
+    .toast-icon { font-size: 20px; font-weight: bold; }
+    .toast-success .toast-icon { color: #10b981; }
+    .toast-error .toast-icon { color: #ef4444; }
+    .toast-warning .toast-icon { color: #f59e0b; }
+    .toast-info .toast-icon { color: #3b82f6; }
+
+    .toast-content { flex: 1; color: #0f172a; font-size: 14px; font-weight: 500; }
+
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: rgba(0, 0, 0, 0.08);
+        width: 100%;
+        animation: progress 3s linear forwards;
     }
 
-    .logout-item {
-        color: #e74c3c;
-    }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes progress { from { width: 100%; } to { width: 0%; } }
 
     /* Upload Modal */
     .modal {
@@ -467,261 +542,98 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
         z-index: 2000;
         align-items: center;
         justify-content: center;
     }
 
-    .modal.show {
-        display: flex;
-    }
+    .modal.show { display: flex; }
 
     .modal-content {
         background: white;
-        border-radius: 12px;
+        border-radius: 20px;
         width: 90%;
-        max-width: 400px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        max-width: 440px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        animation: slideDown 0.3s ease;
     }
 
     .modal-header {
-        padding: 20px;
-        border-bottom: 1px solid #e9ecef;
+        padding: 24px;
+        border-bottom: 1px solid #f1f5f9;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .modal-header h3 {
-        margin: 0;
-        color: #343a40;
-        font-size: 18px;
-        font-family: Arial, sans-serif;
-    }
+    .modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
 
     .close-modal {
         background: none;
         border: none;
         font-size: 24px;
         cursor: pointer;
-        color: #6c757d;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .upload-area {
-        border: 2px dashed #ced4da;
+        color: #94a3b8;
+        width: 32px;
+        height: 32px;
         border-radius: 8px;
-        padding: 30px;
-        text-align: center;
-        cursor: pointer;
-        transition: border-color 0.3s;
-    }
-
-    .upload-area:hover {
-        border-color: #007bff;
-    }
-
-    .upload-area i {
-        font-size: 48px;
-        color: #6c757d;
-        margin-bottom: 10px;
-    }
-
-    .upload-area p {
-        margin: 0;
-        color: #6c757d;
-        font-family: Arial, sans-serif;
-    }
-
-    .upload-area small {
-        color: #adb5bd;
-        font-size: 12px;
-        font-family: Arial, sans-serif;
-    }
-
-    .image-preview {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .image-preview img {
-        max-width: 100%;
-        max-height: 200px;
-        border-radius: 8px;
-    }
-
-    .upload-progress {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 8px;
-        background-color: #e9ecef;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 5px;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: #007bff;
-        width: 0%;
-        transition: width 0.3s ease;
-    }
-
-    #progressText {
-        font-size: 12px;
-        color: #6c757d;
-        font-family: Arial, sans-serif;
-    }
-
-    .modal-footer {
-        padding: 20px;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .btn-primary-modal {
-        background: #007bff;
-        color: white;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        font-family: Arial, sans-serif;
-    }
-
-    .btn-primary-modal:hover:not(:disabled) {
-        opacity: 0.9;
-    }
-
-    .btn-primary-modal:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .btn-secondary-modal {
-        background: #6c757d;
-        color: white;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        font-family: Arial, sans-serif;
-    }
-
-    .btn-secondary-modal:hover {
-        opacity: 0.9;
-    }
-
-    /* Toast Notifications */
-    .toast-container {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        z-index: 9999;
-    }
-
-    .toast {
-        background: white;
-        border-radius: 8px;
-        padding: 16px 20px;
-        margin-bottom: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         display: flex;
         align-items: center;
-        gap: 12px;
-        min-width: 300px;
-        animation: slideInRight 0.3s ease;
-        border-left: 4px solid;
-        font-family: Arial, sans-serif;
-        position: relative;
-        overflow: hidden;
+        justify-content: center;
+        transition: all 0.2s ease;
     }
 
-    .toast-success {
-        border-left-color: #28a745;
-        background: #f0f9f0;
+    .close-modal:hover { background: #f1f5f9; color: #0f172a; }
+    .modal-body { padding: 24px; }
+
+    .upload-area {
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        padding: 40px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    .toast-error {
-        border-left-color: #dc3545;
-        background: #fff5f5;
-    }
+    .upload-area:hover { border-color: #3b82f6; background: #f8fafc; }
+    .upload-area i { font-size: 48px; color: #94a3b8; margin-bottom: 12px; }
+    .upload-area p { margin: 0; color: #64748b; font-weight: 500; }
+    .upload-area small { color: #94a3b8; font-size: 12px; margin-top: 4px; display: block; }
 
-    .toast-warning {
-        border-left-color: #ffc107;
-        background: #fffbf0;
-    }
+    .image-preview { margin-top: 20px; text-align: center; }
+    .image-preview img { max-width: 100%; max-height: 200px; border-radius: 12px; }
 
-    .toast-info {
-        border-left-color: #17a2b8;
-        background: #f0f9ff;
-    }
+    .upload-progress { margin-top: 20px; text-align: center; }
+    .progress-bar { width: 100%; height: 6px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+    .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s ease; border-radius: 6px; }
+    #progressText { font-size: 13px; color: #64748b; font-weight: 500; }
 
-    .toast-icon {
-        font-size: 20px;
-    }
+    .modal-footer { padding: 20px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; }
 
-    .toast-success .toast-icon { color: #28a745; }
-    .toast-error .toast-icon { color: #dc3545; }
-    .toast-warning .toast-icon { color: #ffc107; }
-    .toast-info .toast-icon { color: #17a2b8; }
-
-    .toast-content {
-        flex: 1;
-        color: #333;
-        font-size: 14px;
+    .btn-primary-modal {
+        padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600;
+        transition: all 0.2s ease; background: #3b82f6; color: white;
     }
+    .btn-primary-modal:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+    .btn-primary-modal:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .toast-progress {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 3px;
-        background: rgba(0,0,0,0.1);
-        width: 100%;
-        animation: progress 3s linear forwards;
+    .btn-secondary-modal {
+        padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600;
+        transition: all 0.2s ease; background: #f1f5f9; color: #64748b;
     }
-
-    @keyframes slideInRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes slideOutRight {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-
-    @keyframes progress {
-        from { width: 100%; }
-        to { width: 0%; }
-    }
+    .btn-secondary-modal:hover { background: #e2e8f0; }
 
     /* Main Content */
     .main-content {
-        margin-left: 60px;
-        padding: 30px;
-        transition: margin-left 0.3s;
-        min-height: calc(100vh - 80px);
+        margin-left: 260px;
+        padding: 32px;
+        transition: margin-left 0.3s ease;
+        min-height: calc(100vh - 72px);
     }
 
-    .sidebar:hover ~ .main-content {
-        margin-left: 220px;
-    }
+    .main-content.user-mode { margin-left: 0; }
 
     /* Tracker Styles */
     .tracker-container {
@@ -733,36 +645,53 @@
     .tracker-header {
         text-align: center;
         margin-bottom: 40px;
+        position: relative;
     }
 
     .tracker-header h2 {
         font-size: 28px;
-        color: #1a1a2e;
+        color: #0f172a;
         margin-bottom: 10px;
-        font-family: Arial, sans-serif;
+        font-weight: 700;
     }
 
-    .tracker-header p {
-        color: #6c757d;
-        font-family: Arial, sans-serif;
+    .tracker-header p { color: #64748b; }
+
+    .continue-shopping-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #10b981;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
     }
+
+    .continue-shopping-btn:hover { background: #059669; transform: translateY(-2px); }
 
     .order-track-card {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         margin-bottom: 30px;
         overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
     }
 
-    .order-track-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
+    .order-track-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
 
     .order-track-header {
-        background: linear-gradient(135deg, #1f2a44 0%, #16213e 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: white;
         padding: 15px 25px;
         display: flex;
@@ -771,23 +700,11 @@
         gap: 10px;
     }
 
-    .order-id {
-        font-size: 18px;
-        font-weight: bold;
-        font-family: Arial, sans-serif;
-    }
+    .order-id { font-size: 18px; font-weight: 700; }
+    .order-date { font-size: 13px; opacity: 0.85; }
 
-    .order-date {
-        font-size: 13px;
-        opacity: 0.85;
-        font-family: Arial, sans-serif;
-    }
+    .order-track-body { padding: 25px; }
 
-    .order-track-body {
-        padding: 25px;
-    }
-
-    /* Product Header with Status Badge */
     .product-header {
         display: flex;
         justify-content: space-between;
@@ -796,51 +713,23 @@
         gap: 15px;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid #f1f5f9;
     }
 
-    .product-info {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        flex: 1;
-    }
+    .product-info { display: flex; gap: 20px; flex-wrap: wrap; flex: 1; }
 
     .product-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #f8f9fa;
-        flex-shrink: 0;
+        width: 100px; height: 100px; border-radius: 12px; overflow: hidden;
+        background: #f8fafc; flex-shrink: 0;
     }
 
-    .product-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
 
-    .product-details {
-        flex: 1;
-    }
+    .product-details { flex: 1; }
 
-    .product-name {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 8px;
-        font-family: Arial, sans-serif;
-    }
+    .product-name { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .product-meta { font-size: 14px; color: #64748b; margin-bottom: 5px; }
 
-    .product-meta {
-        font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 5px;
-        font-family: Arial, sans-serif;
-    }
-
-    /* Status Badge - Top Right */
     .order-status-badge {
         display: inline-block;
         padding: 8px 18px;
@@ -849,33 +738,30 @@
         font-weight: 600;
         white-space: nowrap;
         flex-shrink: 0;
-        font-family: Arial, sans-serif;
     }
 
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-processing { background: #cce5ff; color: #004085; }
-    .status-packaging { background: #d1ecf1; color: #0c5460; }
-    .status-ready_for_pickup { background: #d4edda; color: #155724; }
-    .status-shipped { background: #fff3cd; color: #856404; }
-    .status-delivered { background: #d4edda; color: #155724; }
-    .status-cancelled { background: #f8d7da; color: #721c24; }
-    .status-rejected { background: #f8d7da; color: #721c24; }
-    .status-completed { background: #d4edda; color: #155724; }
-    .status-accepted { background: #cce5ff; color: #004085; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-processing { background: #dbeafe; color: #1e40af; }
+    .status-packaging { background: #e0e7ff; color: #3730a3; }
+    .status-ready_for_pickup { background: #d1fae5; color: #065f46; }
+    .status-shipped { background: #fef3c7; color: #92400e; }
+    .status-delivered { background: #d1fae5; color: #065f46; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+    .status-rejected { background: #fee2e2; color: #991b1b; }
+    .status-completed { background: #d1fae5; color: #065f46; }
+    .status-accepted { background: #dbeafe; color: #1e40af; }
 
     .delivery-info {
-        background: #f8f9fa;
+        background: #f8fafc;
         padding: 12px 15px;
         border-radius: 12px;
         margin-bottom: 25px;
         font-size: 14px;
-        font-family: Arial, sans-serif;
+        border: 1px solid #f1f5f9;
     }
 
     /* Progress Stepper */
-    .progress-stepper {
-        margin: 30px 0;
-    }
+    .progress-stepper { margin: 30px 0; }
 
     .progress-steps {
         display: flex;
@@ -891,191 +777,112 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: #e9ecef;
+        background: #e2e8f0;
         z-index: 1;
     }
 
-    .step {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        flex: 1;
-    }
+    .step { position: relative; z-index: 2; text-align: center; flex: 1; }
 
     .step-icon {
-        width: 50px;
-        height: 50px;
-        background: #e9ecef;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 10px;
-        font-size: 20px;
-        color: #6c757d;
+        width: 50px; height: 50px; background: #e2e8f0; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 10px; font-size: 20px; color: #64748b;
         transition: all 0.3s;
     }
 
     .step.completed .step-icon {
-        background: #28a745;
-        color: white;
-        box-shadow: 0 0 0 5px rgba(40,167,69,0.2);
+        background: #10b981; color: white;
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.2);
     }
 
     .step.active .step-icon {
-        background: #3498db;
-        color: white;
-        box-shadow: 0 0 0 5px rgba(52,152,219,0.2);
+        background: #3b82f6; color: white;
+        box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.2);
         animation: stepPulse 1.5s infinite;
     }
 
     @keyframes stepPulse {
-        0% { box-shadow: 0 0 0 0 rgba(52,152,219,0.4); }
-        70% { box-shadow: 0 0 0 10px rgba(52,152,219,0); }
-        100% { box-shadow: 0 0 0 0 rgba(52,152,219,0); }
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
     }
 
-    .step.cancelled .step-icon {
-        background: #dc3545;
-        color: white;
-    }
+    .step.cancelled .step-icon { background: #ef4444; color: white; }
 
-    .step-label {
-        font-size: 11px;
-        font-weight: 600;
-        color: #6c757d;
-        font-family: Arial, sans-serif;
-    }
-
-    .step.completed .step-label {
-        color: #28a745;
-    }
-
-    .step.active .step-label {
-        color: #3498db;
-    }
-
-    .step.cancelled .step-label {
-        color: #dc3545;
-    }
+    .step-label { font-size: 11px; font-weight: 600; color: #64748b; }
+    .step.completed .step-label { color: #10b981; }
+    .step.active .step-label { color: #3b82f6; }
+    .step.cancelled .step-label { color: #ef4444; }
 
     /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 20px;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-    }
+    .action-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
 
     .btn {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
+        padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
+        font-size: 13px; font-weight: 600; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 8px;
+        transition: all 0.2s ease;
     }
 
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 
-    .btn-danger:hover {
-        background: #c82333;
-        transform: translateY(-1px);
-    }
+    .btn-warning { background: #f59e0b; color: #0f172a; }
+    .btn-warning:hover { background: #d97706; transform: translateY(-1px); }
 
-    .btn-warning {
-        background: #ffc107;
-        color: #333;
-    }
+    .btn-secondary { background: #64748b; color: white; }
+    .btn-secondary:hover { background: #475569; }
 
-    .btn-warning:hover {
-        background: #e0a800;
-        transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: #5a6268;
-    }
-
-    .btn-info {
-        background: #17a2b8;
-        color: white;
-    }
-
-    .btn-info:hover {
-        background: #138496;
-    }
+    .btn-info { background: #06b6d4; color: white; }
+    .btn-info:hover { background: #0891b2; }
 
     .empty-tracker {
         text-align: center;
         padding: 80px 20px;
         background: white;
         border-radius: 16px;
-        font-family: Arial, sans-serif;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
 
-    .empty-tracker i {
-        font-size: 64px;
-        color: #bdc3c7;
-        margin-bottom: 20px;
-    }
-
-    .empty-tracker h3 {
-        margin-bottom: 10px;
-        color: #1a1a2e;
-        font-family: Arial, sans-serif;
-    }
-
-    .empty-tracker p {
-        color: #6c757d;
-        margin-bottom: 20px;
-        font-family: Arial, sans-serif;
-    }
+    .empty-tracker i { font-size: 64px; color: #94a3b8; margin-bottom: 20px; }
+    .empty-tracker h3 { margin-bottom: 10px; color: #0f172a; font-weight: 700; }
+    .empty-tracker p { color: #64748b; margin-bottom: 20px; }
 
     .btn-primary {
         display: inline-block;
         padding: 12px 24px;
-        background: #28a745;
+        background: #10b981;
         color: white;
         text-decoration: none;
         border-radius: 10px;
-        transition: background 0.3s;
-        font-family: Arial, sans-serif;
+        font-weight: 600;
+        transition: background 0.2s ease;
     }
 
-    .btn-primary:hover {
-        background: #218838;
-    }
+    .btn-primary:hover { background: #059669; }
 
     /* Responsive */
     @media (max-width: 768px) {
-        body { padding-top: 70px; }
-        .menu-toggle { display: block; }
-        .header { left: 0 !important; height: 70px; padding: 0 15px; }
-        .header h1 { font-size: 16px; }
-        .sidebar { transform: translateX(-100%); width: 260px; }
+        body { padding-top: 64px; }
+        .menu-toggle { display: flex; }
+        .admin-header { left: 0 !important; height: 64px; padding: 0 16px; }
+        .user-header { height: 64px; padding: 0 16px; }
+        .admin-header-right, .user-header-right { gap: 4px; }
+        .user-logo-wrapper { width: 70px; height: 70px; }
+        .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 280px; }
         .sidebar.mobile-open { transform: translateX(0); }
-        .sidebar.mobile-open:hover { width: 260px; }
-        .sidebar.mobile-open a span { display: inline; }
-        .sidebar.mobile-open .logo img { height: 80px; }
-        .main-content { margin-left: 0 !important; padding: 15px; }
-        .profile-name, .dropdown-icon { display: none; }
-        .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 18px; }
+        .sidebar .logo img { height: 100px; }
+        .main-content { margin-left: 0 !important; padding: 20px; }
+        .main-content.user-mode { margin-left: 0; }
+        
+        .user-tracker-icon-link i, .admin-tracker-icon-link i,
+        .user-cart-icon-link i, .admin-cart-icon-link i,
+        .user-notification-icon i, .admin-notification-icon i { font-size: 18px; }
+        .user-tracker-icon-link, .admin-tracker-icon-link,
+        .user-cart-icon-link, .admin-cart-icon-link { width: 36px; height: 36px; }
+        .user-notification-icon, .admin-notification-icon { width: 36px; height: 36px; }
+        .user-profile-avatar, .admin-profile-avatar { width: 36px; height: 36px; font-size: 16px; }
+        .user-profile-wrapper, .admin-profile-wrapper { margin-left: 8px; }
         
         .step-icon { width: 40px; height: 40px; font-size: 16px; }
         .step-label { font-size: 9px; }
@@ -1086,20 +893,29 @@
         .tracker-container { padding: 15px; }
         .action-buttons { justify-content: center; }
         
-        .toast-container { top: 80px; right: 10px; left: 10px; }
+        .toast-container { top: 76px; right: 12px; left: 12px; }
         .toast { min-width: auto; width: 100%; }
-        .notification-dropdown { position: fixed; top: 70px; left: 10px; right: 10px; width: auto; max-width: none; border-radius: 12px; }
-        .profile-dropdown { position: fixed; top: 70px; right: 10px; left: 10px; width: auto; max-width: none; }
+        .user-notification-dropdown, .admin-notification-dropdown { position: fixed; top: 64px; left: 12px; right: 12px; width: auto; max-width: none; border-radius: 16px; }
+        .user-profile-dropdown, .admin-profile-dropdown { position: fixed; top: 64px; right: 12px; left: 12px; width: auto; max-width: none; }
+        .continue-shopping-btn { position: relative; margin-bottom: 20px; display: inline-block; }
+        .tracker-header { text-align: center; display: flex; flex-direction: column; align-items: center; }
     }
 
     @media (max-width: 576px) {
-        body { padding-top: 60px; }
-        .header { height: 60px; padding: 0 12px; }
-        .header h1 { font-size: 14px; }
-        .header-right { gap: 10px; }
-        .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 16px; }
-        .profile-avatar { width: 32px; height: 32px; font-size: 14px; }
-        .main-content { padding: 10px; }
+        body { padding-top: 56px; }
+        .admin-header, .user-header { height: 56px; padding: 0 12px; }
+        .admin-header-right, .user-header-right { gap: 2px; }
+        .user-logo-wrapper { width: 55px; height: 55px; }
+        .admin-header-left h1 { font-size: 14px; }
+        .user-tracker-icon-link i, .admin-tracker-icon-link i,
+        .user-cart-icon-link i, .admin-cart-icon-link i,
+        .user-notification-icon i, .admin-notification-icon i { font-size: 16px; }
+        .user-tracker-icon-link, .admin-tracker-icon-link,
+        .user-cart-icon-link, .admin-cart-icon-link { width: 34px; height: 34px; }
+        .user-notification-icon, .admin-notification-icon { width: 34px; height: 34px; }
+        .user-profile-avatar, .admin-profile-avatar { width: 34px; height: 34px; font-size: 15px; }
+        .user-profile-wrapper, .admin-profile-wrapper { margin-left: 6px; }
+        .main-content { padding: 16px; }
         .tracker-header h2 { font-size: 22px; }
         .tracker-header p { font-size: 13px; }
         .order-track-body { padding: 15px; }
@@ -1108,8 +924,9 @@
         .step-icon { width: 35px; height: 35px; font-size: 14px; }
         .step-label { font-size: 8px; }
         .btn { padding: 6px 12px; font-size: 12px; }
-        .notification-dropdown { top: 60px; }
-        .profile-dropdown { top: 60px; }
+        .user-notification-dropdown, .admin-notification-dropdown { top: 56px; }
+        .user-profile-dropdown, .admin-profile-dropdown { top: 56px; }
+        .continue-shopping-btn { padding: 8px 16px; font-size: 12px; }
     }
 
     @media (min-width: 769px) {
@@ -1120,90 +937,69 @@
 </style>
 
 <!-- ============================================ -->
-<!-- SIDEBAR
+<!-- SIDEBAR (Only for Admin and Staff) -->
 <!-- ============================================ -->
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
-    <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home"></i>
-        <span>Dashboard</span>
-    </a>
-    <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-    </a>
-    <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes"></i>
-        <span>Stocks</span>
-    </a>
-    <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-store"></i>
-        <span>Marketplace</span>
-    </a>
-    <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
-    </a>
-    <a href="{{ path('app_user_index') }}">
-        <i class="fas fa-user-tie"></i>
-        <span>Staff Management</span>
-    </a>
-    <a href="{{ path('app_activity_log_index') }}">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Activity Logs</span>
-    </a>
-    <a href="{{ path('app_profile_index') }}">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-    </a>
-    <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off"></i>
-        <span>Logout</span>
-    </a>
+    
+    <nav>
+        <div class="nav-section"><span>Main Menu</span></div>
+        
+        <a href="{{ path('app_dashboard') }}"><i class="fas fa-home"></i><span>Dashboard</span></a>
+        <a href="{{ path('app_product_index') }}"><i class="fas fa-shopping-bag"></i><span>Products</span></a>
+        <a href="{{ path('app_stock_index') }}"><i class="fas fa-boxes"></i><span>Stocks</span></a>
+        <a href="{{ path('app_order_new') }}"><i class="fas fa-shopping-cart"></i><span>Shop</span></a>
+        <a href="{{ path('app_order_index') }}"><i class="fas fa-receipt"></i><span>Orders</span></a>
+        
+        <div class="nav-section"><span>Management</span></div>
+        
+        <a href="{{ path('app_customer_management_index') }}"><i class="fas fa-users"></i><span>Customers</span></a>
+        <a href="{{ path('app_user_index') }}"><i class="fas fa-user-tie"></i><span>Staff Management</span></a>
+        <a href="{{ path('app_activity_log_index') }}"><i class="fas fa-clipboard-list"></i><span>Activity Logs</span></a>
+        
+        <div class="nav-section"><span>Account</span></div>
+        
+        <a href="{{ path('app_profile_index') }}"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+    
+    <div class="logout-section">
+        <a href="{{ path('app_logout') }}"><i class="fas fa-power-off"></i><span>Logout</span></a>
+    </div>
 </div>
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
     <div class="logo">
         <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
     </div>
-    <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home"></i>
-        <span>Dashboard</span>
-    </a>
-    <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-    </a>
-    <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes"></i>
-        <span>Stocks</span>
-    </a>
-    <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-store"></i>
-        <span>Marketplace</span>
-    </a>
-    <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
-    </a>
-    <a href="{{ path('app_profile_index') }}">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-    </a>
-    <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off"></i>
-        <span>Logout</span>
-    </a>
+    
+    <nav>
+        <div class="nav-section"><span>Main Menu</span></div>
+        
+        <a href="{{ path('app_dashboard') }}"><i class="fas fa-home"></i><span>Dashboard</span></a>
+        <a href="{{ path('app_product_index') }}"><i class="fas fa-shopping-bag"></i><span>Products</span></a>
+        <a href="{{ path('app_stock_index') }}"><i class="fas fa-boxes"></i><span>Stocks</span></a>
+        <a href="{{ path('app_order_new') }}"><i class="fas fa-shopping-cart"></i><span>Shop</span></a>
+        <a href="{{ path('app_order_index') }}"><i class="fas fa-receipt"></i><span>Orders</span></a>
+        <a href="{{ path('app_customer_management_index') }}"><i class="fas fa-users"></i><span>Customers</span></a>
+        
+        <div class="nav-section"><span>Account</span></div>
+        
+        <a href="{{ path('app_profile_index') }}"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+    
+    <div class="logout-section">
+        <a href="{{ path('app_logout') }}"><i class="fas fa-power-off"></i><span>Logout</span></a>
+    </div>
 </div>
 {% endif %}
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- ============================================ -->
-<!-- PROFILE VARIABLES
+<!-- PROFILE VARIABLES -->
 <!-- ============================================ -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
@@ -1211,72 +1007,108 @@
 {% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 
 <!-- ============================================ -->
-<!-- HEADER
+<!-- HEADER -->
 <!-- ============================================ -->
-<div class="header">
-    <h1>
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <i class="fas fa-chart-line"></i> My Orders Tracker
-    </h1>
-
-    <div class="header-right">
-        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+<div class="admin-header">
+    <div class="admin-header-left">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <h1><i class="fas fa-chart-line"></i> My Orders Tracker</h1>
+    </div>
+    <div class="admin-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="admin-tracker-icon-link" title="My Orders Tracker">
             <i class="fas fa-box"></i>
-            <span class="tracker-badge" id="trackerBadge">0</span>
+            <span class="admin-tracker-badge" id="adminTrackerBadge">0</span>
         </a>
-        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+        <a href="{{ path('app_cart_view') }}" class="admin-cart-icon-link" title="Shopping Cart">
             <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" id="cartBadge">0</span>
+            <span class="admin-cart-badge" id="adminCartBadge">0</span>
         </a>
-        <div class="notification-wrapper">
-            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+        <div class="admin-notification-wrapper">
+            <button class="admin-notification-icon" id="adminNotificationIcon">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">0</span>
+                <span class="admin-notification-badge" id="adminNotificationBadge">0</span>
             </button>
-            <div class="notification-dropdown" id="notificationDropdown">
+            <div class="admin-notification-dropdown" id="adminNotificationDropdown">
                 <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
-                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div id="adminNotificationList"><div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
                 <div class="notification-footer">
-                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
-                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link">View all notifications</a>
+                    <button class="clear-notif-btn">Clear all</button>
                 </div>
             </div>
         </div>
-        <div class="profile-wrapper">
-            <div class="profile-header" id="profileHeader">
-                <div class="profile-avatar">
+        <div class="admin-profile-wrapper">
+            <div class="admin-profile-header" id="adminProfileHeader">
+                <div class="admin-profile-avatar">
                     {% if hasProfilePic %}
                         <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
                     {% else %}
                         {{ app.user.username|first|upper }}
                     {% endif %}
                 </div>
-                <span class="profile-name">{{ app.user.username }}</span>
-                <i class="fas fa-chevron-down dropdown-icon"></i>
             </div>
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="dropdown-role-header">
-                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                </div>
-                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                    <i class="fas fa-user-circle"></i>
-                    <span>My Profile</span>
-                </a>
-                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                    <i class="fas fa-camera"></i>
-                    <span>Change Picture</span>
-                </a>
+            <div class="admin-profile-dropdown" id="adminProfileDropdown">
+                <div class="dropdown-role-header"><i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}</div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                <a href="#" class="dropdown-item" id="adminChangeProfilePicBtn"><i class="fas fa-camera"></i><span>Change Picture</span></a>
                 <div class="dropdown-divider"></div>
-                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
             </div>
         </div>
     </div>
 </div>
+{% else %}
+<div class="user-header">
+    <a href="{{ path('app_order_new') }}" class="user-logo-link">
+        <div class="user-logo-wrapper">
+            <img src="{{ asset('images/cart8-01.png') }}" alt="Cartlify">
+        </div>
+    </a>
+    <div class="user-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="user-tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="user-tracker-badge" id="userTrackerBadge">0</span>
+        </a>
+        <a href="{{ path('app_cart_view') }}" class="user-cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="user-cart-badge" id="userCartBadge">0</span>
+        </a>
+        <div class="user-notification-wrapper">
+            <button class="user-notification-icon" id="userNotificationIcon">
+                <i class="fas fa-bell"></i>
+                <span class="user-notification-badge" id="userNotificationBadge">0</span>
+            </button>
+            <div class="user-notification-dropdown" id="userNotificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="userNotificationList"><div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link">View all notifications</a>
+                    <button class="clear-notif-btn">Clear all</button>
+                </div>
+            </div>
+        </div>
+        <div class="user-profile-wrapper">
+            <div class="user-profile-header" id="userProfileHeader">
+                <div class="user-profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ app.user.username|first|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="user-profile-dropdown" id="userProfileDropdown">
+                <div class="dropdown-role-header"><i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}</div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                <a href="#" class="dropdown-item" id="userChangeProfilePicBtn"><i class="fas fa-camera"></i><span>Change Picture</span></a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
@@ -1284,11 +1116,14 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- ============================================ -->
-<!-- MAIN CONTENT
+<!-- MAIN CONTENT -->
 <!-- ============================================ -->
-<div class="main-content">
+<div class="main-content {% if not is_granted('ROLE_ADMIN') and not is_granted('ROLE_STAFF') %}user-mode{% endif %}">
     <div class="tracker-container">
         <div class="tracker-header">
+            <a href="{{ path('app_order_new') }}" class="continue-shopping-btn">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
             <h2><i class="fas fa-chart-line"></i> My Orders Tracker</h2>
             <p>Track the real-time status of your orders from placement to delivery</p>
         </div>
@@ -1306,7 +1141,6 @@
                         <span class="order-date"><i class="far fa-calendar-alt"></i> {{ order.createdAt|date('F d, Y - h:i A') }}</span>
                     </div>
                     <div class="order-track-body">
-                        <!-- Product Header with Status Badge on Top Right -->
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-image">
@@ -1317,8 +1151,8 @@
                                         {% endif %}
                                         <img src="{{ imagePath }}" alt="{{ order.stock.product.name }}" onerror="this.src='{{ asset('images/placeholder.png') }}'">
                                     {% else %}
-                                        <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f8f9fa;">
-                                            <i class="fas fa-image" style="font-size:32px;color:#bdc3c7;"></i>
+                                        <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f8fafc;">
+                                            <i class="fas fa-image" style="font-size:32px;color:#94a3b8;"></i>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -1326,10 +1160,9 @@
                                     <div class="product-name">{{ order.stock.product.name }}</div>
                                     <div class="product-meta"><i class="fas fa-cubes"></i> Quantity: {{ order.quantity }}</div>
                                     <div class="product-meta"><i class="fas fa-tag"></i> Unit Price: ₱{{ order.unitPrice|number_format(2, '.', ',') }}</div>
-                                    <div class="product-meta" style="font-size:16px;color:#28a745;font-weight:bold;">Total: ₱{{ order.totalAmount|number_format(2, '.', ',') }}</div>
+                                    <div class="product-meta" style="font-size:16px;color:#10b981;font-weight:700;">Total: ₱{{ order.totalAmount|number_format(2, '.', ',') }}</div>
                                 </div>
                             </div>
-                            <!-- Status Badge - Top Right -->
                             <div>
                                 {% if orderStatus == 'pending' %}
                                     <span class="order-status-badge status-pending"><i class="fas fa-hourglass-half"></i> Awaiting Confirmation</span>
@@ -1364,82 +1197,41 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Progress Timeline -->
                         <div class="progress-stepper">
                             <div class="progress-steps">
                                 {% if isRejectedOrCancelled %}
-                                    <!-- Rejected/Cancelled Order Timeline -->
                                     <div class="step cancelled">
                                         <div class="step-icon"><i class="fas fa-times-circle"></i></div>
                                         <div class="step-label">Order {% if orderStatus == 'rejected' %}Rejected{% else %}Cancelled{% endif %}</div>
                                     </div>
                                 {% elseif isCompleted %}
-                                    <!-- Completed Order Timeline - All steps completed -->
-                                    <div class="step completed">
-                                        <div class="step-icon"><i class="fas fa-clock"></i></div>
-                                        <div class="step-label">Order Placed</div>
-                                    </div>
-                                    <div class="step completed">
-                                        <div class="step-icon"><i class="fas fa-cogs"></i></div>
-                                        <div class="step-label">Processing</div>
-                                    </div>
-                                    <div class="step completed">
-                                        <div class="step-icon"><i class="fas fa-box"></i></div>
-                                        <div class="step-label">Packaging</div>
-                                    </div>
+                                    <div class="step completed"><div class="step-icon"><i class="fas fa-clock"></i></div><div class="step-label">Order Placed</div></div>
+                                    <div class="step completed"><div class="step-icon"><i class="fas fa-cogs"></i></div><div class="step-label">Processing</div></div>
+                                    <div class="step completed"><div class="step-icon"><i class="fas fa-box"></i></div><div class="step-label">Packaging</div></div>
                                     {% if order.deliveryType == 'pickup' %}
-                                        <div class="step completed">
-                                            <div class="step-icon"><i class="fas fa-store"></i></div>
-                                            <div class="step-label">Ready for Pickup</div>
-                                        </div>
-                                        <div class="step completed">
-                                            <div class="step-icon"><i class="fas fa-check-circle"></i></div>
-                                            <div class="step-label">Picked Up</div>
-                                        </div>
+                                        <div class="step completed"><div class="step-icon"><i class="fas fa-store"></i></div><div class="step-label">Ready for Pickup</div></div>
+                                        <div class="step completed"><div class="step-icon"><i class="fas fa-check-circle"></i></div><div class="step-label">Picked Up</div></div>
                                     {% else %}
-                                        <div class="step completed">
-                                            <div class="step-icon"><i class="fas fa-shipping-fast"></i></div>
-                                            <div class="step-label">Shipped</div>
-                                        </div>
-                                        <div class="step completed">
-                                            <div class="step-icon"><i class="fas fa-check-circle"></i></div>
-                                            <div class="step-label">Delivered</div>
-                                        </div>
+                                        <div class="step completed"><div class="step-icon"><i class="fas fa-shipping-fast"></i></div><div class="step-label">Shipped</div></div>
+                                        <div class="step completed"><div class="step-icon"><i class="fas fa-check-circle"></i></div><div class="step-label">Delivered</div></div>
                                     {% endif %}
                                 {% else %}
-                                    <!-- Active Order Timeline -->
-                                    <!-- Step 1: Order Placed -->
-                                    <div class="step completed">
-                                        <div class="step-icon"><i class="fas fa-clock"></i></div>
-                                        <div class="step-label">Order Placed</div>
-                                    </div>
-                                    
-                                    <!-- Step 2: Processing -->
+                                    <div class="step completed"><div class="step-icon"><i class="fas fa-clock"></i></div><div class="step-label">Order Placed</div></div>
                                     <div class="step {% if currentStep in ['processing','packaging','ready_for_pickup','shipped','delivered'] %}completed{% elseif currentStep == 'processing' %}active{% endif %}">
-                                        <div class="step-icon"><i class="fas fa-cogs"></i></div>
-                                        <div class="step-label">Processing</div>
+                                        <div class="step-icon"><i class="fas fa-cogs"></i></div><div class="step-label">Processing</div>
                                     </div>
-                                    
-                                    <!-- Step 3: Packaging -->
                                     <div class="step {% if currentStep in ['packaging','ready_for_pickup','shipped','delivered'] %}completed{% elseif currentStep == 'packaging' %}active{% endif %}">
-                                        <div class="step-icon"><i class="fas fa-box"></i></div>
-                                        <div class="step-label">Packaging</div>
+                                        <div class="step-icon"><i class="fas fa-box"></i></div><div class="step-label">Packaging</div>
                                     </div>
-                                    
-                                    <!-- Step 4: Ready for Pickup (Pickup) OR Shipped (Delivery) -->
                                     {% if order.deliveryType == 'pickup' %}
                                         <div class="step {% if currentStep in ['ready_for_pickup','delivered'] %}completed{% elseif currentStep == 'ready_for_pickup' %}active{% endif %}">
-                                            <div class="step-icon"><i class="fas fa-store"></i></div>
-                                            <div class="step-label">Ready for Pickup</div>
+                                            <div class="step-icon"><i class="fas fa-store"></i></div><div class="step-label">Ready for Pickup</div>
                                         </div>
                                     {% else %}
                                         <div class="step {% if currentStep in ['shipped','delivered'] %}completed{% elseif currentStep == 'shipped' %}active{% endif %}">
-                                            <div class="step-icon"><i class="fas fa-shipping-fast"></i></div>
-                                            <div class="step-label">Shipped</div>
+                                            <div class="step-icon"><i class="fas fa-shipping-fast"></i></div><div class="step-label">Shipped</div>
                                         </div>
                                     {% endif %}
-                                    
-                                    <!-- Step 5: Picked Up (Pickup) OR Delivered (Delivery) -->
                                     <div class="step {% if currentStep == 'delivered' %}completed{% elseif currentStep == 'delivered' %}active{% endif %}">
                                         <div class="step-icon"><i class="fas fa-check-circle"></i></div>
                                         <div class="step-label">{% if order.deliveryType == 'pickup' %}Picked Up{% else %}Delivered{% endif %}</div>
@@ -1448,45 +1240,27 @@
                             </div>
                         </div>
                         
-                        <!-- Action Buttons -->
                         <div class="action-buttons">
                             {% if orderStatus == 'completed' %}
-                                <!-- Completed orders: Can delete -->
                                 <form method="post" action="{{ path('app_order_customer_delete', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Delete this completed order? This action cannot be undone.')">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Delete Order
-                                    </button>
+                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete Order</button>
                                 </form>
                             {% elseif orderStatus == 'rejected' or orderStatus == 'cancelled' %}
-                                <!-- Rejected/Cancelled orders: Can delete -->
                                 <form method="post" action="{{ path('app_order_customer_delete', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Delete this {{ orderStatus }} order? This action cannot be undone.')">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Delete Order
-                                    </button>
+                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete Order</button>
                                 </form>
                             {% elseif orderStatus == 'pending' %}
-                                <!-- Pending orders: Can request cancellation -->
                                 <form method="post" action="{{ path('app_order_customer_cancel', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Request to cancel this pending order? The admin will review your request.')">
                                     <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="fas fa-ban"></i> Request Cancellation
-                                    </button>
+                                    <button type="submit" class="btn btn-warning"><i class="fas fa-ban"></i> Request Cancellation</button>
                                 </form>
                             {% elseif orderStatus == 'accepted' %}
-                                <!-- Accepted orders: Can request cancellation -->
                                 <form method="post" action="{{ path('app_order_customer_cancel', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Request to cancel this accepted order? The admin will review your request.')">
                                     <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="fas fa-ban"></i> Request Cancellation
-                                    </button>
+                                    <button type="submit" class="btn btn-warning"><i class="fas fa-ban"></i> Request Cancellation</button>
                                 </form>
-                            {% else %}
-                                <!-- Other statuses: Contact support -->
-                                <a href="#" class="btn btn-info">
-                                    <i class="fas fa-headset"></i> Contact Support
-                                </a>
                             {% endif %}
                         </div>
                     </div>
@@ -1506,243 +1280,125 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-    let notifications = [];
+    let adminNotifications = [];
+    let userNotifications = [];
     let shownFlashes = [];
+    const isAdminOrStaff = {{ is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') ? 'true' : 'false' }};
 
-    // ============================================
-    // MARK ALL NOTIFICATIONS AS READ
-    // ============================================
-    function markAllNotificationsAsRead() {
-        if (notifications.length > 0) {
-            let hasUnread = notifications.some(n => !n.read);
-            if (hasUnread) {
-                notifications.forEach(n => n.read = true);
-                saveNotifications();
-                updateNotificationBadge();
-            }
-        }
+    function loadAdminNotifications() { const saved = localStorage.getItem('admin_order_notifications'); adminNotifications = saved ? JSON.parse(saved) : []; updateAdminNotificationUI(); updateAdminNotificationBadge(); }
+    function saveAdminNotifications() { localStorage.setItem('admin_order_notifications', JSON.stringify(adminNotifications)); updateAdminNotificationUI(); updateAdminNotificationBadge(); }
+    
+    function updateAdminNotificationBadge() {
+        const unreadCount = adminNotifications.filter(n => !n.read).length;
+        const badge = document.getElementById('adminNotificationBadge');
+        if (badge) { if (unreadCount > 0) { badge.classList.add('show'); badge.textContent = unreadCount > 99 ? '99+' : unreadCount; } else { badge.classList.remove('show'); } }
     }
     
-    function markAllNotificationsAsReadBeforeRedirect() {
-        markAllNotificationsAsRead();
-        window.location.href = '{{ path('app_notifications_index') }}';
+    function markAllAdminNotificationsAsRead() {
+        if (adminNotifications.length > 0) { let hasUnread = adminNotifications.some(n => !n.read); if (hasUnread) { adminNotifications.forEach(n => n.read = true); saveAdminNotifications(); updateAdminNotificationBadge(); } }
     }
+    
+    function updateAdminNotificationUI() {
+        const list = document.getElementById('adminNotificationList'); if (!list) return;
+        if (adminNotifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>'; }
+        else { const recentNotifications = adminNotifications.slice(0, 5); list.innerHTML = recentNotifications.map(n => `<div class="notification-item ${n.read ? '' : 'unread'}" onclick="markAdminNotificationAsRead(${n.id})"><div class="notification-title">${n.title}</div><div class="notification-message">${n.message}</div><div class="notification-time">${formatTimeAgo(n.timestamp)}</div></div>`).join(''); }
+    }
+    
+    function markAdminNotificationAsRead(id) { const notification = adminNotifications.find(n => n.id === id); if (notification) { notification.read = true; saveAdminNotifications(); } }
+    function clearAllAdminNotifications() { if (confirm('Clear all notifications?')) { adminNotifications = []; saveAdminNotifications(); showToast('All notifications cleared', 'info'); } }
+    function toggleAdminNotificationDropdown(e) { if (e) e.stopPropagation(); const dropdown = document.getElementById('adminNotificationDropdown'); if (dropdown) { markAllAdminNotificationsAsRead(); dropdown.classList.toggle('show'); } }
 
-    // ============================================
-    // BADGE UPDATE FUNCTIONS
-    // ============================================
+    function loadUserNotifications() { const saved = localStorage.getItem('user_order_notifications'); userNotifications = saved ? JSON.parse(saved) : []; updateUserNotificationUI(); updateUserNotificationBadge(); }
+    function saveUserNotifications() { localStorage.setItem('user_order_notifications', JSON.stringify(userNotifications)); updateUserNotificationUI(); updateUserNotificationBadge(); }
+    
+    function updateUserNotificationBadge() {
+        const unreadCount = userNotifications.filter(n => !n.read).length;
+        const badge = document.getElementById('userNotificationBadge');
+        if (badge) { if (unreadCount > 0) { badge.classList.add('show'); badge.textContent = unreadCount > 99 ? '99+' : unreadCount; } else { badge.classList.remove('show'); } }
+    }
+    
+    function markAllUserNotificationsAsRead() {
+        if (userNotifications.length > 0) { let hasUnread = userNotifications.some(n => !n.read); if (hasUnread) { userNotifications.forEach(n => n.read = true); saveUserNotifications(); updateUserNotificationBadge(); } }
+    }
+    
+    function updateUserNotificationUI() {
+        const list = document.getElementById('userNotificationList'); if (!list) return;
+        if (userNotifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>'; }
+        else { const recentNotifications = userNotifications.slice(0, 5); list.innerHTML = recentNotifications.map(n => `<div class="notification-item ${n.read ? '' : 'unread'}" onclick="markUserNotificationAsRead(${n.id})"><div class="notification-title">${n.title}</div><div class="notification-message">${n.message}</div><div class="notification-time">${formatTimeAgo(n.timestamp)}</div></div>`).join(''); }
+    }
+    
+    function markUserNotificationAsRead(id) { const notification = userNotifications.find(n => n.id === id); if (notification) { notification.read = true; saveUserNotifications(); } }
+    function clearAllUserNotifications() { if (confirm('Clear all notifications?')) { userNotifications = []; saveUserNotifications(); showToast('All notifications cleared', 'info'); } }
+    function toggleUserNotificationDropdown(e) { if (e) e.stopPropagation(); const dropdown = document.getElementById('userNotificationDropdown'); if (dropdown) { markAllUserNotificationsAsRead(); dropdown.classList.toggle('show'); } }
+
+    function formatTimeAgo(timestamp) { const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); if (mins < 1) return 'Just now'; if (mins < 60) return `${mins} min ago`; if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; return `${days} day${days > 1 ? 's' : ''} ago`; }
+
+    function toggleAdminProfileDropdown(event) { if (event) event.stopPropagation(); const dropdown = document.getElementById('adminProfileDropdown'); const header = document.getElementById('adminProfileHeader'); if (dropdown && header) { dropdown.classList.toggle('show'); header.classList.toggle('active'); } }
+    function toggleUserProfileDropdown(event) { if (event) event.stopPropagation(); const dropdown = document.getElementById('userProfileDropdown'); const header = document.getElementById('userProfileHeader'); if (dropdown && header) { dropdown.classList.toggle('show'); header.classList.toggle('active'); } }
+
     function updateCartBadge() {
-        fetch('/cart/count')
-            .then(res => res.json())
-            .then(data => {
-                const badge = document.getElementById('cartBadge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count > 9 ? '9+' : data.count;
-                        badge.classList.add('show');
-                    } else {
-                        badge.classList.remove('show');
-                    }
-                }
-            })
-            .catch(e => console.log('Cart update error:', e));
+        fetch('/cart/count').then(res => res.json()).then(data => {
+            if (isAdminOrStaff) {
+                const badge = document.getElementById('adminCartBadge');
+                if (badge) { if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); } else { badge.classList.remove('show'); } }
+            } else {
+                const badge = document.getElementById('userCartBadge');
+                if (badge) { if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); } else { badge.classList.remove('show'); } }
+            }
+        }).catch(e => console.log('Cart update error:', e));
     }
 
     function updateTrackerBadge() {
-        fetch('{{ path('app_new_orders_count') }}')
-            .then(res => res.json())
-            .then(data => {
-                const badge = document.getElementById('trackerBadge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count > 9 ? '9+' : data.count;
-                        badge.classList.add('show');
-                    } else {
-                        badge.classList.remove('show');
-                    }
-                }
-            })
-            .catch(e => console.log('Tracker update error:', e));
+        fetch('{{ path('app_new_orders_count') }}').then(res => res.json()).then(data => {
+            if (isAdminOrStaff) {
+                const badge = document.getElementById('adminTrackerBadge');
+                if (badge) { if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); } else { badge.classList.remove('show'); } }
+            } else {
+                const badge = document.getElementById('userTrackerBadge');
+                if (badge) { if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); } else { badge.classList.remove('show'); } }
+            }
+        }).catch(e => console.log('Tracker update error:', e));
     }
 
-    // ============================================
-    // TOAST NOTIFICATION
-    // ============================================
     function showToast(message, type = 'success') {
         let container = document.getElementById('toastContainer');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toastContainer';
-            container.className = 'toast-container';
-            document.body.appendChild(container);
-        }
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
+        if (!container) { container = document.createElement('div'); container.id = 'toastContainer'; container.className = 'toast-container'; document.body.appendChild(container); }
+        const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
         let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
         toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
         container.appendChild(toast);
-        setTimeout(() => {
-            toast.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        setTimeout(() => { toast.style.animation = 'slideOutRight 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // ============================================
-    // NOTIFICATION SYSTEM
-    // ============================================
-    function loadNotifications() {
-        const saved = localStorage.getItem('order_notifications');
-        notifications = saved ? JSON.parse(saved) : [];
-        updateNotificationUI();
-        updateNotificationBadge();
-    }
-    
-    function saveNotifications() {
-        localStorage.setItem('order_notifications', JSON.stringify(notifications));
-        updateNotificationUI();
-        updateNotificationBadge();
-    }
-    
-    function addNotification(title, message, orderId, type) {
-        const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
-        notifications.unshift(notification);
-        if (notifications.length > 100) notifications = notifications.slice(0, 100);
-        saveNotifications();
-        showToast(message, type);
-        updateTrackerBadge();
-    }
-    
-    function updateNotificationBadge() {
-        const unreadCount = notifications.filter(n => !n.read).length;
-        const badge = document.getElementById('notificationBadge');
-        if (badge) { 
-            if (unreadCount > 0) { 
-                badge.classList.add('show'); 
-                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
-            } else { 
-                badge.classList.remove('show'); 
-            } 
-        }
-    }
-    
-    function updateNotificationUI() {
-        const list = document.getElementById('notificationList');
-        if (!list) return;
-        
-        if (notifications.length === 0) { 
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
-        } else { 
-            const recentNotifications = notifications.slice(0, 5);
-            list.innerHTML = recentNotifications.map(n => `
-                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
-                    <div class="notification-title">${n.title}</div>
-                    <div class="notification-message">${n.message}</div>
-                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
-                </div>
-            `).join('');
-            
-            if (notifications.length > 5) {
-                list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
-            }
-        }
-    }
-    
-    function markNotificationAsRead(id) { 
-        const notification = notifications.find(n => n.id === id); 
-        if (notification) { 
-            notification.read = true; 
-            saveNotifications(); 
-        } 
-    }
-    
-    function clearAllNotifications() { 
-        if (confirm('Clear all notifications?')) { 
-            notifications = []; 
-            saveNotifications(); 
-            showToast('All notifications cleared', 'info'); 
-        } 
-    }
-    
-    function formatTimeAgo(timestamp) { 
-        const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
-        if (mins < 1) return 'Just now'; 
-        if (mins < 60) return `${mins} min ago`; 
-        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
-        return `${days} day${days > 1 ? 's' : ''} ago`; 
-    }
-    
-    function toggleNotificationDropdown() { 
-        const dropdown = document.getElementById('notificationDropdown');
-        if (dropdown) {
-            markAllNotificationsAsRead();
-            dropdown.classList.toggle('show');
-        }
-    }
-
-    // ============================================
-    // PROFILE DROPDOWN FUNCTIONS
-    // ============================================
-    function toggleProfileDropdown() {
-        const dropdown = document.getElementById('profileDropdown');
-        const header = document.getElementById('profileHeader');
-        if (dropdown && header) {
-            dropdown.classList.toggle('show');
-            header.classList.toggle('active');
-        }
-    }
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const notificationIcon = document.getElementById('notificationIcon');
-        if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
-            notificationDropdown.classList.remove('show');
-        }
-        
-        const profileDropdown = document.getElementById('profileDropdown');
-        const profileHeader = document.getElementById('profileHeader');
-        if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
-            profileDropdown.classList.remove('show');
-            profileHeader.classList.remove('active');
-        }
-    });
-
-    // ============================================
-    // CHECK ORDER UPDATES
-    // ============================================
     function checkOrderUpdates() {
-        fetch('{{ path('app_order_check_updates') }}')
-            .then(res => res.json())
-            .then(data => {
-                if (data.updates && data.updates.length > 0) {
-                    updateTrackerBadge();
-                    data.updates.forEach(update => {
-                        let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
-                        if (!exists) {
-                            let title = '', message = '', type = 'info';
-                            switch(update.newStatus) {
-                                case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
-                                case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
-                                case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
-                                case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
-                                case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
-                                case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
-                                case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
-                                case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
-                                case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
-                                default: return;
-                            }
-                            addNotification(title, message, update.orderId, type);
-                        }
-                    });
-                }
-            })
-            .catch(e => console.error('Polling error:', e));
+        fetch('{{ path('app_order_check_updates') }}').then(res => res.json()).then(data => {
+            if (data.updates && data.updates.length > 0) { updateTrackerBadge();
+                data.updates.forEach(update => {
+                    let title = '', message = '', type = 'info';
+                    switch(update.newStatus) {
+                        case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                        case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                        case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                        case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                        case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                        case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                        case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
+                        case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
+                        case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                        default: return;
+                    }
+                    if (isAdminOrStaff) {
+                        let exists = adminNotifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                        if (!exists) { const notification = { id: Date.now(), title, message, orderId: update.orderId, type, timestamp: new Date().toISOString(), read: false }; adminNotifications.unshift(notification); if (adminNotifications.length > 100) adminNotifications = adminNotifications.slice(0, 100); saveAdminNotifications(); showToast(message, type); }
+                    } else {
+                        let exists = userNotifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                        if (!exists) { const notification = { id: Date.now(), title, message, orderId: update.orderId, type, timestamp: new Date().toISOString(), read: false }; userNotifications.unshift(notification); if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100); saveUserNotifications(); showToast(message, type); }
+                    }
+                });
+            }
+        }).catch(e => console.error('Polling error:', e));
     }
 
-    // ============================================
-    // MOBILE SIDEBAR
-    // ============================================
     let sidebarInit = false;
     function initMobileSidebar() {
         if (sidebarInit) return;
@@ -1757,9 +1413,6 @@
         sidebarInit = true;
     }
 
-    // ============================================
-    // FLASH MESSAGES
-    // ============================================
     function initFlashMessages() {
         {% for label, messages in app.flashes %}
             {% for message in messages %}
@@ -1769,27 +1422,6 @@
         {% endfor %}
     }
 
-    // ============================================
-    // PROFILE DROPDOWN
-    // ============================================
-    let dropdownInit = false;
-    function initializeDropdown() {
-        if (dropdownInit) return;
-        let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
-        if (header && dropdown) {
-            header.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleProfileDropdown();
-            });
-            dropdownInit = true;
-        }
-        let changeBtn = document.getElementById('changeProfilePicBtn');
-        if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
-    }
-
-    // ============================================
-    // PROFILE PICTURE UPLOAD MODAL
-    // ============================================
     function showUploadModal() {
         let existing = document.getElementById('uploadModal'); if (existing) existing.remove();
         let modal = document.createElement('div'); modal.id = 'uploadModal'; modal.className = 'modal';
@@ -1799,42 +1431,72 @@
         let fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp'; fileInput.style.display = 'none'; modal.appendChild(fileInput);
         uploadArea.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => { let file = e.target.files[0]; if (file) { if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)) { showToast('Invalid image type', 'error'); return; } if (file.size > 2*1024*1024) { showToast('File too large (max 2MB)', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; }; reader.readAsDataURL(file); } });
-        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#3b82f6'; });
         uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
         saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
-        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { if (isAdminOrStaff) { document.querySelector('.admin-profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}" style="border-radius: 50%;">`; } else { document.querySelector('.user-profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}" style="border-radius: 50%;">`; } showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
         function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
         window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
-        cancelBtn.addEventListener('click', closeUploadModal);
-        closeBtn.addEventListener('click', closeUploadModal);
+        cancelBtn.addEventListener('click', closeUploadModal); closeBtn.addEventListener('click', closeUploadModal);
         modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
     }
 
-    // ============================================
-    // MARK NOTIFICATIONS AS READ ON PAGE LOAD
-    // ============================================
-    function markNotificationsAsReadOnPageLoad() {
-        markAllNotificationsAsRead();
+    function closeAllDropdowns(event) {
+        if (isAdminOrStaff) {
+            const adminNotifIcon = document.getElementById('adminNotificationIcon');
+            const adminProfileHeader = document.getElementById('adminProfileHeader');
+            if (adminNotifIcon && adminNotifIcon.contains(event.target)) return;
+            if (adminProfileHeader && adminProfileHeader.contains(event.target)) return;
+            const adminProfileDropdown = document.getElementById('adminProfileDropdown');
+            const adminProfileHeaderEl = document.getElementById('adminProfileHeader');
+            if (adminProfileDropdown && adminProfileHeaderEl && !adminProfileHeaderEl.contains(event.target) && !adminProfileDropdown.contains(event.target)) { adminProfileDropdown.classList.remove('show'); adminProfileHeaderEl.classList.remove('active'); }
+            const adminNotifDropdown = document.getElementById('adminNotificationDropdown');
+            if (adminNotifDropdown && !adminNotifIcon?.contains(event.target) && !adminNotifDropdown.contains(event.target)) { adminNotifDropdown.classList.remove('show'); }
+        } else {
+            const userNotifIcon = document.getElementById('userNotificationIcon');
+            const userProfileHeader = document.getElementById('userProfileHeader');
+            if (userNotifIcon && userNotifIcon.contains(event.target)) return;
+            if (userProfileHeader && userProfileHeader.contains(event.target)) return;
+            const userProfileDropdown = document.getElementById('userProfileDropdown');
+            const userProfileHeaderEl = document.getElementById('userProfileHeader');
+            if (userProfileDropdown && userProfileHeaderEl && !userProfileHeaderEl.contains(event.target) && !userProfileDropdown.contains(event.target)) { userProfileDropdown.classList.remove('show'); userProfileHeaderEl.classList.remove('active'); }
+            const userNotifDropdown = document.getElementById('userNotificationDropdown');
+            if (userNotifDropdown && !userNotifIcon?.contains(event.target) && !userNotifDropdown.contains(event.target)) { userNotifDropdown.classList.remove('show'); }
+        }
     }
 
-    // ============================================
-    // INIT ALL
-    // ============================================
     function initAll() {
-        initMobileSidebar(); 
-        initFlashMessages(); 
-        initializeDropdown(); 
-        loadNotifications();
-        markNotificationsAsReadOnPageLoad();
-        
-        checkOrderUpdates(); 
-        setInterval(checkOrderUpdates, 30000);
-        updateCartBadge(); 
-        setInterval(updateCartBadge, 5000);
+        if (isAdminOrStaff) {
+            initMobileSidebar(); loadAdminNotifications();
+            const adminHeader = document.getElementById('adminProfileHeader');
+            if (adminHeader) { adminHeader.removeEventListener('click', toggleAdminProfileDropdown); adminHeader.addEventListener('click', toggleAdminProfileDropdown); }
+            const adminNotifIcon = document.getElementById('adminNotificationIcon');
+            if (adminNotifIcon) { adminNotifIcon.removeEventListener('click', toggleAdminNotificationDropdown); adminNotifIcon.addEventListener('click', toggleAdminNotificationDropdown); }
+            const adminClearBtn = document.querySelector('#adminNotificationDropdown .clear-notif-btn');
+            if (adminClearBtn) { adminClearBtn.removeEventListener('click', clearAllAdminNotifications); adminClearBtn.addEventListener('click', clearAllAdminNotifications); }
+            const adminChangeBtn = document.getElementById('adminChangeProfilePicBtn');
+            if (adminChangeBtn) { adminChangeBtn.removeEventListener('click', showUploadModal); adminChangeBtn.addEventListener('click', (e) => { e.preventDefault(); showUploadModal(); }); }
+        } else {
+            loadUserNotifications();
+            const userHeader = document.getElementById('userProfileHeader');
+            if (userHeader) { userHeader.removeEventListener('click', toggleUserProfileDropdown); userHeader.addEventListener('click', toggleUserProfileDropdown); }
+            const userNotifIcon = document.getElementById('userNotificationIcon');
+            if (userNotifIcon) { userNotifIcon.removeEventListener('click', toggleUserNotificationDropdown); userNotifIcon.addEventListener('click', toggleUserNotificationDropdown); }
+            const userClearBtn = document.querySelector('#userNotificationDropdown .clear-notif-btn');
+            if (userClearBtn) { userClearBtn.removeEventListener('click', clearAllUserNotifications); userClearBtn.addEventListener('click', clearAllUserNotifications); }
+            const userChangeBtn = document.getElementById('userChangeProfilePicBtn');
+            if (userChangeBtn) { userChangeBtn.removeEventListener('click', showUploadModal); userChangeBtn.addEventListener('click', (e) => { e.preventDefault(); showUploadModal(); }); }
+        }
+        initFlashMessages();
+        document.removeEventListener('click', closeAllDropdowns);
+        document.addEventListener('click', closeAllDropdowns);
+        checkOrderUpdates(); setInterval(checkOrderUpdates, 30000);
+        updateCartBadge(); setInterval(updateCartBadge, 5000);
         updateTrackerBadge();
     }
 
-    document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100));
-    document.addEventListener('turbo:load', () => { sidebarInit = false; dropdownInit = false; setTimeout(initAll, 100); });
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => setTimeout(initAll, 100)); }
+    else { setTimeout(initAll, 100); }
+    document.addEventListener('turbo:load', () => { sidebarInit = false; setTimeout(initAll, 100); });
 </script>
 {% endblock %}

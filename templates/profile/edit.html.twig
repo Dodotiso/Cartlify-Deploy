@@ -4,2528 +4,615 @@
 
 {% block stylesheets %}
 <style>
-/* --- Body & Sidebar --- */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #343a40;
-    padding-top: 80px;
-}
+    /* ============================================ */
+    /* BASE RESET & TYPOGRAPHY */
+    /* ============================================ */
+    * { box-sizing: border-box; }
 
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 60px;
-    background: #1f2a44;
-    padding-top: 30px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: width 0.3s, transform 0.3s ease;
-    z-index: 100;
-}
-
-.sidebar:hover {
-    width: 220px;
-}
-
-.sidebar .logo {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-.sidebar .logo img {
-    height: 48px;
-    transition: height 0.3s;
-}
-
-.sidebar:hover .logo img {
-    height: 128px;
-}
-
-.sidebar a {
-    display: flex;
-    align-items: center;
-    padding: 15px 15px;
-    text-decoration: none;
-    color: #fff;
-    font-weight: 500;
-    border-left: 4px solid transparent;
-    transition: all 0.3s;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-}
-
-.sidebar a i {
-    min-width: 24px;
-    font-size: 18px;
-    text-align: center;
-}
-
-.sidebar a span {
-    display: none;
-    margin-left: 20px;
-    white-space: nowrap;
-    transition: opacity 0.3s;
-}
-
-.sidebar:hover a span {
-    display: inline;
-    opacity: 1;
-}
-
-.sidebar a:hover {
-    background-color: #34495e;
-    border-left: 4px solid #E64C3C;
-}
-
-/* Mobile Sidebar Toggle Button */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #343a40;
-    cursor: pointer;
-    padding: 8px;
-    margin-right: 10px;
-    transition: all 0.3s;
-}
-
-.menu-toggle:hover {
-    background-color: #f0f0f0;
-    border-radius: 8px;
-}
-
-/* Sidebar Overlay for Mobile */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 99;
-    transition: all 0.3s;
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
-
-/* --- Sticky Header --- */
-.header {
-    position: fixed;
-    top: 0;
-    left: 60px;
-    right: 0;
-    height: 80px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: left 0.3s;
-    z-index: 99;
-}
-
-.sidebar:hover ~ .header {
-    left: 220px;
-}
-
-.header h1 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1a1a2e;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    flex-shrink: 0;
-}
-
-/* Header Right Icons */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
-}
-
-.tracker-icon-link {
-    position: relative;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-}
-
-.tracker-icon-link i {
-    font-size: 22px;
-    color: #1a1a2e;
-    transition: color 0.3s;
-}
-
-.tracker-icon-link:hover i {
-    color: #007bff;
-}
-
-.tracker-badge {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background: #e74c3c;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 5px;
-    font-size: 9px;
-    font-weight: bold;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 0 2px white;
-    display: none;
-}
-
-.tracker-badge.show {
-    display: flex;
-    animation: pulse 0.5s ease;
-}
-
-.cart-icon-link {
-    position: relative;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-}
-
-.cart-icon-link i {
-    font-size: 22px;
-    color: #1a1a2e;
-    transition: color 0.3s;
-}
-
-.cart-icon-link:hover i {
-    color: #007bff;
-}
-
-.cart-badge {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background: #e74c3c;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 5px;
-    font-size: 9px;
-    font-weight: bold;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 0 2px white;
-    display: none;
-}
-
-.cart-badge.show {
-    display: flex;
-}
-
-.notification-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-}
-
-.notification-icon i {
-    font-size: 22px;
-    color: #1a1a2e;
-    transition: color 0.3s;
-}
-
-.notification-icon:hover i {
-    color: #007bff;
-}
-
-.notification-badge {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background: #e74c3c;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 5px;
-    font-size: 9px;
-    font-weight: bold;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 0 2px white;
-    display: none;
-}
-
-.notification-badge.show {
-    display: flex;
-    animation: pulse 0.5s ease;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-.notification-dropdown {
-    display: none;
-    position: absolute;
-    top: 45px;
-    right: -80px;
-    width: 350px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-    z-index: 1000;
-    max-height: 450px;
-    overflow-y: auto;
-}
-
-.notification-dropdown.show {
-    display: block;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.notification-header {
-    padding: 15px;
-    border-bottom: 1px solid #e9ecef;
-    font-weight: 600;
-    color: #1a1a2e;
-    position: sticky;
-    top: 0;
-    background: white;
-    border-radius: 12px 12px 0 0;
-    font-family: Arial, sans-serif;
-}
-
-.notification-item {
-    padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-family: Arial, sans-serif;
-}
-
-.notification-item:hover {
-    background: #f8f9fa;
-}
-
-.notification-item.unread {
-    background: #e3f2fd;
-    border-left: 3px solid #3498db;
-}
-
-.notification-title {
-    font-weight: 600;
-    font-size: 13px;
-    color: #1a1a2e;
-    margin-bottom: 4px;
-}
-
-.notification-message {
-    font-size: 12px;
-    color: #6c757d;
-    margin-bottom: 4px;
-}
-
-.notification-time {
-    font-size: 10px;
-    color: #adb5bd;
-}
-
-.notification-footer {
-    padding: 10px;
-    border-top: 1px solid #e9ecef;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.clear-notif-btn {
-    background: none;
-    border: none;
-    color: #3498db;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: Arial, sans-serif;
-}
-
-.view-all-link {
-    background: none;
-    border: none;
-    color: #28a745;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: Arial, sans-serif;
-    text-decoration: none;
-}
-
-.view-all-link:hover {
-    text-decoration: underline;
-}
-
-/* --- Main Content --- */
-.main-content {
-    margin-left: 60px;
-    padding: 30px;
-    transition: margin-left 0.3s;
-    min-height: calc(100vh - 80px);
-}
-
-.sidebar:hover ~ .main-content {
-    margin-left: 220px;
-}
-
-/* --- Profile Dropdown --- */
-.profile-wrapper {
-    position: relative;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 20px;
-    transition: background-color 0.3s;
-}
-
-.profile-header:hover {
-    background-color: #f0f0f0;
-}
-
-.profile-header.active {
-    background-color: #e9ecef;
-}
-
-.profile-avatar {
-    width: 38px;
-    height: 38px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-    overflow: hidden;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.profile-name {
-    font-weight: 500;
-    color: #333;
-    user-select: none;
-    font-family: Arial, sans-serif;
-}
-
-.dropdown-icon {
-    font-size: 12px;
-    color: #6c757d;
-    transition: transform 0.3s;
-}
-
-.profile-header.active .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: 55px;
-    right: 0;
-    width: 240px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 1000;
-}
-
-.profile-dropdown.show {
-    display: flex;
-}
-
-.dropdown-role-header {
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.dropdown-role-header i {
-    margin-right: 5px;
-    font-size: 12px;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
-}
-
-.dropdown-item {
-    padding: 12px 16px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background-color 0.2s;
-    font-family: Arial, sans-serif;
-}
-
-.dropdown-item i {
-    width: 18px;
-    color: #6c757d;
-}
-
-.dropdown-item:hover {
-    background-color: #f8f9fa;
-}
-
-.dropdown-item.logout-item {
-    color: #dc3545;
-    border-top: 1px solid #eee;
-}
-
-.dropdown-item.logout-item i {
-    color: #dc3545;
-}
-
-/* Toast Notifications */
-.toast-container {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    z-index: 9999;
-}
-
-.toast {
-    background: white;
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 300px;
-    animation: slideInRight 0.3s ease;
-    border-left: 4px solid;
-    font-family: Arial, sans-serif;
-    position: relative;
-    overflow: hidden;
-}
-
-.toast-success {
-    border-left-color: #28a745;
-    background: #f0f9f0;
-}
-
-.toast-error {
-    border-left-color: #dc3545;
-    background: #fff5f5;
-}
-
-.toast-warning {
-    border-left-color: #ffc107;
-    background: #fffbf0;
-}
-
-.toast-info {
-    border-left-color: #17a2b8;
-    background: #f0f9ff;
-}
-
-.toast-icon {
-    font-size: 20px;
-}
-
-.toast-success .toast-icon { color: #28a745; }
-.toast-error .toast-icon { color: #dc3545; }
-.toast-warning .toast-icon { color: #ffc107; }
-.toast-info .toast-icon { color: #17a2b8; }
-
-.toast-content {
-    flex: 1;
-    color: #333;
-    font-size: 14px;
-}
-
-.toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    background: rgba(0,0,0,0.1);
-    width: 100%;
-    animation: progress 3s linear forwards;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOutRight {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-@keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
-}
-
-/* Upload Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #e9ecef;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #343a40;
-    font-size: 18px;
-    font-family: Arial, sans-serif;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6c757d;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.upload-area {
-    border: 2px dashed #ced4da;
-    border-radius: 8px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.3s;
-}
-
-.upload-area:hover {
-    border-color: #007bff;
-}
-
-.upload-area i {
-    font-size: 48px;
-    color: #6c757d;
-    margin-bottom: 10px;
-}
-
-.upload-area p {
-    margin: 0;
-    color: #6c757d;
-    font-family: Arial, sans-serif;
-}
-
-.upload-area small {
-    color: #adb5bd;
-    font-size: 12px;
-    font-family: Arial, sans-serif;
-}
-
-.image-preview {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.image-preview img {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-}
-
-.upload-progress {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 5px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #007bff;
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-#progressText {
-    font-size: 12px;
-    color: #6c757d;
-    font-family: Arial, sans-serif;
-}
-
-.modal-footer {
-    padding: 20px;
-    border-top: 1px solid #e9ecef;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-primary-modal {
-    background: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: Arial, sans-serif;
-}
-
-.btn-primary-modal:hover:not(:disabled) {
-    opacity: 0.9;
-}
-
-.btn-primary-modal:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary-modal {
-    background: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: Arial, sans-serif;
-}
-
-.btn-secondary-modal:hover {
-    opacity: 0.9;
-}
-
-/* --- Edit Profile Layout --- */
-.edit-profile-container {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.edit-profile-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 1px solid #e9ecef;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-/* Left Column - Profile Picture & User Info */
-.edit-profile-left {
-    flex: 0 0 320px;
-    background: linear-gradient(135deg, #1f2a44 0%, #2d3a5e 100%);
-    text-align: center;
-    padding: 40px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Profile Picture - Clickable */
-.profile-picture-container {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 20px;
-    cursor: pointer;
-    position: relative;
-}
-
-.profile-picture-container:hover .profile-picture-overlay {
-    opacity: 1;
-}
-
-.profile-picture-large {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #007bff, #6610f2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid rgba(255,255,255,0.3);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.profile-picture-large img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-picture-large i {
-    font-size: 70px;
-    color: white;
-}
-
-.profile-picture-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-    cursor: pointer;
-}
-
-.profile-picture-overlay i {
-    color: white;
-    font-size: 32px;
-}
-
-/* User Info in Left Column */
-.profile-info-left {
-    color: white;
-    text-align: center;
-    width: 100%;
-}
-
-.profile-info-left h3 {
-    margin: 0 0 5px 0;
-    font-size: 22px;
-    font-weight: 600;
-    font-family: Arial, sans-serif;
-}
-
-.role-badge-left {
-    display: inline-block;
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 600;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    margin-top: 8px;
-    font-family: Arial, sans-serif;
-}
-
-.role-badge-left i {
-    margin-right: 6px;
-    font-size: 12px;
-}
-
-.active-status-left {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 16px;
-    padding: 6px 14px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 40px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.active-status-dot-left {
-    width: 10px;
-    height: 10px;
-    background: #10b981;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-    }
-}
-
-.active-status-text-left {
-    font-size: 12px;
-    font-weight: 500;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.user-stats-left {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.15);
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-}
-
-.stat-item-left {
-    text-align: center;
-    color: white;
-}
-
-.stat-number-left {
-    font-size: 24px;
-    font-weight: 700;
-    font-family: Arial, sans-serif;
-}
-
-.stat-label-left {
-    font-size: 11px;
-    opacity: 0.8;
-    margin-top: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-family: Arial, sans-serif;
-}
-
-/* Right Column - Form */
-.edit-profile-right {
-    flex: 1;
-    padding: 32px;
-    background: white;
-}
-
-.form-header {
-    margin-bottom: 28px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.form-header h2 {
-    margin: 0 0 5px 0;
-    font-size: 22px;
-    color: #1f2a44;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: Arial, sans-serif;
-}
-
-.form-header p {
-    margin: 0;
-    color: #6c757d;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-}
-
-.form-group {
-    margin-bottom: 24px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #495057;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-}
-
-.form-group label i {
-    margin-right: 6px;
-    color: #007bff;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-.form-control:disabled {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    cursor: not-allowed;
-}
-
-.form-control.error-field {
-    border: 2px solid #dc3545 !important;
-    background-color: #fff5f5 !important;
-}
-
-.form-help {
-    font-size: 12px;
-    color: #6c757d;
-    margin-top: 6px;
-    display: block;
-    font-family: Arial, sans-serif;
-}
-
-.form-help i {
-    margin-right: 4px;
-}
-
-.password-hint {
-    background: #f8f9fa;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 10px;
-    font-size: 12px;
-    color: #6c757d;
-    border-left: 3px solid #ffc107;
-    font-family: Arial, sans-serif;
-}
-
-.password-hint i {
-    color: #ffc107;
-    margin-right: 6px;
-}
-
-.form-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #e9ecef;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-weight: 500;
-    transition: all 0.3s;
-    font-family: Arial, sans-serif;
-}
-
-.btn-primary {
-    background: #007bff;
-    color: white;
-    flex: 1;
-}
-
-.btn-primary:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-    flex: 1;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-    transform: translateY(-2px);
-}
-
-/* ===== RESPONSIVE STYLES ===== */
-@media (max-width: 992px) {
-    .edit-profile-card {
-        flex-direction: column;
-    }
-    
-    .edit-profile-left {
-        flex: auto;
-        width: 100%;
-        padding: 32px 20px;
-    }
-    
-    .profile-picture-container {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .profile-picture-large i {
-        font-size: 50px;
-    }
-    
-    .profile-info-left h3 {
-        font-size: 20px;
-    }
-    
-    .user-stats-left {
-        max-width: 280px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-@media (max-width: 768px) {
     body {
-        padding-top: 70px;
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        padding-top: 72px;
     }
-    
-    .menu-toggle {
-        display: block;
-    }
-    
-    .header {
-        left: 0 !important;
-        height: 70px;
-        padding: 0 15px;
-        z-index: 100;
-    }
-    
-    .header h1 {
-        font-size: 16px;
-    }
-    
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        width: 260px;
-        z-index: 1000;
-    }
-    
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-    
-    .sidebar.mobile-open:hover {
-        width: 260px;
-    }
-    
-    .sidebar.mobile-open a span {
-        display: inline;
-    }
-    
-    .sidebar.mobile-open .logo img {
-        height: 80px;
-    }
-    
-    .main-content {
-        margin-left: 0 !important;
-        padding: 15px;
-    }
-    
-    .sidebar:hover ~ .main-content {
-        margin-left: 0;
-    }
-    
-    .profile-name, .dropdown-icon {
-        display: none;
-    }
-    
-    .edit-profile-right {
-        padding: 20px;
-    }
-    
-    .form-header h2 {
-        font-size: 18px;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .btn {
-        width: 100%;
-    }
-    
-    .toast {
-        min-width: 250px;
-        padding: 12px 16px;
-    }
-    
-    .toast-container {
-        top: 80px;
-        right: 15px;
-    }
-    
-    .notification-dropdown {
-        position: fixed;
-        top: 70px;
-        left: 10px;
-        right: 10px;
-        width: auto;
-        max-width: none;
-        border-radius: 12px;
-    }
-    
-    .profile-dropdown {
-        position: fixed;
-        top: 70px;
-        right: 10px;
-        left: 10px;
-        width: auto;
-        max-width: none;
-    }
-}
 
-@media (max-width: 480px) {
-    body {
-        padding-top: 60px;
-    }
-    
-    .header {
-        height: 60px;
-        padding: 0 12px;
-    }
-    
-    .header h1 {
-        font-size: 14px;
-    }
-    
-    .main-content {
-        padding: 10px;
-    }
-    
-    .profile-picture-container {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .profile-info-left h3 {
-        font-size: 18px;
-    }
-    
-    .role-badge-left {
-        font-size: 11px;
-        padding: 4px 12px;
-    }
-    
-    .stat-number-left {
-        font-size: 18px;
-    }
-    
-    .stat-label-left {
-        font-size: 10px;
-    }
-    
-    .form-header h2 {
-        font-size: 16px;
-    }
-    
-    .form-group label {
-        font-size: 13px;
-    }
-    
-    .form-control {
-        padding: 10px;
-        font-size: 13px;
-    }
-    
-    .btn {
-        padding: 10px 16px;
-        font-size: 13px;
-    }
-    
-    .toast-container {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-    }
-    
-    .toast {
-        min-width: auto;
-        width: 100%;
-    }
-    
-    .notification-dropdown {
-        top: 60px;
-    }
-    
-    .profile-dropdown {
-        top: 60px;
-    }
-}
-
-@media (min-width: 769px) {
+    /* ============================================ */
+    /* SIDEBAR - MODERN FIXED WIDTH */
+    /* ============================================ */
     .sidebar {
-        transform: translateX(0) !important;
+        position: fixed; top: 0; left: 0; height: 100%; width: 260px;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        padding: 24px 0; display: flex; flex-direction: column; z-index: 100;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
     }
-    
-    .menu-toggle {
-        display: none !important;
+
+    .sidebar .logo { display: flex; justify-content: center; padding: 0 32px 28px 32px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
+    .sidebar .logo img { height: 120px; width: auto; transition: transform 0.2s ease; }
+    .sidebar .logo img:hover { transform: scale(1.05); }
+
+    .sidebar .nav-section { padding: 0 20px 8px 20px; margin-top: 16px; }
+    .sidebar .nav-section span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #64748b; }
+
+    .sidebar nav { display: flex; flex-direction: column; gap: 4px; padding: 0 12px; flex: 1; overflow-y: auto; }
+    .sidebar nav::-webkit-scrollbar { width: 4px; }
+    .sidebar nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    .sidebar a {
+        display: flex; align-items: center; padding: 12px 16px; text-decoration: none;
+        color: #94a3b8; font-weight: 500; font-size: 14px; border-radius: 10px;
+        transition: all 0.2s cubic-bezier(0.4,0,0.2,1); position: relative; gap: 14px;
     }
-    
-    .sidebar-overlay {
-        display: none !important;
+    .sidebar a i { width: 20px; font-size: 18px; text-align: center; transition: transform 0.2s ease; }
+    .sidebar a span { white-space: nowrap; opacity: 0.9; }
+    .sidebar a:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; transform: translateX(2px); }
+    .sidebar a:hover i { transform: scale(1.1); }
+    .sidebar a.active { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #fff; box-shadow: 0 4px 12px rgba(59,130,246,0.3); font-weight: 600; }
+    .sidebar a.active::before { content: ''; position: absolute; left: -2px; top: 50%; transform: translateY(-50%); width: 3px; height: 24px; background: #60a5fa; border-radius: 4px; }
+
+    .sidebar .logout-section { padding: 0 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; }
+    .sidebar .logout-section a { color: #ef4444; }
+    .sidebar .logout-section a:hover { background: rgba(239,68,68,0.15); color: #fca5a5; }
+
+    /* ============================================ */
+    /* MOBILE SIDEBAR */
+    /* ============================================ */
+    .menu-toggle { display: none; background: none; border: none; font-size: 22px; color: #64748b; cursor: pointer; padding: 8px; margin-right: 8px; transition: all 0.2s ease; border-radius: 8px; width: 40px; height: 40px; align-items: center; justify-content: center; }
+    .menu-toggle:hover { background-color: #f1f5f9; color: #0f172a; }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 99; transition: all 0.3s ease; }
+    .sidebar-overlay.active { display: block; }
+
+    /* ============================================ */
+    /* HEADERS */
+    /* ============================================ */
+    .admin-header {
+        position: fixed; top: 0; left: 260px; right: 0; height: 72px;
+        background: #fff; display: flex; justify-content: space-between; align-items: center;
+        padding: 0 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: left 0.3s ease; z-index: 99; backdrop-filter: blur(10px);
     }
-}
+    .admin-header-left { display: flex; align-items: center; gap: 12px; }
+    .admin-header-left h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
+    .admin-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .user-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); z-index: 99; backdrop-filter: blur(10px); }
+    .user-logo-link { display: flex; align-items: center; text-decoration: none; gap: 10px; }
+    .user-logo-wrapper { width: 120px; height: 120px; }
+    .user-logo-wrapper img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0) saturate(100%); }
+    .user-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* Icons & Badges (Shared) */
+    .user-tracker-icon-link, .admin-tracker-icon-link, .user-cart-icon-link, .admin-cart-icon-link {
+        position: relative; text-decoration: none; display: flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border-radius: 10px; transition: all 0.2s ease;
+    }
+    .user-tracker-icon-link:hover, .admin-tracker-icon-link:hover, .user-cart-icon-link:hover, .admin-cart-icon-link:hover { background: #f1f5f9; }
+    .user-tracker-icon-link i, .admin-tracker-icon-link i, .user-cart-icon-link i, .admin-cart-icon-link i, .user-notification-icon i, .admin-notification-icon i { font-size: 20px; color: #64748b; transition: color 0.2s ease; }
+    .user-tracker-icon-link:hover i, .admin-tracker-icon-link:hover i, .user-cart-icon-link:hover i, .admin-cart-icon-link:hover i, .user-notification-icon:hover i, .admin-notification-icon:hover i { color: #3b82f6; }
+
+    .user-tracker-badge, .admin-tracker-badge, .user-cart-badge, .admin-cart-badge, .user-notification-badge, .admin-notification-badge {
+        position: absolute; top: -4px; right: -6px; background: #ef4444; color: white; border-radius: 50%;
+        padding: 2px 6px; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px;
+        display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px white; display: none; letter-spacing: 0;
+    }
+    .user-tracker-badge.show, .admin-tracker-badge.show, .user-cart-badge.show, .admin-cart-badge.show, .user-notification-badge.show, .admin-notification-badge.show { display: flex; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+    /* Notification Dropdown */
+    .user-notification-wrapper, .admin-notification-wrapper { position: relative; display: flex; align-items: center; justify-content: center; }
+    .user-notification-icon, .admin-notification-icon { background: none; border: none; cursor: pointer; position: relative; padding: 0; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; transition: background 0.2s ease; }
+    .user-notification-icon:hover, .admin-notification-icon:hover { background: #f1f5f9; }
+    .user-notification-dropdown, .admin-notification-dropdown { display: none; position: absolute; top: 48px; right: -80px; width: 380px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); z-index: 1000; max-height: 480px; overflow-y: auto; border: 1px solid #e2e8f0; }
+    .user-notification-dropdown.show, .admin-notification-dropdown.show { display: block; animation: slideDown 0.3s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+    .notification-header { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #0f172a; position: sticky; top: 0; background: white; border-radius: 16px 16px 0 0; font-size: 15px; letter-spacing: -0.2px; }
+    .notification-item { padding: 14px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; transition: background 0.2s ease; }
+    .notification-item:hover { background: #f8fafc; }
+    .notification-item.unread { background: #eff6ff; border-left: 3px solid #3b82f6; }
+    .notification-title { font-weight: 600; font-size: 13px; color: #0f172a; margin-bottom: 4px; }
+    .notification-message { font-size: 12px; color: #64748b; margin-bottom: 4px; line-height: 1.5; }
+    .notification-time { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .notification-footer { padding: 12px 20px; border-top: 1px solid #f1f5f9; text-align: center; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; background: #fafafa; border-radius: 0 0 16px 16px; }
+    .clear-notif-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .view-all-link { background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 13px; font-weight: 500; text-decoration: none; }
+
+    /* Profile Dropdown - CIRCULAR AVATAR */
+    .user-profile-wrapper, .admin-profile-wrapper { position: relative; margin-left: 12px; }
+    .user-profile-header, .admin-profile-header { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px; border-radius: 50%; transition: background-color 0.2s ease; }
+    .user-profile-header:hover, .admin-profile-header:hover { background-color: #f1f5f9; }
+    .user-profile-header.active, .admin-profile-header.active { background-color: #e2e8f0; }
+    .user-profile-avatar, .admin-profile-avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; overflow: hidden; box-shadow: 0 2px 8px rgba(59,130,246,0.3); border: 2px solid #ffffff; }
+    .user-profile-avatar img, .admin-profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .user-profile-dropdown, .admin-profile-dropdown { position: absolute; top: 56px; right: 0; width: 260px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid #e2e8f0; }
+    .user-profile-dropdown.show, .admin-profile-dropdown.show { display: flex; animation: slideDown 0.2s ease; }
+    .dropdown-role-header { padding: 14px 18px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; font-size: 12px; font-weight: 600; text-align: center; letter-spacing: 0.5px; }
+    .dropdown-item { padding: 12px 18px; text-decoration: none; color: #0f172a; font-size: 14px; display: flex; align-items: center; gap: 12px; transition: background 0.2s ease; }
+    .dropdown-item i { width: 18px; color: #64748b; font-size: 16px; }
+    .dropdown-item:hover { background: #f8fafc; color: #3b82f6; }
+    .dropdown-item:hover i { color: #3b82f6; }
+    .dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+    .logout-item { color: #ef4444; }
+    .logout-item:hover { background: #fef2f2; color: #dc2626; }
+
+    /* ============================================ */
+    /* TOAST & MODAL */
+    /* ============================================ */
+    .toast-container { position: fixed; top: 88px; right: 24px; z-index: 9999; }
+    .toast { background: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; min-width: 320px; animation: slideInRight 0.3s ease; border-left: 4px solid; position: relative; overflow: hidden; }
+    .toast-success { border-left-color: #10b981; background: #f0fdf4; }
+    .toast-error { border-left-color: #ef4444; background: #fef2f2; }
+    .toast-warning { border-left-color: #f59e0b; background: #fffbeb; }
+    .toast-info { border-left-color: #3b82f6; background: #eff6ff; }
+    .toast-icon { font-size: 20px; font-weight: bold; }
+    .toast-content { flex: 1; color: #0f172a; font-size: 14px; font-weight: 500; }
+    .toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: rgba(0,0,0,0.08); width: 100%; animation: progress 3s linear forwards; }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes progress { from { width: 100%; } to { width: 0%; } }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
+    .modal.show { display: flex; }
+    .modal-content { background: white; border-radius: 20px; width: 90%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideDown 0.3s ease; }
+    .modal-header { padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
+    .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+    .close-modal:hover { background: #f1f5f9; color: #0f172a; }
+    .modal-body { padding: 24px; }
+    .upload-area { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
+    .upload-area:hover { border-color: #3b82f6; background: #f8fafc; }
+    .upload-area i { font-size: 48px; color: #94a3b8; margin-bottom: 12px; }
+    .upload-area p { margin: 0; color: #64748b; font-weight: 500; }
+    .upload-area small { color: #94a3b8; font-size: 12px; margin-top: 4px; display: block; }
+    .image-preview { margin-top: 20px; text-align: center; }
+    .image-preview img { max-width: 100%; max-height: 200px; border-radius: 12px; }
+    .upload-progress { margin-top: 20px; text-align: center; }
+    .progress-bar { width: 100%; height: 6px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+    .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s ease; border-radius: 6px; }
+    #progressText { font-size: 13px; color: #64748b; font-weight: 500; }
+    .modal-footer { padding: 20px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; }
+    .btn-primary-modal { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; background: #3b82f6; color: white; }
+    .btn-primary-modal:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+    .btn-primary-modal:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary-modal { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; background: #f1f5f9; color: #64748b; }
+    .btn-secondary-modal:hover { background: #e2e8f0; }
+
+    /* ============================================ */
+    /* MAIN CONTENT */
+    /* ============================================ */
+    .main-content { margin-left: 260px; padding: 32px; transition: margin-left 0.3s ease; min-height: calc(100vh - 72px); }
+    .main-content.user-mode { margin-left: 0; }
+
+    .edit-profile-container { max-width: 1100px; margin: 0 auto; }
+    .edit-profile-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #f1f5f9; display: flex; flex-wrap: wrap; }
+
+    /* Left Column */
+    .edit-profile-left { flex: 0 0 320px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); text-align: center; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; }
+    .profile-picture-container { width: 140px; height: 140px; margin: 0 auto 20px; cursor: pointer; position: relative; }
+    .profile-picture-container:hover .profile-picture-overlay { opacity: 1; }
+    .profile-picture-large { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+    .profile-picture-large img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-picture-large i { font-size: 70px; color: white; }
+    .profile-picture-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; cursor: pointer; }
+    .profile-picture-overlay i { color: white; font-size: 32px; }
+
+    .profile-info-left { color: white; text-align: center; width: 100%; }
+    .profile-info-left h3 { margin: 0 0 5px 0; font-size: 22px; font-weight: 700; }
+    .role-badge-left { display: inline-block; padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.2); color: white; margin-top: 8px; }
+    .role-badge-left i { margin-right: 6px; font-size: 12px; }
+    .active-status-left { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 6px 14px; background: rgba(255,255,255,0.15); border-radius: 40px; width: fit-content; margin-left: auto; margin-right: auto; }
+    .active-status-dot-left { width: 10px; height: 10px; background: #10b981; border-radius: 50%; animation: dotPulse 2s infinite; }
+    @keyframes dotPulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); } 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+    .active-status-text-left { font-size: 12px; font-weight: 500; color: white; }
+    .user-stats-left { margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-around; width: 100%; }
+    .stat-item-left { text-align: center; color: white; }
+    .stat-number-left { font-size: 24px; font-weight: 700; }
+    .stat-label-left { font-size: 11px; opacity: 0.8; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Right Column */
+    .edit-profile-right { flex: 1; padding: 32px; background: white; }
+    .form-header { margin-bottom: 28px; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; }
+    .form-header h2 { margin: 0 0 5px 0; font-size: 22px; color: #0f172a; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .form-header p { margin: 0; color: #64748b; font-size: 14px; }
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #0f172a; font-size: 14px; }
+    .form-group label i { margin-right: 6px; color: #3b82f6; }
+    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; transition: all 0.2s ease; box-sizing: border-box; }
+    .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .form-control:disabled { background-color: #f8fafc; color: #64748b; cursor: not-allowed; }
+    .form-control.error-field { border: 2px solid #ef4444 !important; background-color: #fef2f2 !important; }
+    .form-help { font-size: 12px; color: #64748b; margin-top: 6px; display: block; }
+    .form-help i { margin-right: 4px; }
+    .password-hint { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; font-size: 12px; color: #64748b; border-left: 3px solid #f59e0b; }
+    .password-hint i { color: #f59e0b; margin-right: 6px; }
+    .form-actions { display: flex; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; transition: all 0.2s ease; }
+    .btn-primary { background: #3b82f6; color: white; flex: 1; }
+    .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+    .btn-secondary { background: #64748b; color: white; flex: 1; }
+    .btn-secondary:hover { background: #475569; transform: translateY(-2px); }
+
+    /* ============================================ */
+    /* RESPONSIVE */
+    /* ============================================ */
+    @media (max-width: 992px) {
+        .edit-profile-card { flex-direction: column; }
+        .edit-profile-left { flex: auto; width: 100%; padding: 32px 20px; }
+        .profile-picture-container { width: 100px; height: 100px; }
+        .profile-picture-large i { font-size: 50px; }
+        .profile-info-left h3 { font-size: 20px; }
+        .user-stats-left { max-width: 280px; margin-left: auto; margin-right: auto; }
+    }
+
+    @media (max-width: 768px) {
+        body { padding-top: 64px; }
+        .menu-toggle { display: flex; }
+        .admin-header { left: 0 !important; height: 64px; padding: 0 16px; }
+        .user-header { height: 64px; padding: 0 16px; }
+        .admin-header-right, .user-header-right { gap: 4px; }
+        .user-logo-wrapper { width: 70px; height: 70px; }
+        .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); width: 280px; }
+        .sidebar.mobile-open { transform: translateX(0); }
+        .sidebar .logo img { height: 100px; }
+        .main-content { margin-left: 0 !important; padding: 20px; }
+        .main-content.user-mode { margin-left: 0; }
+        .user-tracker-icon-link i, .admin-tracker-icon-link i, .user-cart-icon-link i, .admin-cart-icon-link i, .user-notification-icon i, .admin-notification-icon i { font-size: 18px; }
+        .user-tracker-icon-link, .admin-tracker-icon-link, .user-cart-icon-link, .admin-cart-icon-link { width: 36px; height: 36px; }
+        .user-notification-icon, .admin-notification-icon { width: 36px; height: 36px; }
+        .user-profile-avatar, .admin-profile-avatar { width: 36px; height: 36px; font-size: 16px; }
+        .user-profile-wrapper, .admin-profile-wrapper { margin-left: 8px; }
+        .edit-profile-right { padding: 20px; }
+        .form-header h2 { font-size: 18px; }
+        .form-actions { flex-direction: column; }
+        .btn { width: 100%; }
+        .toast-container { top: 76px; right: 12px; left: 12px; }
+        .toast { min-width: auto; width: 100%; }
+        .user-notification-dropdown, .admin-notification-dropdown { position: fixed; top: 64px; left: 12px; right: 12px; width: auto; max-width: none; border-radius: 16px; }
+        .user-profile-dropdown, .admin-profile-dropdown { position: fixed; top: 64px; right: 12px; left: 12px; width: auto; max-width: none; }
+    }
+
+    @media (max-width: 576px) {
+        body { padding-top: 56px; }
+        .admin-header, .user-header { height: 56px; padding: 0 12px; }
+        .admin-header-right, .user-header-right { gap: 2px; }
+        .user-logo-wrapper { width: 55px; height: 55px; }
+        .user-tracker-icon-link i, .admin-tracker-icon-link i, .user-cart-icon-link i, .admin-cart-icon-link i, .user-notification-icon i, .admin-notification-icon i { font-size: 16px; }
+        .user-tracker-icon-link, .admin-tracker-icon-link, .user-cart-icon-link, .admin-cart-icon-link { width: 34px; height: 34px; }
+        .user-notification-icon, .admin-notification-icon { width: 34px; height: 34px; }
+        .user-profile-avatar, .admin-profile-avatar { width: 34px; height: 34px; font-size: 15px; }
+        .user-profile-wrapper, .admin-profile-wrapper { margin-left: 6px; }
+        .main-content { padding: 16px; }
+        .profile-picture-container { width: 80px; height: 80px; }
+        .profile-info-left h3 { font-size: 18px; }
+        .role-badge-left { font-size: 11px; padding: 4px 12px; }
+        .stat-number-left { font-size: 18px; }
+        .stat-label-left { font-size: 10px; }
+        .form-header h2 { font-size: 16px; }
+        .form-group label { font-size: 13px; }
+        .form-control { padding: 10px; font-size: 13px; }
+        .btn { padding: 10px 16px; font-size: 13px; }
+        .user-notification-dropdown, .admin-notification-dropdown { top: 56px; }
+        .user-profile-dropdown, .admin-profile-dropdown { top: 56px; }
+    }
+
+    @media (min-width: 769px) {
+        .sidebar { transform: translateX(0) !important; }
+        .menu-toggle { display: none !important; }
+        .sidebar-overlay { display: none !important; }
+    }
 </style>
 {% endblock %}
 
 {% block body %}
+{# Determine user type #}
 {% if is_granted('ROLE_ADMIN') %}
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
-    </div>
-    <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home"></i>
-        <span>Dashboard</span>
-    </a>
-    <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-    </a>
-    <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes"></i>
-        <span>Stocks</span>
-    </a>
-    <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Marketplace</span>
-    </a>
-    <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
-    </a>
-    <a href="{{ path('app_user_index') }}">
-        <i class="fas fa-user-tie"></i>
-        <span>Staff Management</span>
-    </a>
-    <a href="{{ path('app_activity_log_index') }}">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Activity Logs</span>
-    </a>
-    <a href="{{ path('app_profile_index') }}">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-    </a>
-    <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off"></i>
-        <span>Logout</span>
-    </a>
-</div>
-
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Profile Section Variables -->
-{% set role = app.user.roles[0] ?? 'ROLE_USER' %}
-{% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
-{% set userRoleName = 
-    role == 'ROLE_ADMIN' ? 'Administrator' :
-    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
-%}
-{% set userRoleIcon = 
-    role == 'ROLE_ADMIN' ? 'crown' :
-    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
-%}
-{% set avatarLetter = app.user.username|first|upper %}
-
-<!-- Sticky Header -->
-<div class="header">
-    <h1>
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <i class="fas fa-key"></i> Change Password
-    </h1>
-    
-    <div class="header-right">
-        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
-            <i class="fas fa-box"></i>
-            <span class="tracker-badge" id="trackerBadge">0</span>
-        </a>
-        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" id="cartBadge">0</span>
-        </a>
-        <div class="notification-wrapper">
-            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">0</span>
-            </button>
-            <div class="notification-dropdown" id="notificationDropdown">
-                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
-                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
-                <div class="notification-footer">
-                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
-                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
-                </div>
-            </div>
-        </div>
-        <div class="profile-wrapper">
-            <div class="profile-header" id="profileHeader">
-                <div class="profile-avatar">
-                    {% if hasProfilePic %}
-                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                    {% else %}
-                        {{ avatarLetter }}
-                    {% endif %}
-                </div>
-                <span class="profile-name">{{ app.user.username }}</span>
-                <i class="fas fa-chevron-down dropdown-icon"></i>
-            </div>
-            
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="dropdown-role-header">
-                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                </div>
-                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                    <i class="fas fa-user-circle"></i>
-                    <span>My Profile</span>
-                </a>
-                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                    <i class="fas fa-camera"></i>
-                    <span>Change Picture</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Hidden File Upload Form -->
-<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
-    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
-</form>
-
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <div class="edit-profile-container">
-        <div class="edit-profile-card">
-            
-            <!-- LEFT COLUMN - Profile Picture & User Info -->
-            <div class="edit-profile-left">
-                <div class="profile-picture-container" id="changeProfilePicTrigger">
-                    <div class="profile-picture-large">
-                        {% if hasProfilePic %}
-                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                        {% else %}
-                            <i class="fas fa-user-circle"></i>
-                        {% endif %}
-                    </div>
-                    <div class="profile-picture-overlay">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                </div>
-                <div class="profile-info-left">
-                    <h3>{{ app.user.username }}</h3>
-                    <div class="role-badge-left">
-                        <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                    </div>
-                    <div class="active-status-left">
-                        <div class="active-status-dot-left"></div>
-                        <span class="active-status-text-left">Active Now</span>
-                    </div>
-                </div>
-                <div class="user-stats-left">
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.roles|length }}</div>
-                        <div class="stat-label-left">Roles</div>
-                    </div>
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
-                        <div class="stat-label-left">Joined Day</div>
-                    </div>
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
-                        <div class="stat-label-left">Joined Month</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- RIGHT COLUMN - Password Form -->
-            <div class="edit-profile-right">
-                <div class="form-header">
-                    <h2><i class="fas fa-key"></i> Change Password</h2>
-                    <p>Update your account password below</p>
-                </div>
-                
-                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'passwordForm'}}) }}
-                
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> Username</label>
-                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-lock"></i> New Password</label>
-                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...', 'id': 'password_first'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Minimum 6 characters</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
-                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...', 'id': 'password_second'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Passwords must match</div>
-                    </div>
-                    
-                    <div class="password-hint">
-                        <i class="fas fa-lightbulb"></i> Leave both fields blank to keep your current password
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-save"></i> Update Password
-                        </button>
-                        <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
-                    </div>
-                    
-                {{ form_end(form) }}
-            </div>
-        </div>
-    </div>
-</div>
-
+    {% set headerType = 'admin' %}
+    {% set sidebarLinks = [
+        {path: 'app_dashboard', icon: 'fa-home', label: 'Dashboard'},
+        {path: 'app_product_index', icon: 'fa-shopping-bag', label: 'Products'},
+        {path: 'app_stock_index', icon: 'fa-boxes', label: 'Stocks'},
+        {path: 'app_order_new', icon: 'fa-shopping-cart', label: 'Shop'},
+        {path: 'app_order_index', icon: 'fa-receipt', label: 'Orders'},
+        {path: 'app_customer_management_index', icon: 'fa-users', label: 'Customers', section: 'management'},
+        {path: 'app_user_index', icon: 'fa-user-tie', label: 'Staff Management'},
+        {path: 'app_activity_log_index', icon: 'fa-clipboard-list', label: 'Activity Logs'},
+        {path: 'app_profile_index', icon: 'fa-user', label: 'Profile', section: 'account', active: true}
+    ] %}
 {% elseif is_granted('ROLE_STAFF') %}
+    {% set headerType = 'admin' %}
+    {% set sidebarLinks = [
+        {path: 'app_dashboard', icon: 'fa-home', label: 'Dashboard'},
+        {path: 'app_product_index', icon: 'fa-shopping-bag', label: 'Products'},
+        {path: 'app_stock_index', icon: 'fa-boxes', label: 'Stocks'},
+        {path: 'app_order_new', icon: 'fa-shopping-cart', label: 'Shop'},
+        {path: 'app_order_index', icon: 'fa-receipt', label: 'Orders'},
+        {path: 'app_customer_management_index', icon: 'fa-users', label: 'Customers'},
+        {path: 'app_profile_index', icon: 'fa-user', label: 'Profile', section: 'account', active: true}
+    ] %}
+{% else %}
+    {% set headerType = 'user' %}
+{% endif %}
 
-<!-- Sidebar for Staff -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
-    </div>
-    <a href="{{ path('app_dashboard') }}">
-        <i class="fas fa-home"></i>
-        <span>Dashboard</span>
-    </a>
-    <a href="{{ path('app_product_index') }}">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-    </a>
-    <a href="{{ path('app_stock_index') }}">
-        <i class="fas fa-boxes"></i>
-        <span>Stocks</span>
-    </a>
-    <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Marketplace</span>
-    </a>
-    <a href="{{ path('app_order_index') }}">
-        <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
-    </a>
-    <a href="{{ path('app_profile_index') }}">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-    </a>
-    <a href="{{ path('app_logout') }}">
-        <i class="fas fa-power-off"></i>
-        <span>Logout</span>
-    </a>
-</div>
-
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Profile Section Variables for Staff -->
+{# Common profile variables #}
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
-{% set userRoleName = 
-    role == 'ROLE_ADMIN' ? 'Administrator' :
-    (role == 'ROLE_STAFF' ? 'Staff Member' : 'User')
-%}
-{% set userRoleIcon = 
-    role == 'ROLE_ADMIN' ? 'crown' :
-    (role == 'ROLE_STAFF' ? 'user-tie' : 'user')
-%}
+{% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'Customer') %}
+{% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 {% set avatarLetter = app.user.username|first|upper %}
 
-<!-- Sticky Header for Staff -->
-<div class="header">
-    <h1>
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <i class="fas fa-key"></i> Change Password
-    </h1>
-    
-    <div class="header-right">
-        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
-            <i class="fas fa-box"></i>
-            <span class="tracker-badge" id="trackerBadge">0</span>
-        </a>
-        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" id="cartBadge">0</span>
-        </a>
-        <div class="notification-wrapper">
-            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">0</span>
-            </button>
-            <div class="notification-dropdown" id="notificationDropdown">
+{# Sidebar for Admin/Staff #}
+{% if headerType == 'admin' %}
+<div class="sidebar" id="sidebar">
+    <div class="logo"><img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo"></div>
+    <nav>
+        {% set currentSection = '' %}
+        {% for link in sidebarLinks %}
+            {% if link.section is defined and link.section != currentSection %}
+                {% set currentSection = link.section %}
+                <div class="nav-section"><span>{{ currentSection == 'management' ? 'Management' : 'Account' }}</span></div>
+            {% endif %}
+            <a href="{{ path(link.path) }}" {% if link.active is defined and link.active %}class="active"{% endif %}>
+                <i class="fas {{ link.icon }}"></i><span>{{ link.label }}</span>
+            </a>
+        {% endfor %}
+    </nav>
+    <div class="logout-section"><a href="{{ path('app_logout') }}"><i class="fas fa-power-off"></i><span>Logout</span></a></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+{% endif %}
+
+{# Header #}
+{% if headerType == 'admin' %}
+<div class="admin-header">
+    <div class="admin-header-left">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <h1><i class="fas fa-key"></i> Change Password</h1>
+    </div>
+    <div class="admin-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="admin-tracker-icon-link" title="My Orders Tracker"><i class="fas fa-box"></i><span class="admin-tracker-badge" id="adminTrackerBadge">0</span></a>
+        <a href="{{ path('app_cart_view') }}" class="admin-cart-icon-link" title="Shopping Cart"><i class="fas fa-shopping-cart"></i><span class="admin-cart-badge" id="adminCartBadge">0</span></a>
+        <div class="admin-notification-wrapper">
+            <button class="admin-notification-icon" id="adminNotificationIcon" onclick="toggleAdminNotificationDropdown()"><i class="fas fa-bell"></i><span class="admin-notification-badge" id="adminNotificationBadge">0</span></button>
+            <div class="admin-notification-dropdown" id="adminNotificationDropdown">
                 <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
-                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div id="adminNotificationList"><div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
                 <div class="notification-footer">
-                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
-                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllAdminNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllAdminNotifications()">Clear all</button>
                 </div>
             </div>
         </div>
-        <div class="profile-wrapper">
-            <div class="profile-header" id="profileHeader">
-                <div class="profile-avatar">
-                    {% if hasProfilePic %}
-                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                    {% else %}
-                        {{ avatarLetter }}
-                    {% endif %}
-                </div>
-                <span class="profile-name">{{ app.user.username }}</span>
-                <i class="fas fa-chevron-down dropdown-icon"></i>
+        <div class="admin-profile-wrapper">
+            <div class="admin-profile-header" id="adminProfileHeader">
+                <div class="admin-profile-avatar">{% if hasProfilePic %}<img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">{% else %}{{ avatarLetter }}{% endif %}</div>
             </div>
-            
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="dropdown-role-header">
-                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                </div>
-                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
-                    <i class="fas fa-user-circle"></i>
-                    <span>My Profile</span>
-                </a>
-                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
-                    <i class="fas fa-camera"></i>
-                    <span>Change Picture</span>
-                </a>
+            <div class="admin-profile-dropdown" id="adminProfileDropdown">
+                <div class="dropdown-role-header"><i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}</div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                <a href="#" class="dropdown-item" id="adminChangeProfilePicBtn"><i class="fas fa-camera"></i><span>Change Picture</span></a>
                 <div class="dropdown-divider"></div>
-                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Hidden File Upload Form -->
-<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
-    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
-</form>
-
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Main Content for Staff -->
-<div class="main-content">
-    <div class="edit-profile-container">
-        <div class="edit-profile-card">
-            
-            <!-- LEFT COLUMN - Profile Picture & User Info -->
-            <div class="edit-profile-left">
-                <div class="profile-picture-container" id="changeProfilePicTrigger">
-                    <div class="profile-picture-large">
-                        {% if hasProfilePic %}
-                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
-                        {% else %}
-                            <i class="fas fa-user-circle"></i>
-                        {% endif %}
-                    </div>
-                    <div class="profile-picture-overlay">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                </div>
-                <div class="profile-info-left">
-                    <h3>{{ app.user.username }}</h3>
-                    <div class="role-badge-left">
-                        <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
-                    </div>
-                    <div class="active-status-left">
-                        <div class="active-status-dot-left"></div>
-                        <span class="active-status-text-left">Active Now</span>
-                    </div>
-                </div>
-                <div class="user-stats-left">
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.roles|length }}</div>
-                        <div class="stat-label-left">Roles</div>
-                    </div>
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div>
-                        <div class="stat-label-left">Joined Day</div>
-                    </div>
-                    <div class="stat-item-left">
-                        <div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div>
-                        <div class="stat-label-left">Joined Month</div>
-                    </div>
+{% else %}
+<div class="user-header">
+    <a href="{{ path('app_order_new') }}" class="user-logo-link"><div class="user-logo-wrapper"><img src="{{ asset('images/cart8-01.png') }}" alt="Cartlify"></div></a>
+    <div class="user-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="user-tracker-icon-link" title="My Orders Tracker"><i class="fas fa-box"></i><span class="user-tracker-badge" id="userTrackerBadge">0</span></a>
+        <a href="{{ path('app_cart_view') }}" class="user-cart-icon-link" title="Shopping Cart"><i class="fas fa-shopping-cart"></i><span class="user-cart-badge" id="userCartBadge">0</span></a>
+        <div class="user-notification-wrapper">
+            <button class="user-notification-icon" id="userNotificationIcon" onclick="toggleUserNotificationDropdown()"><i class="fas fa-bell"></i><span class="user-notification-badge" id="userNotificationBadge">0</span></button>
+            <div class="user-notification-dropdown" id="userNotificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="userNotificationList"><div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllUserNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllUserNotifications()">Clear all</button>
                 </div>
             </div>
-            
-            <!-- RIGHT COLUMN - Password Form -->
-            <div class="edit-profile-right">
-                <div class="form-header">
-                    <h2><i class="fas fa-key"></i> Change Password</h2>
-                    <p>Update your account password below</p>
-                </div>
-                
-                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'passwordForm'}}) }}
-                
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> Username</label>
-                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-lock"></i> New Password</label>
-                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...', 'id': 'password_first'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Minimum 6 characters</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
-                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...', 'id': 'password_second'}}) }}
-                        <div class="form-help"><i class="fas fa-info-circle"></i> Passwords must match</div>
-                    </div>
-                    
-                    <div class="password-hint">
-                        <i class="fas fa-lightbulb"></i> Leave both fields blank to keep your current password
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-save"></i> Update Password
-                        </button>
-                        <a href="{{ path('app_profile_index') }}" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
-                    </div>
-                    
-                {{ form_end(form) }}
+        </div>
+        <div class="user-profile-wrapper">
+            <div class="user-profile-header" id="userProfileHeader">
+                <div class="user-profile-avatar">{% if hasProfilePic %}<img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">{% else %}{{ avatarLetter }}{% endif %}</div>
+            </div>
+            <div class="user-profile-dropdown" id="userProfileDropdown">
+                <div class="dropdown-role-header"><i class="fas fa-user"></i> Customer</div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                <a href="#" class="dropdown-item" id="userChangeProfilePicBtn"><i class="fas fa-camera"></i><span>Change Picture</span></a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
 
-<!-- Add Font Awesome -->
+<form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
+    <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
+</form>
+<div class="toast-container" id="toastContainer"></div>
+
+{# Main Content #}
+<div class="main-content {% if headerType == 'user' %}user-mode{% endif %}">
+    <div class="edit-profile-container">
+        <div class="edit-profile-card">
+            <!-- LEFT COLUMN -->
+            <div class="edit-profile-left">
+                <div class="profile-picture-container" id="changeProfilePicTrigger">
+                    <div class="profile-picture-large">
+                        {% if hasProfilePic %}<img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">{% else %}<i class="fas fa-user-circle"></i>{% endif %}
+                    </div>
+                    <div class="profile-picture-overlay"><i class="fas fa-camera"></i></div>
+                </div>
+                <div class="profile-info-left">
+                    <h3>{{ app.user.username }}</h3>
+                    <div class="role-badge-left"><i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}</div>
+                    <div class="active-status-left"><div class="active-status-dot-left"></div><span class="active-status-text-left">Active Now</span></div>
+                </div>
+                <div class="user-stats-left">
+                    <div class="stat-item-left"><div class="stat-number-left">{{ app.user.roles|length }}</div><div class="stat-label-left">Roles</div></div>
+                    <div class="stat-item-left"><div class="stat-number-left">{{ app.user.createdAt|date('d') }}</div><div class="stat-label-left">Joined Day</div></div>
+                    <div class="stat-item-left"><div class="stat-number-left">{{ app.user.createdAt|date('M Y') }}</div><div class="stat-label-left">Joined Month</div></div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="edit-profile-right">
+                <div class="form-header">
+                    <h2><i class="fas fa-key"></i> Change Password</h2>
+                    <p>Update your account password below</p>
+                </div>
+
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false', 'id': 'passwordForm'}}) }}
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Username</label>
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'disabled': 'disabled'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Username cannot be changed</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> New Password</label>
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password...', 'id': 'password_first'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Minimum 6 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password...', 'id': 'password_second'}}) }}
+                        <div class="form-help"><i class="fas fa-info-circle"></i> Passwords must match</div>
+                    </div>
+
+                    <div class="password-hint"><i class="fas fa-lightbulb"></i> Leave both fields blank to keep your current password</div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-save"></i> Update Password</button>
+                        <a href="{{ path('app_profile_index') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+                    </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// ============================================
-// NOTIFICATION SYSTEM
-// ============================================
-let notifications = [];
-let shownFlashes = [];
+var adminNotifications = [];
+var userNotifications = [];
+var shownFlashes = [];
+var isAdminOrStaff = {{ is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') ? 'true' : 'false' }};
+var sidebarInitialized = false;
+var dropdownInit = false;
 
-function markAllNotificationsAsRead() {
-    if (notifications.length > 0) {
-        let hasUnread = notifications.some(n => !n.read);
-        if (hasUnread) {
-            notifications.forEach(n => n.read = true);
-            saveNotifications();
-            updateNotificationBadge();
-        }
-    }
-}
+function loadAdminNotifications() { var s = localStorage.getItem('admin_order_notifications'); adminNotifications = s ? JSON.parse(s) : []; updateAdminNotificationUI(); updateAdminNotificationBadge(); }
+function saveAdminNotifications() { localStorage.setItem('admin_order_notifications', JSON.stringify(adminNotifications)); updateAdminNotificationUI(); updateAdminNotificationBadge(); }
+function updateAdminNotificationBadge() { var c = adminNotifications.filter(function(n){return !n.read;}).length; var b = document.getElementById('adminNotificationBadge'); if(b){if(c>0){b.classList.add('show');b.textContent=c>99?'99+':c;}else{b.classList.remove('show');}} }
+function markAllAdminNotificationsAsRead() { if(adminNotifications.length>0&&adminNotifications.some(function(n){return!n.read;})){adminNotifications.forEach(function(n){n.read=true;});saveAdminNotifications();updateAdminNotificationBadge();} }
+function markAllAdminNotificationsAsReadBeforeRedirect() { markAllAdminNotificationsAsRead(); window.location.href = '{{ path('app_notifications_index') }}'; }
+function updateAdminNotificationUI() { var l = document.getElementById('adminNotificationList'); if(!l)return; if(adminNotifications.length===0){l.innerHTML='<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>';}else{var r=adminNotifications.slice(0,5);l.innerHTML=r.map(function(n){return'<div class="notification-item '+(n.read?'':'unread')+'" onclick="markAdminNotificationAsRead('+n.id+')"><div class="notification-title">'+n.title+'</div><div class="notification-message">'+n.message+'</div><div class="notification-time">'+formatTimeAgo(n.timestamp)+'</div></div>';}).join('');} }
+function markAdminNotificationAsRead(id) { var n = adminNotifications.find(function(n){return n.id===id;}); if(n){n.read=true;saveAdminNotifications();} }
+function clearAllAdminNotifications() { if(confirm('Clear all notifications?')){adminNotifications=[];saveAdminNotifications();showToast('All notifications cleared','info');} }
+function toggleAdminNotificationDropdown() { var d = document.getElementById('adminNotificationDropdown'); if(d){markAllAdminNotificationsAsRead();d.classList.toggle('show');} }
 
-function markAllNotificationsAsReadBeforeRedirect() {
-    markAllNotificationsAsRead();
-    window.location.href = '{{ path('app_notifications_index') }}';
-}
+function loadUserNotifications() { var s = localStorage.getItem('user_order_notifications'); userNotifications = s ? JSON.parse(s) : []; updateUserNotificationUI(); updateUserNotificationBadge(); }
+function saveUserNotifications() { localStorage.setItem('user_order_notifications', JSON.stringify(userNotifications)); updateUserNotificationUI(); updateUserNotificationBadge(); }
+function updateUserNotificationBadge() { var c = userNotifications.filter(function(n){return!n.read;}).length; var b = document.getElementById('userNotificationBadge'); if(b){if(c>0){b.classList.add('show');b.textContent=c>99?'99+':c;}else{b.classList.remove('show');}} }
+function markAllUserNotificationsAsRead() { if(userNotifications.length>0&&userNotifications.some(function(n){return!n.read;})){userNotifications.forEach(function(n){n.read=true;});saveUserNotifications();updateUserNotificationBadge();} }
+function markAllUserNotificationsAsReadBeforeRedirect() { markAllUserNotificationsAsRead(); window.location.href = '{{ path('app_notifications_index') }}'; }
+function updateUserNotificationUI() { var l = document.getElementById('userNotificationList'); if(!l)return; if(userNotifications.length===0){l.innerHTML='<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>';}else{var r=userNotifications.slice(0,5);l.innerHTML=r.map(function(n){return'<div class="notification-item '+(n.read?'':'unread')+'" onclick="markUserNotificationAsRead('+n.id+')"><div class="notification-title">'+n.title+'</div><div class="notification-message">'+n.message+'</div><div class="notification-time">'+formatTimeAgo(n.timestamp)+'</div></div>';}).join('');} }
+function markUserNotificationAsRead(id) { var n = userNotifications.find(function(n){return n.id===id;}); if(n){n.read=true;saveUserNotifications();} }
+function clearAllUserNotifications() { if(confirm('Clear all notifications?')){userNotifications=[];saveUserNotifications();showToast('All notifications cleared','info');} }
+function toggleUserNotificationDropdown() { var d = document.getElementById('userNotificationDropdown'); if(d){markAllUserNotificationsAsRead();d.classList.toggle('show');} }
 
-function loadNotifications() {
-    const saved = localStorage.getItem('order_notifications');
-    notifications = saved ? JSON.parse(saved) : [];
-    updateNotificationUI();
-    updateNotificationBadge();
-}
+function formatTimeAgo(timestamp) { var d=new Date(timestamp),n=new Date(),m=Math.floor((n-d)/60000),h=Math.floor(m/60),dy=Math.floor(h/24); if(m<1)return'Just now';if(m<60)return m+' min ago';if(h<24)return h+' hour'+(h>1?'s':'')+' ago';return dy+' day'+(dy>1?'s':'')+' ago'; }
 
-function saveNotifications() {
-    localStorage.setItem('order_notifications', JSON.stringify(notifications));
-    updateNotificationUI();
-    updateNotificationBadge();
-}
+function updateCartBadge(){fetch('/cart/count').then(function(r){return r.json();}).then(function(d){var b=isAdminOrStaff?document.getElementById('adminCartBadge'):document.getElementById('userCartBadge');if(b){if(d.count>0){b.textContent=d.count>9?'9+':d.count;b.classList.add('show');}else{b.classList.remove('show');}}}).catch(function(e){console.log('Cart update error:',e);});}
+function updateTrackerBadge(){fetch('{{ path('app_new_orders_count') }}').then(function(r){return r.json();}).then(function(d){var b=isAdminOrStaff?document.getElementById('adminTrackerBadge'):document.getElementById('userTrackerBadge');if(b){if(d.count>0){b.textContent=d.count>9?'9+':d.count;b.classList.add('show');}else{b.classList.remove('show');}}}).catch(function(e){console.log('Tracker update error:',e);});}
 
-function addNotification(title, message, orderId, type) {
-    const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
-    notifications.unshift(notification);
-    if (notifications.length > 100) notifications = notifications.slice(0, 100);
-    saveNotifications();
-    showToast(message, type);
-    updateTrackerBadge();
-}
+function showToast(message,type){type=type||'success';var c=document.getElementById('toastContainer');if(!c){c=document.createElement('div');c.id='toastContainer';c.className='toast-container';document.body.appendChild(c);}var t=document.createElement('div');t.className='toast toast-'+type;var i='';if(type==='success')i='\u2713';else if(type==='error')i='\u2717';else if(type==='warning')i='\u26A0';else i='\u2139';t.innerHTML='<div class="toast-icon">'+i+'</div><div class="toast-content">'+message+'</div><div class="toast-progress"></div>';c.appendChild(t);setTimeout(function(){t.style.animation='slideOutRight 0.3s ease';setTimeout(function(){t.remove();},300);},5000);}
 
-function updateNotificationBadge() {
-    const unreadCount = notifications.filter(n => !n.read).length;
-    const badge = document.getElementById('notificationBadge');
-    if (badge) { 
-        if (unreadCount > 0) { 
-            badge.classList.add('show'); 
-            badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
-        } else { 
-            badge.classList.remove('show'); 
-        } 
-    }
-}
+function toggleAdminProfileDropdown(){var d=document.getElementById('adminProfileDropdown'),h=document.getElementById('adminProfileHeader');if(d&&h){d.classList.toggle('show');h.classList.toggle('active');}}
+function toggleUserProfileDropdown(){var d=document.getElementById('userProfileDropdown'),h=document.getElementById('userProfileHeader');if(d&&h){d.classList.toggle('show');h.classList.toggle('active');}}
 
-function updateNotificationUI() {
-    const list = document.getElementById('notificationList');
-    if (!list) return;
-    
-    if (notifications.length === 0) { 
-        list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
-    } else { 
-        const recentNotifications = notifications.slice(0, 5);
-        list.innerHTML = recentNotifications.map(n => `
-            <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
-                <div class="notification-title">${n.title}</div>
-                <div class="notification-message">${n.message}</div>
-                <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
-            </div>
-        `).join('');
-        
-        if (notifications.length > 5) {
-            list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
-        }
-    }
-}
-
-function markNotificationAsRead(id) { 
-    const notification = notifications.find(n => n.id === id); 
-    if (notification) { 
-        notification.read = true; 
-        saveNotifications(); 
-    } 
-}
-
-function clearAllNotifications() { 
-    if (confirm('Clear all notifications?')) { 
-        notifications = []; 
-        saveNotifications(); 
-        showToast('All notifications cleared', 'info'); 
-    } 
-}
-
-function formatTimeAgo(timestamp) { 
-    const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
-    if (mins < 1) return 'Just now'; 
-    if (mins < 60) return `${mins} min ago`; 
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
-    return `${days} day${days > 1 ? 's' : ''} ago`; 
-}
-
-function toggleNotificationDropdown() { 
-    const dropdown = document.getElementById('notificationDropdown');
-    if (dropdown) {
-        markAllNotificationsAsRead();
-        dropdown.classList.toggle('show');
-    }
-}
-
-// ============================================
-// BADGE UPDATE FUNCTIONS
-// ============================================
-function updateCartBadge() {
-    fetch('/cart/count')
-        .then(res => res.json())
-        .then(data => {
-            const badge = document.getElementById('cartBadge');
-            if (badge) {
-                if (data.count > 0) {
-                    badge.textContent = data.count > 9 ? '9+' : data.count;
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
-                }
-            }
-        })
-        .catch(e => console.log('Cart update error:', e));
-}
-
-function updateTrackerBadge() {
-    fetch('{{ path('app_new_orders_count') }}')
-        .then(res => res.json())
-        .then(data => {
-            const badge = document.getElementById('trackerBadge');
-            if (badge) {
-                if (data.count > 0) {
-                    badge.textContent = data.count > 9 ? '9+' : data.count;
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
-                }
-            }
-        })
-        .catch(e => console.log('Tracker update error:', e));
-}
-
-// ============================================
-// TOAST NOTIFICATION
-// ============================================
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let icon = '';
-    if (type === 'success') icon = '✓';
-    if (type === 'error') icon = '✗';
-    if (type === 'warning') icon = '⚠';
-    if (type === 'info') icon = 'ℹ';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">${message}</div>
-        <div class="toast-progress"></div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
-}
-
-// ============================================
-// PROFILE DROPDOWN FUNCTIONS
-// ============================================
-function toggleProfileDropdown() {
-    const dropdown = document.getElementById('profileDropdown');
-    const header = document.getElementById('profileHeader');
-    if (dropdown && header) {
-        dropdown.classList.toggle('show');
-        header.classList.toggle('active');
-    }
-}
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(event) {
-    const notificationDropdown = document.getElementById('notificationDropdown');
-    const notificationIcon = document.getElementById('notificationIcon');
-    if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
-        notificationDropdown.classList.remove('show');
-    }
-    
-    const profileDropdown = document.getElementById('profileDropdown');
-    const profileHeader = document.getElementById('profileHeader');
-    if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
-        profileDropdown.classList.remove('show');
-        profileHeader.classList.remove('active');
-    }
+document.addEventListener('click',function(e){
+    if(isAdminOrStaff){var nd=document.getElementById('adminNotificationDropdown'),ni=document.getElementById('adminNotificationIcon');if(nd&&ni&&!ni.contains(e.target)&&!nd.contains(e.target))nd.classList.remove('show');var pd=document.getElementById('adminProfileDropdown'),ph=document.getElementById('adminProfileHeader');if(pd&&ph&&!ph.contains(e.target)&&!pd.contains(e.target)){pd.classList.remove('show');ph.classList.remove('active');}}
+    else{var nd=document.getElementById('userNotificationDropdown'),ni=document.getElementById('userNotificationIcon');if(nd&&ni&&!ni.contains(e.target)&&!nd.contains(e.target))nd.classList.remove('show');var pd=document.getElementById('userProfileDropdown'),ph=document.getElementById('userProfileHeader');if(pd&&ph&&!ph.contains(e.target)&&!pd.contains(e.target)){pd.classList.remove('show');ph.classList.remove('active');}}
 });
 
-// ============================================
-// MOBILE SIDEBAR
-// ============================================
-let sidebarInitialized = false;
+function initMobileSidebar(){if(sidebarInitialized)return;var t=document.getElementById('menuToggle'),s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay');if(!t||!s)return;function open(){s.classList.add('mobile-open');if(o)o.classList.add('active');document.body.style.overflow='hidden';}function close(){s.classList.remove('mobile-open');if(o)o.classList.remove('active');document.body.style.overflow='';}t.addEventListener('click',function(e){e.stopPropagation();s.classList.contains('mobile-open')?close():open();});if(o)o.addEventListener('click',close);document.addEventListener('click',function(e){if(window.innerWidth<=768&&s.classList.contains('mobile-open')&&!s.contains(e.target)&&!t.contains(e.target))close();});window.addEventListener('resize',function(){if(window.innerWidth>768&&s.classList.contains('mobile-open'))close();});sidebarInitialized=true;}
 
-function initMobileSidebar() {
-    if (sidebarInitialized) return;
-    
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (!menuToggle || !sidebar) return;
-    
-    function openSidebar() {
-        sidebar.classList.add('mobile-open');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove('mobile-open');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    const newToggle = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-    const newMenuToggle = document.getElementById('menuToggle');
-    
-    newMenuToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl.classList.contains('mobile-open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-    
-    if (overlay) {
-        const newOverlay = overlay.cloneNode(true);
-        overlay.parentNode.replaceChild(newOverlay, overlay);
-        const newOverlayEl = document.getElementById('sidebarOverlay');
-        newOverlayEl.addEventListener('click', closeSidebar);
-    }
-    
-    document.addEventListener('click', function(e) {
-        const currentSidebar = document.getElementById('sidebar');
-        const currentMenuToggle = document.getElementById('menuToggle');
-        if (window.innerWidth <= 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            if (!currentSidebar.contains(e.target) && !currentMenuToggle.contains(e.target)) {
-                closeSidebar();
-            }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        const currentSidebar = document.getElementById('sidebar');
-        if (window.innerWidth > 768 && currentSidebar && currentSidebar.classList.contains('mobile-open')) {
-            closeSidebar();
-        }
-    });
-    
-    sidebarInitialized = true;
+function initializeDropdowns(){
+    if(dropdownInit)return;
+    if(isAdminOrStaff){var h=document.getElementById('adminProfileHeader');if(h)h.addEventListener('click',function(e){e.stopPropagation();toggleAdminProfileDropdown();});var b=document.getElementById('adminChangeProfilePicBtn');if(b)b.addEventListener('click',function(e){e.preventDefault();showUploadModal();});}
+    else{var h=document.getElementById('userProfileHeader');if(h)h.addEventListener('click',function(e){e.stopPropagation();toggleUserProfileDropdown();});var b=document.getElementById('userChangeProfilePicBtn');if(b)b.addEventListener('click',function(e){e.preventDefault();showUploadModal();});}
+    var ct=document.getElementById('changeProfilePicTrigger');if(ct)ct.addEventListener('click',function(e){e.preventDefault();showUploadModal();});
+    dropdownInit=true;
 }
 
-// Profile dropdown
-let dropdownInitialized = false;
-
-function initializeDropdown() {
-    if (dropdownInitialized) return;
-    
-    const profileHeader = document.getElementById('profileHeader');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const changePicBtn = document.getElementById('changeProfilePicBtn');
-    const changePicTrigger = document.getElementById('changeProfilePicTrigger');
-    
-    if (profileHeader && profileDropdown) {
-        const newHeader = profileHeader.cloneNode(true);
-        profileHeader.parentNode.replaceChild(newHeader, profileHeader);
-        const newProfileHeader = document.getElementById('profileHeader');
-        
-        newProfileHeader.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.toggle('active');
-            const dropdown = document.getElementById('profileDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            const header = document.getElementById('profileHeader');
-            const dropdown = document.getElementById('profileDropdown');
-            if (header && dropdown && !header.contains(e.target) && !dropdown.contains(e.target)) {
-                header.classList.remove('active');
-                dropdown.classList.remove('show');
-            }
-        });
-        
-        dropdownInitialized = true;
-    }
-    
-    // Trigger change picture when clicking on profile picture
-    if (changePicTrigger) {
-        changePicTrigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            showUploadModal();
-        });
-    }
-    
-    if (changePicBtn) {
-        const newChangeBtn = changePicBtn.cloneNode(true);
-        changePicBtn.parentNode.replaceChild(newChangeBtn, changePicBtn);
-        const newChangePicBtn = document.getElementById('changeProfilePicBtn');
-        if (newChangePicBtn) {
-            newChangePicBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showUploadModal();
-            });
-        }
-    }
+function showUploadModal(){
+    var ex=document.getElementById('uploadModal');if(ex)ex.remove();
+    var m=document.createElement('div');m.id='uploadModal';m.className='modal';
+    m.innerHTML='<div class="modal-content"><div class="modal-header"><h3>Change Profile Picture</h3><button class="close-modal">&times;</button></div><div class="modal-body"><div class="upload-area" id="uploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload or drag and drop</p><small>PNG, JPG, GIF, WebP up to 2MB</small></div><div class="image-preview" id="imagePreview" style="display:none;"><img src="" alt="Preview"></div><div class="upload-progress" id="uploadProgress" style="display:none;"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></div><div class="modal-footer"><button class="btn-secondary-modal" id="cancelUpload">Cancel</button><button class="btn-primary-modal" id="saveUpload" disabled>Upload</button></div></div>';
+    document.body.appendChild(m);setTimeout(function(){m.classList.add('show');},10);
+    var ua=document.getElementById('uploadArea'),pr=document.getElementById('imagePreview'),pi=pr.querySelector('img'),sb=document.getElementById('saveUpload'),cb=document.getElementById('cancelUpload'),cl=m.querySelector('.close-modal'),pc=document.getElementById('uploadProgress'),pf=document.getElementById('progressFill'),pt=document.getElementById('progressText');
+    var fi=document.createElement('input');fi.type='file';fi.accept='image/jpeg,image/png,image/gif,image/webp';fi.style.display='none';m.appendChild(fi);
+    ua.addEventListener('click',function(){fi.click();});
+    fi.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(!['image/jpeg','image/png','image/gif','image/webp'].includes(f.type)){showToast('Invalid image type','error');return;}if(f.size>2*1024*1024){showToast('File too large (max 2MB)','error');return;}var r=new FileReader();r.onload=function(e){pi.src=e.target.result;pr.style.display='block';ua.style.display='none';sb.disabled=false;};r.readAsDataURL(f);});
+    ua.addEventListener('dragover',function(e){e.preventDefault();ua.style.borderColor='#3b82f6';});
+    ua.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(!f||!f.type.startsWith('image/'))return;if(f.size>2*1024*1024){showToast('File too large','error');return;}var r=new FileReader();r.onload=function(e){pi.src=e.target.result;pr.style.display='block';ua.style.display='none';sb.disabled=false;var dt=new DataTransfer();dt.items.add(f);fi.files=dt.files;};r.readAsDataURL(f);});
+    sb.addEventListener('click',function(){if(fi.files.length>0)uploadProfilePicture(fi.files[0]);});
+    function uploadProfilePicture(file){var fd=new FormData();fd.append('profile_picture',file);pc.style.display='block';sb.disabled=true;var x=new XMLHttpRequest();x.upload.addEventListener('progress',function(e){if(e.lengthComputable){var pct=Math.round((e.loaded/e.total)*100);pf.style.width=pct+'%';pt.textContent=pct+'%';}});x.addEventListener('load',function(){if(x.status===200){try{var r=JSON.parse(x.responseText);if(r.success){updateAvatars(r.imageUrl);showToast('Profile picture updated!','success');closeUploadModal();}else{showToast(r.message||'Upload failed','error');resetUpload();}}catch(e){showToast('Invalid response','error');resetUpload();}}else{showToast('Upload failed','error');resetUpload();}});x.addEventListener('error',function(){showToast('Network error','error');resetUpload();});x.open('POST',isAdminOrStaff?'/dashboard/upload-profile-picture':'/profile/upload-picture',true);x.send(fd);}
+    function resetUpload(){pc.style.display='none';pf.style.width='0%';pt.textContent='0%';sb.disabled=false;}
+    function updateAvatars(url){var a1=document.querySelector(isAdminOrStaff?'.admin-profile-avatar':'.user-profile-avatar');if(a1)a1.innerHTML='<img src="'+url+'?t='+Date.now()+'" alt="{{ app.user.username }}" style="border-radius:50%;">';var a2=document.querySelector('.profile-picture-large');if(a2)a2.innerHTML='<img src="'+url+'?t='+Date.now()+'" alt="{{ app.user.username }}">';}
+    function closeUploadModal(){m.classList.remove('show');setTimeout(function(){m.remove();},300);}
+    cb.addEventListener('click',closeUploadModal);cl.addEventListener('click',closeUploadModal);m.addEventListener('click',function(e){if(e.target===m)closeUploadModal();});
 }
 
-function showUploadModal() {
-    const existingModal = document.getElementById('uploadModal');
-    if (existingModal) existingModal.remove();
-    
-    const modal = document.createElement('div');
-    modal.id = 'uploadModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Change Profile Picture</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Click to upload or drag and drop</p>
-                    <small>PNG, JPG, GIF, WebP up to 2MB</small>
-                </div>
-                <div class="image-preview" id="imagePreview" style="display: none;">
-                    <img src="" alt="Preview">
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary-modal" id="cancelUpload">Cancel</button>
-                <button class="btn-primary-modal" id="saveUpload" disabled>Upload</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('show'), 10);
-    
-    const uploadArea = document.getElementById('uploadArea');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImg = imagePreview.querySelector('img');
-    const saveBtn = document.getElementById('saveUpload');
-    const cancelBtn = document.getElementById('cancelUpload');
-    const closeBtn = modal.querySelector('.close-modal');
-    const progressContainer = document.getElementById('uploadProgress');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
-    fileInput.style.display = 'none';
-    modal.appendChild(fileInput);
-    
-    uploadArea.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                showToast('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'error');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#007bff';
-        uploadArea.style.backgroundColor = 'rgba(0,123,255,0.05)';
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ced4da';
-        uploadArea.style.backgroundColor = 'transparent';
-        
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size must be less than 2MB', 'error');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadArea.style.display = 'none';
-                saveBtn.disabled = false;
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    saveBtn.addEventListener('click', function() {
-        if (fileInput.files.length > 0) {
-            uploadProfilePicture(fileInput.files[0]);
-        }
-    });
-    
-    function uploadProfilePicture(file) {
-        const formData = new FormData();
-        formData.append('profile_picture', file);
-        
-        progressContainer.style.display = 'block';
-        saveBtn.disabled = true;
-        
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const percentComplete = Math.round((e.loaded / e.total) * 100);
-                progressFill.style.width = percentComplete + '%';
-                progressText.textContent = percentComplete + '%';
-            }
+function checkOrderUpdates(){
+    fetch('{{ path('app_order_check_updates') }}').then(function(r){return r.json();}).then(function(d){
+        if(!d.updates||d.updates.length===0)return;updateTrackerBadge();
+        d.updates.forEach(function(u){
+            var exists=isAdminOrStaff?adminNotifications.find(function(n){return n.orderId===u.orderId&&n.message.includes(u.newStatus);}):userNotifications.find(function(n){return n.orderId===u.orderId&&n.message.includes(u.newStatus);});
+            if(exists)return;
+            var title='',message='',type='info';
+            switch(u.newStatus){case'processing':title='\uD83D\uDCE6 Order Processing';message='Order #'+u.orderId+' is now being processed.';break;case'packaging':title='\uD83D\uDCE6 Packaging Your Order';message='Order #'+u.orderId+' is being packed.';break;case'ready_for_pickup':title='\u2705 Ready for Pickup!';message='Order #'+u.orderId+' is ready for pickup.';type='success';break;case'shipped':title='\uD83D\uDE9A Order Shipped!';message='Order #'+u.orderId+' has been shipped.';type='success';break;case'delivered':title='\uD83C\uDFE0 Order Delivered';message='Order #'+u.orderId+' has been delivered.';type='success';break;case'complete':title='\u2705 Order Complete';message='Order #'+u.orderId+' has been completed.';type='success';break;case'cancelled':title='\u274C Order Cancelled';message='Order #'+u.orderId+' has been cancelled.';type='warning';break;default:return;}
+            var n={id:Date.now(),title:title,message:message,orderId:u.orderId,type:type,timestamp:new Date().toISOString(),read:false};
+            if(isAdminOrStaff){adminNotifications.unshift(n);if(adminNotifications.length>100)adminNotifications=adminNotifications.slice(0,100);saveAdminNotifications();}else{userNotifications.unshift(n);if(userNotifications.length>100)userNotifications=userNotifications.slice(0,100);saveUserNotifications();}
+            showToast(message,type);
         });
-        
-        xhr.addEventListener('load', function() {
-            if (xhr.status === 200) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        updateProfilePicture(response.imageUrl);
-                        showToast('Profile picture updated successfully!', 'success');
-                        modal.classList.remove('show');
-                        setTimeout(() => modal.remove(), 300);
-                    } else {
-                        showToast(response.message || 'Upload failed', 'error');
-                        resetUpload();
-                    }
-                } catch (e) {
-                    showToast('Invalid server response', 'error');
-                    resetUpload();
-                }
-            } else {
-                showToast('Upload failed. Please try again.', 'error');
-                resetUpload();
-            }
-        });
-        
-        xhr.addEventListener('error', function() {
-            showToast('Network error. Please try again.', 'error');
-            resetUpload();
-        });
-        
-        xhr.open('POST', '/dashboard/upload-profile-picture', true);
-        xhr.send(formData);
-    }
-    
-    function resetUpload() {
-        progressContainer.style.display = 'none';
-        progressFill.style.width = '0%';
-        progressText.textContent = '0%';
-        saveBtn.disabled = false;
-    }
-    
-    function updateProfilePicture(imageUrl) {
-        const avatar = document.querySelector('.profile-avatar');
-        const largeAvatar = document.querySelector('.profile-picture-large');
-        
-        const url = imageUrl + '?t=' + new Date().getTime();
-        
-        if (avatar) {
-            avatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
-        }
-        if (largeAvatar) {
-            largeAvatar.innerHTML = `<img src="${url}" alt="{{ app.user.username }}">`;
-        }
-    }
-    
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    cancelBtn.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
+    }).catch(function(e){console.error('Polling error:',e);});
 }
 
-// ============================================
-// CHECK ORDER UPDATES
-// ============================================
-function checkOrderUpdates() {
-    fetch('{{ path('app_order_check_updates') }}')
-        .then(res => res.json())
-        .then(data => {
-            if (data.updates && data.updates.length > 0) {
-                updateTrackerBadge();
-                data.updates.forEach(update => {
-                    let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
-                    if (!exists) {
-                        let title = '', message = '', type = 'info';
-                        switch(update.newStatus) {
-                            case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
-                            case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
-                            case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
-                            case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
-                            case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
-                            case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
-                            case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
-                            case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
-                            case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
-                            default: return;
-                        }
-                        addNotification(title, message, update.orderId, type);
-                    }
-                });
-            }
-        })
-        .catch(e => console.error('Polling error:', e));
-}
-
-// ============================================
-// PASSWORD VALIDATION
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('passwordForm');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    if (!form) return;
-    
-    const passwordFirst = document.getElementById('password_first');
-    const passwordSecond = document.getElementById('password_second');
-    
-    function removeError(field) {
-        if (field) {
-            field.classList.remove('error-field');
-            field.style.border = '';
-            field.style.backgroundColor = '';
-        }
-    }
-    
-    function addError(field) {
-        if (field) {
-            field.classList.add('error-field');
-            field.style.border = '2px solid #dc3545';
-            field.style.backgroundColor = '#fff5f5';
-        }
-    }
-    
-    if (passwordFirst) {
-        passwordFirst.addEventListener('input', function() { removeError(passwordFirst); });
-    }
-    if (passwordSecond) {
-        passwordSecond.addEventListener('input', function() { removeError(passwordSecond); });
-    }
-    
-    form.addEventListener('submit', function(e) {
-        removeError(passwordFirst);
-        removeError(passwordSecond);
-        
-        const password = passwordFirst ? passwordFirst.value : '';
-        const confirm = passwordSecond ? passwordSecond.value : '';
-        
-        let errorMessage = '';
-        let errorField = null;
-        
-        if (password || confirm) {
-            if (password.length < 6 && password.length > 0) {
-                errorMessage = '❌ Password must be at least 6 characters long!';
-                errorField = passwordFirst;
-            } else if (password !== confirm) {
-                errorMessage = '❌ Passwords do not match! Please make sure both passwords are the same.';
-                errorField = passwordSecond;
-            }
-        }
-        
-        if (errorMessage) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            if (errorField) {
-                addError(errorField);
-                errorField.focus();
-                errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            showToast(errorMessage, 'error');
-            return false;
-        }
-        
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Password...';
-        }
-        
+document.addEventListener('DOMContentLoaded',function(){
+    var form=document.getElementById('passwordForm'),submitBtn=document.getElementById('submitBtn');
+    if(!form)return;
+    var pf=document.getElementById('password_first'),ps=document.getElementById('password_second');
+    function removeError(f){if(f){f.classList.remove('error-field');f.style.border='';f.style.backgroundColor='';}}
+    function addError(f){if(f){f.classList.add('error-field');f.style.border='2px solid #ef4444';f.style.backgroundColor='#fef2f2';}}
+    if(pf)pf.addEventListener('input',function(){removeError(pf);});
+    if(ps)ps.addEventListener('input',function(){removeError(ps);});
+    form.addEventListener('submit',function(e){
+        removeError(pf);removeError(ps);
+        var p=pf?pf.value:'',c=ps?ps.value:'',err='',ef=null;
+        if(p||c){if(p.length<6&&p.length>0){err='\u274C Password must be at least 6 characters long!';ef=pf;}else if(p!==c){err='\u274C Passwords do not match!';ef=ps;}}
+        if(err){e.preventDefault();e.stopPropagation();if(ef){addError(ef);ef.focus();ef.scrollIntoView({behavior:'smooth',block:'center'});}showToast(err,'error');return false;}
+        if(submitBtn){submitBtn.disabled=true;submitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Updating Password...';}
         return true;
     });
 });
 
-// ============================================
-// FLASH MESSAGES - FIXED DUPLICATION ISSUE
-// ============================================
-function displayFlashMessages() {
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            let msg = '{{ message|escape('js') }}';
-            // Only show if not already shown
-            if (!shownFlashes.includes(msg)) {
-                shownFlashes.push(msg);
-                showToast(msg, '{{ label }}');
-            }
-        {% endfor %}
-    {% endfor %}
+function initFlashMessages(){ {% for label, messages in app.flashes %}{% for message in messages %}(function(){var m='{{ message|escape('js') }}';if(shownFlashes.indexOf(m)===-1){shownFlashes.push(m);showToast(m,'{{ label }}');}})();{% endfor %}{% endfor %} }
+
+function initAll(){
+    if(isAdminOrStaff){initMobileSidebar();loadAdminNotifications();}else{loadUserNotifications();}
+    initializeDropdowns();initFlashMessages();
+    checkOrderUpdates();setInterval(checkOrderUpdates,30000);
+    updateCartBadge();setInterval(updateCartBadge,5000);updateTrackerBadge();
 }
 
-// ============================================
-// INIT ALL
-// ============================================
-function initAll() {
-    initMobileSidebar();
-    initializeDropdown();
-    loadNotifications();
-    displayFlashMessages();
-    
-    checkOrderUpdates();
-    setInterval(checkOrderUpdates, 30000);
-    updateCartBadge();
-    setInterval(updateCartBadge, 5000);
-    updateTrackerBadge();
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initAll, 100);
-});
-
-// Handle Turbo navigation
-document.addEventListener('turbo:load', function() {
-    sidebarInitialized = false;
-    dropdownInitialized = false;
-    setTimeout(initAll, 100);
-});
+document.addEventListener('DOMContentLoaded',function(){setTimeout(initAll,100);});
+document.addEventListener('turbo:load',function(){sidebarInitialized=false;dropdownInit=false;setTimeout(initAll,100);});
 </script>
 {% endblock %}

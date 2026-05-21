@@ -5,1758 +5,1317 @@
 {% block stylesheets %}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* ========== CSS VARIABLES ========== */
+    :root {
+        --slide-seconds: 5s;
+        --slide-count: 5;
+        --total-duration: calc(var(--slide-seconds) * var(--slide-count));
+        --primary: #1B2A4A;
+        --primary-dark: #0F1D35;
+        --primary-light: #243660;
+        --accent: #e67e22;
+        --accent-dark: #d35400;
+        --gray-50: #f8f9fa;
+        --gray-100: #e9ecef;
+        --gray-200: #dee2e6;
+        --gray-500: #6c757d;
+        --gray-700: #343a40;
+        --gray-900: #212529;
+        --white: #ffffff;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+        --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --transition: all 0.3s ease;
+        --navbar-height: 80px;
+    }
+
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--gray-900);
+        background: var(--white);
+        overflow-x: hidden;
+    }
+
+    h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; margin-bottom: 1rem; }
+    h3 { font-size: 1.25rem; font-weight: 600; }
+    
+    .section-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 3rem;
+    }
+    
+    .section-header p {
+        color: var(--gray-500);
+        font-size: 1.1rem;
+    }
+
+    /* ========== NAVIGATION ========== */
+    .navbar {
+        display: flex;
+        align-items: center;
+        padding: 0 5%;
+        background: var(--white);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        height: var(--navbar-height);
+    }
+
+    .navbar.scrolled {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .navbar__logo {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .navbar__logo-img {
+        height: 45px;
+        width: auto;
+        transition: var(--transition);
+        filter: brightness(0) saturate(100%) invert(11%) sepia(53%) saturate(746%) hue-rotate(197deg) brightness(37%) contrast(97%);
+    }
+
+    .navbar__logo-img:hover {
+        transform: scale(1.05);
+    }
+
+    .navbar__nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+    }
+
+    .navbar__menu {
+        display: flex;
+        gap: 2.5rem;
+        list-style: none;
+        align-items: center;
+    }
+
+    .navbar__menu-link {
+        text-decoration: none;
+        color: var(--gray-700);
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        position: relative;
+        padding: 0.5rem 0;
+        letter-spacing: 0.3px;
+    }
+
+    .navbar__menu-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background: var(--accent);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .navbar__menu-link:hover,
+    .navbar__menu-link--active {
+        color: var(--primary);
+    }
+
+    .navbar__menu-link:hover::after,
+    .navbar__menu-link--active::after {
+        width: 100%;
+    }
+
+    .navbar__actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .navbar__mobile-auth {
+        display: none;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-block;
+        border: 2px solid transparent;
+    }
+
+    .btn--outline {
+        border-color: var(--primary);
+        background: transparent;
+        color: var(--primary);
+    }
+
+    .btn--outline:hover {
+        background: var(--primary);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(27, 42, 74, 0.3);
+    }
+
+    .btn--primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--white);
+    }
+
+    .btn--primary:hover {
+        background: var(--accent-dark);
+        border-color: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+    }
+
+    .btn--large {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+
+    .btn--block {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    /* ========== HAMBURGER ========== */
+    .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 1001;
+        width: 40px;
+        height: 40px;
+    }
+
+    .hamburger__line {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--primary);
+        margin: 5px auto;
+        transition: var(--transition);
+        border-radius: 2px;
+    }
+
+    .hamburger--active .hamburger__line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger--active .hamburger__line:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger--active .hamburger__line:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* ========== MOBILE OVERLAY ========== */
+    .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .overlay--active {
+        opacity: 1;
+    }
+
+    /* ========== HERO ABOUT SECTION ========== */
+    .hero-about {
+        min-height: 60vh;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 5%;
+    }
+
+    .hero-about::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&auto=format') center/cover;
+        opacity: 0.1;
+        animation: slowZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes slowZoom {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.05); }
+    }
+
+    .hero-about__content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        color: var(--white);
+    }
+
+    .hero-about__badge {
+        display: inline-block;
+        background: var(--accent);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 40px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-about__content h1 {
+        margin-bottom: 1rem;
+    }
+
+    .hero-about__content h1 span {
+        color: var(--accent);
+    }
+
+    .hero-about__content p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+
+    .hero-about__stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-item__number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        display: block;
+    }
+
+    .stat-item__label {
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    /* ========== STORY SECTION ========== */
+    .story {
+        padding: 5rem 5%;
+        background: var(--white);
+    }
+
+    .story__container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .story__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+    }
+
+    .story__content {
+        position: relative;
+    }
+
+    .story__badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .story__content h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        line-height: 1.2;
+    }
+
+    .story__content h2 span {
+        color: var(--accent);
+        position: relative;
+    }
+
+    .story__content h2 span::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: rgba(230, 126, 34, 0.2);
+        z-index: -1;
+    }
+
+    .story__content p {
+        color: var(--gray-700);
+        line-height: 1.7;
+        margin-bottom: 1.2rem;
+        font-size: 1rem;
+    }
+
+    .story__highlight {
+        background: linear-gradient(135deg, var(--gray-50), var(--white));
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        margin: 1.5rem 0;
+        border-left: 4px solid var(--accent);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .story__highlight i {
+        color: var(--accent);
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+    }
+
+    .story__highlight p {
+        margin-bottom: 0;
+        font-style: italic;
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+
+    .story__stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .story-stat__number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        display: block;
+    }
+
+    .story-stat__label {
+        font-size: 0.8rem;
+        color: var(--gray-500);
+    }
+
+    .story__image {
+        position: relative;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .story__image img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+        display: block;
+    }
+
+    .story__image:hover img {
+        transform: scale(1.05);
+    }
+
+    /* ========== VALUES SECTION ========== */
+    .values {
+        padding: 5rem 5%;
+        background: var(--gray-50);
+    }
+
+    .values__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .value-card {
+        text-align: center;
+        padding: 2rem;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .value-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .value-card__icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: var(--white);
+        transition: var(--transition);
+    }
+
+    .value-card:hover .value-card__icon {
+        transform: rotateY(180deg);
+    }
+
+    /* ========== TEAM SECTION ========== */
+    .team {
+        padding: 5rem 5%;
+        background: var(--white);
+    }
+
+    .team__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .team-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        text-align: center;
+        border: 1px solid var(--gray-100);
+    }
+
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--accent);
+    }
+
+    .team-card__image {
+        position: relative;
+        overflow: hidden;
+        padding-top: 100%;
+        background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+    }
+
+    .team-card__image img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .team-card:hover .team-card__image img {
+        transform: scale(1.08);
+    }
+
+    .team-card__social {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .team-card:hover .team-card__social {
+        transform: translateY(0);
+    }
+
+    .team-card__social a {
+        width: 36px;
+        height: 36px;
+        background: var(--white);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .team-card__social a:hover {
+        background: var(--accent);
+        color: var(--white);
+        transform: translateY(-3px);
+    }
+
+    .team-card__body {
+        padding: 1.5rem;
+    }
+
+    .team-card__name {
+        margin-bottom: 0.25rem;
+        color: var(--gray-900);
+        font-size: 1.3rem;
+    }
+
+    .team-card__role {
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--gray-50);
+        border-radius: 50px;
+    }
+
+    .team-card__bio {
+        color: var(--gray-500);
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin: 0.75rem 0;
+    }
+
+    /* ========== CTA BANNER ========== */
+    .cta-banner {
+        margin: 3rem 5%;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .cta-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(230,126,34,0.15) 0%, transparent 70%);
+        animation: rotateBg 20s linear infinite;
+    }
+
+    @keyframes rotateBg {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .cta-banner__container {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 3rem 4rem;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .cta-banner__content {
+        flex: 1;
+        color: var(--white);
+    }
+
+    .cta-banner__content h2 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--white);
+    }
+
+    .cta-banner__content p {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .cta-banner__features {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .cta-banner__feature {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255,255,255,0.8);
+        font-size: 0.85rem;
+    }
+
+    .cta-banner__feature i {
+        color: var(--accent);
+    }
+
+    .cta-banner__actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn--cta-primary {
+        padding: 1rem 2rem;
+        background: var(--accent);
+        color: var(--white);
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn--cta-primary:hover {
+        background: var(--accent-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(230,126,34,0.3);
+    }
+
+    .btn--cta-secondary {
+        padding: 1rem 2rem;
+        background: transparent;
+        color: var(--white);
+        border: 2px solid var(--white);
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn--cta-secondary:hover {
+        background: var(--white);
+        color: var(--primary);
+        transform: translateY(-3px);
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+        background: var(--primary-dark);
+        color: var(--gray-200);
+        padding: 3rem 5% 2rem;
+    }
+
+    .footer__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .footer a {
+        color: var(--gray-400);
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-block;
+        margin: 0.3rem 0;
+    }
+
+    .footer a:hover {
+        color: var(--accent);
+        transform: translateX(3px);
+    }
+
+    .footer__social {
+        margin-top: 1rem;
+    }
+
+    .footer__social a {
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .footer__bottom {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.8rem;
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section { animation: fadeInUp 0.6s ease-out; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+        .navbar__menu { gap: 1.5rem; }
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0 1.5rem;
+            height: 70px;
+            justify-content: space-between;
+        }
+
+        .navbar__logo-img { height: 35px; }
+
+        .navbar__actions { display: none; }
+
+        .hamburger {
+            display: block;
+            order: 3;
+        }
+
+        .navbar__nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: var(--white);
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 100px 2rem 2rem;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .navbar__nav--open { right: 0; }
+
+        .navbar__menu {
+            flex-direction: column;
+            gap: 0;
+            width: 100%;
+        }
+
+        .navbar__menu li {
+            width: 100%;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .navbar__menu li:last-child { border-bottom: none; }
+
+        .navbar__menu-link {
+            display: block;
+            padding: 1rem 0;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .navbar__menu-link::after { display: none; }
+
+        .navbar__menu-link:hover {
+            color: var(--accent);
+            padding-left: 0.5rem;
+        }
+
+        .navbar__mobile-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            width: 100%;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .overlay { display: block; }
+
+        .hero-about {
+            min-height: auto;
+            padding: 3rem 1rem;
+        }
+
+        .hero-about__content h1 { font-size: 2rem; }
+        .hero-about__content p { font-size: 1rem; }
+
+        .hero-about__stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .story__grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .story__content h2 { font-size: 2rem; }
+        .story__stats { justify-content: center; }
+
+        .values__grid { grid-template-columns: 1fr; }
+
+        .team__grid { grid-template-columns: 1fr; }
+        .team-card { max-width: 350px; margin: 0 auto; }
+
+        .cta-banner__container {
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .cta-banner__content h2 { font-size: 1.8rem; }
+        .cta-banner__actions { justify-content: center; width: 100%; }
+        .btn--cta-primary,
+        .btn--cta-secondary { width: 100%; text-align: center; padding: 0.8rem 1.5rem; }
+        .cta-banner__features { justify-content: center; }
+
+        .footer__grid { grid-template-columns: 1fr; text-align: center; gap: 1.5rem; }
+        .footer a { margin: 0.2rem 0.5rem; }
+        .footer__social a { margin: 0 0.5rem; }
+    }
+
+    @media (max-width: 480px) {
+        .navbar { padding: 0 1rem; height: 60px; }
+        .navbar__logo-img { height: 30px; }
+        .navbar__nav { width: 100%; padding: 90px 1.5rem 2rem; }
+
+        .hero-about__badge { padding: 0.4rem 1rem; font-size: 0.75rem; }
+        .hero-about__content h1 { font-size: 1.8rem; }
+        .stat-item__number { font-size: 1.8rem; }
+
+        .story__content h2 { font-size: 1.8rem; }
+        .story__highlight { padding: 1rem; }
+        .story__highlight i { font-size: 1.2rem; }
+        .story__stats { flex-wrap: wrap; gap: 1rem; }
+        .story-stat__number { font-size: 1.5rem; }
+
+        .value-card__icon { width: 65px; height: 65px; font-size: 1.5rem; }
+
+        .team-card { max-width: 300px; }
+        .team-card__name { font-size: 1.1rem; }
+        .team-card__role { font-size: 0.75rem; }
+        .team-card__bio { font-size: 0.8rem; }
+
+        .cta-banner__content h2 { font-size: 1.5rem; }
+        .cta-banner__features { gap: 1rem; }
+        .cta-banner__feature { font-size: 0.75rem; }
+        .btn--cta-primary,
+        .btn--cta-secondary { padding: 0.7rem 1.2rem; font-size: 0.9rem; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .story__grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .story__stats { justify-content: center; }
+        
+        .cta-banner__container {
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .cta-banner__actions { justify-content: center; }
+        .cta-banner__features { justify-content: center; }
+        
+        .team__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
 {% endblock %}
 
 {% block body %}
-<style>
-:root {
-  --primary-color: #34495e;
-  --primary-dark: #2c3e50;
-  --primary-light: #3b5a7a;
-  --accent-color: #e67e22;
-  --accent-dark: #d35400;
-  --black: #000000;
-  --black-light: #1a1a1a;
-  --white: #ffffff;
-  --gray-light: #f8f9fa;
-  --gray: #e9ecef;
-  --gray-dark: #6c757d;
-  --text-dark: #212529;
-  --text-light: #6c757d;
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-  --shadow-hover: 0 20px 25px rgba(0,0,0,0.15);
-  --shadow-xl: 0 25px 35px rgba(0,0,0,0.2);
-  --border-radius: 12px;
-  --border-radius-lg: 20px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--text-dark);
-  background: var(--white);
-  overflow-x: hidden;
-  line-height: 1.5;
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-h1 { font-size: 3.5rem; margin-bottom: 1rem; }
-h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
-h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-
-@media (max-width: 768px) {
-  h1 { font-size: 2.5rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.25rem; }
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 5%;
-  background: var(--white);
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  flex-wrap: wrap;
-  gap: 1rem;
-  border-bottom: 1px solid var(--gray);
-}
-
-.logo {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.logo-img {
-  width: 180px;
-  height: auto;
-  transition: var(--transition);
-}
-
-.logo-img:hover {
-  transform: scale(1.02);
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--primary-color);
-  padding: 0.5rem;
-  transition: var(--transition);
-}
-
-.menu {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-}
-
-.menu a {
-  text-decoration: none;
-  color: var(--text-dark);
-  font-weight: 500;
-  font-size: 1rem;
-  transition: var(--transition);
-  position: relative;
-  padding: 0.5rem 0;
-}
-
-.menu a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--primary-color);
-  transition: width 0.3s ease;
-}
-
-.menu a:hover::after,
-.menu a.active::after {
-  width: 100%;
-}
-
-.menu a:hover {
-  color: var(--primary-color);
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.btn-outline {
-  padding: 0.5rem 1.5rem;
-  border: 2px solid var(--primary-color);
-  background: transparent;
-  color: var(--primary-color);
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 0.9rem;
-}
-
-.btn-outline:hover {
-  background: var(--primary-color);
-  color: var(--white);
-  transform: translateY(-2px);
-}
-
-.btn-primary {
-  padding: 0.5rem 1.5rem;
-  background: var(--primary-color);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 0.9rem;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Hero Section */
-.hero-about {
-  position: relative;
-  min-height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-
-.hero-about::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(230,126,34,0.1) 0%, transparent 70%);
-  animation: rotateBg 30s linear infinite;
-}
-
-@keyframes rotateBg {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.floating-shapes {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.shape {
-  position: absolute;
-  background: rgba(255,255,255,0.05);
-  border-radius: 50%;
-  animation: float 20s infinite ease-in-out;
-}
-
-.shape-1 { width: 300px; height: 300px; top: -100px; right: -100px; animation-delay: 0s; }
-.shape-2 { width: 200px; height: 200px; bottom: -50px; left: -50px; animation-delay: -5s; }
-.shape-3 { width: 150px; height: 150px; top: 50%; left: 20%; animation-delay: -10s; }
-.shape-4 { width: 100px; height: 100px; bottom: 20%; right: 15%; animation-delay: -3s; }
-.shape-5 { width: 250px; height: 250px; top: 20%; right: 30%; animation-delay: -7s; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-30px) rotate(180deg); }
-}
-
-.hero-content {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  max-width: 800px;
-  padding: 4rem 2rem;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.hero-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 50px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 15px rgba(230,126,34,0.3);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(230,126,34,0.3); }
-  50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(230,126,34,0.5); }
-}
-
-.hero-content h1 {
-  font-size: 4.5rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-}
-
-.hero-content h1 span {
-  background: linear-gradient(135deg, var(--accent-color), #ff6b35);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.hero-content p {
-  font-size: 1.25rem;
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 2rem;
-  animation: fadeInUp 0.8s ease-out 0.4s both;
-}
-
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 2rem;
-  animation: fadeInUp 0.8s ease-out 0.6s both;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--accent-color);
-  display: block;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.7);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.hero-wave {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
-  z-index: 5;
-}
-
-.hero-wave svg {
-  position: relative;
-  display: block;
-  width: calc(100% + 1.3px);
-  height: 80px;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* About Content */
-.about-content {
-  padding: 5rem 5%;
-  background: var(--white);
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-  margin-bottom: 4rem;
-}
-
-.about-text h2 {
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-  position: relative;
-  display: inline-block;
-}
-
-.about-text h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background: var(--accent-color);
-}
-
-.about-text p {
-  color: var(--text-light);
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.about-text .highlight {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-dark);
-  margin: 1.5rem 0;
-  padding: 1rem 1.5rem;
-  background: var(--gray-light);
-  border-radius: var(--border-radius);
-  border-left: 4px solid var(--accent-color);
-}
-
-.about-image img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  transition: var(--transition-slow);
-}
-
-.about-image img:hover {
-  transform: scale(1.02);
-  box-shadow: var(--shadow-xl);
-}
-
-/* Values Section */
-.values {
-  padding: 4rem 0;
-  background: var(--gray-light);
-  border-radius: var(--border-radius-lg);
-  margin: 3rem 0;
-}
-
-.values-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.value-card {
-  text-align: center;
-  padding: 2rem;
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  transition: var(--transition-slow);
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-}
-
-.value-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-}
-
-.value-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  font-size: 2rem;
-  color: var(--white);
-  transition: var(--transition);
-}
-
-.value-card:hover .value-icon {
-  transform: rotateY(180deg);
-}
-
-.value-card h3 {
-  margin-bottom: 1rem;
-  color: var(--text-dark);
-}
-
-.value-card p {
-  color: var(--text-light);
-  line-height: 1.5;
-}
-
-/* Team Section */
-.team {
-  padding: 5rem 0;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.section-header h2 {
-  margin-bottom: 1rem;
-  position: relative;
-  display: inline-block;
-}
-
-.section-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background: var(--accent-color);
-  border-radius: 2px;
-}
-
-.section-header p {
-  color: var(--text-light);
-  font-size: 1.125rem;
-  max-width: 600px;
-  margin: 1rem auto 0;
-}
-
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.team-card {
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition-slow);
-  text-align: center;
-  border: 1px solid var(--gray);
-  position: relative;
-}
-
-.team-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-color);
-}
-
-.team-image {
-  position: relative;
-  overflow: hidden;
-  padding-top: 100%;
-  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-}
-
-.team-image img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.team-card:hover .team-image img {
-  transform: scale(1.08);
-}
-
-.team-social-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-
-.team-card:hover .team-social-overlay {
-  transform: translateY(0);
-}
-
-.team-social-overlay a {
-  width: 36px;
-  height: 36px;
-  background: var(--white);
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.team-social-overlay a:hover {
-  background: var(--accent-color);
-  color: var(--white);
-  transform: translateY(-3px);
-}
-
-.team-info {
-  padding: 1.5rem;
-}
-
-.team-info h3 {
-  margin-bottom: 0.25rem;
-  color: var(--text-dark);
-  font-size: 1.3rem;
-}
-
-.team-position {
-  color: var(--accent-color);
-  font-weight: 600;
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: var(--gray-light);
-  border-radius: 50px;
-}
-
-.team-bio {
-  color: var(--text-light);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 0.75rem 0;
-}
-
-/* Milestones Section */
-.milestones {
-  padding: 4rem 0;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  border-radius: var(--border-radius-lg);
-  margin: 3rem 0;
-  color: var(--white);
-}
-
-.milestones .section-header h2 {
-  color: var(--white);
-}
-
-.milestones .section-header p {
-  color: rgba(255,255,255,0.9);
-}
-
-.milestones .section-header h2::after {
-  background: var(--accent-color);
-}
-
-.milestones-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.milestone-card {
-  text-align: center;
-  padding: 1.5rem;
-  background: rgba(255,255,255,0.1);
-  border-radius: var(--border-radius-lg);
-  backdrop-filter: blur(10px);
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.milestone-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255,255,255,0.2);
-}
-
-.milestone-year {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--accent-color);
-  margin-bottom: 0.5rem;
-}
-
-.milestone-title {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.milestone-desc {
-  font-size: 0.875rem;
-  opacity: 0.9;
-}
-
-/* ========== REDESIGNED BOTTOM SECTION ========== */
-
-/* Trust Indicators Section */
-.trust-indicators {
-  padding: 4rem 0;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: var(--border-radius-lg);
-  margin: 3rem 0;
-}
-
-.trust-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.trust-card {
-  text-align: center;
-  padding: 1.5rem;
-  transition: var(--transition);
-}
-
-.trust-card:hover {
-  transform: translateY(-5px);
-}
-
-.trust-icon {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-  font-size: 1.75rem;
-  color: white;
-  transition: var(--transition);
-}
-
-.trust-card:hover .trust-icon {
-  transform: scale(1.1) rotate(360deg);
-}
-
-.trust-card h4 {
-  margin-bottom: 0.5rem;
-  color: var(--text-dark);
-}
-
-.trust-card p {
-  color: var(--text-light);
-  font-size: 0.875rem;
-}
-
-/* Brand Partners Section */
-.brand-partners {
-  padding: 4rem 0;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.partners-grid {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 3rem;
-  margin-top: 2rem;
-}
-
-.partner-logo {
-  opacity: 0.6;
-  transition: var(--transition);
-  cursor: pointer;
-  filter: grayscale(100%);
-}
-
-.partner-logo:hover {
-  opacity: 1;
-  transform: scale(1.1);
-  filter: grayscale(0%);
-}
-
-.partner-logo i {
-  font-size: 3rem;
-  color: var(--primary-color);
-}
-
-/* Newsletter Section - Enhanced */
-.newsletter-enhanced {
-  padding: 4rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: var(--border-radius-lg);
-  margin: 3rem 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.newsletter-enhanced::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
-}
-
-.newsletter-enhanced::after {
-  content: '✉️';
-  position: absolute;
-  bottom: 20px;
-  right: 30px;
-  font-size: 8rem;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.newsletter-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.newsletter-content h3 {
-  color: white;
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.newsletter-content p {
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 2rem;
-}
-
-.newsletter-form {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.newsletter-form input {
-  flex: 1;
-  min-width: 250px;
-  padding: 1rem 1.5rem;
-  border: none;
-  border-radius: 50px;
-  font-size: 1rem;
-  outline: none;
-  transition: var(--transition);
-}
-
-.newsletter-form input:focus {
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
-}
-
-.newsletter-form button {
-  padding: 1rem 2rem;
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.newsletter-form button:hover {
-  background: var(--accent-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* Instagram Feed Section */
-.instagram-feed {
-  padding: 4rem 0;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.insta-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.insta-item {
-  position: relative;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  cursor: pointer;
-  aspect-ratio: 1;
-}
-
-.insta-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.insta-item:hover img {
-  transform: scale(1.1);
-}
-
-.insta-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.insta-item:hover .insta-overlay {
-  opacity: 1;
-}
-
-.insta-overlay i {
-  font-size: 2rem;
-  color: white;
-}
-
-/* CTA Banner */
-.cta-banner {
-  padding: 4rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  border-radius: var(--border-radius-lg);
-  margin: 3rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.cta-banner::before {
-  content: '🛍️';
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 5rem;
-  opacity: 0.1;
-}
-
-.cta-banner::after {
-  content: '🎉';
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 5rem;
-  opacity: 0.1;
-}
-
-.cta-banner h2 {
-  color: white;
-  margin-bottom: 1rem;
-}
-
-.cta-banner p {
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 2rem;
-}
-
-.cta-banner .btn-primary {
-  background: var(--accent-color);
-  color: white;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-}
-
-.cta-banner .btn-primary:hover {
-  background: var(--accent-dark);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* Footer - Enhanced */
-.footer {
-  background: var(--black);
-  color: var(--gray);
-  padding: 4rem 5% 2rem;
-  margin-top: 4rem;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.footer-section h4 {
-  color: var(--white);
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-  position: relative;
-  display: inline-block;
-}
-
-.footer-section h4::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: var(--accent-color);
-}
-
-.footer-section p {
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section ul li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-section ul li a {
-  color: var(--gray);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer-section ul li a:hover {
-  color: var(--white);
-  padding-left: 5px;
-}
-
-.social-links {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.social-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-  color: var(--white);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.social-links a:hover {
-  background: var(--accent-color);
-  transform: translateY(-3px) rotate(360deg);
-}
-
-.payment-methods {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
-.payment-methods i {
-  font-size: 2rem;
-  color: rgba(255,255,255,0.6);
-  transition: var(--transition);
-}
-
-.payment-methods i:hover {
-  color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-.footer-bottom {
-  text-align: center;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.875rem;
-}
-
-.back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-  background: var(--accent-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  transition: var(--transition);
-  z-index: 100;
-  box-shadow: var(--shadow-lg);
-}
-
-.back-to-top.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.back-to-top:hover {
-  background: var(--accent-dark);
-  transform: translateY(-5px);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-  }
-  
-  .about-text h2::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .logo-img {
-    width: 150px;
-  }
-  
-  .hero-content h1 {
-    font-size: 3rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
-  
-  .menu {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-top: 1px solid var(--gray);
-  }
-  
-  .menu.active {
-    display: flex;
-  }
-  
-  .menu a {
-    padding: 0.5rem;
-    text-align: center;
-  }
-  
-  .nav-buttons {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .hero-content h1 {
-    font-size: 2rem;
-  }
-  
-  .hero-stats {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .hero-wave svg {
-    height: 40px;
-  }
-  
-  .values-grid,
-  .team-grid,
-  .milestones-grid,
-  .trust-grid,
-  .insta-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .team-card {
-    max-width: 320px;
-    margin: 0 auto;
-  }
-  
-  .footer-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
-  .social-links {
-    justify-content: center;
-  }
-  
-  .footer-section h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .logo-img {
-    width: 130px;
-  }
-  
-  .newsletter-form {
-    flex-direction: column;
-  }
-  
-  .newsletter-form input,
-  .newsletter-form button {
-    width: 100%;
-  }
-  
-  .newsletter-enhanced {
-    padding: 2rem;
-  }
-  
-  .cta-banner {
-    padding: 2rem;
-  }
-  
-  .partners-grid {
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-content h1 {
-    font-size: 1.75rem;
-  }
-  
-  .hero-content p {
-    font-size: 1rem;
-  }
-  
-  .trust-grid,
-  .insta-grid {
-    gap: 1rem;
-  }
-  
-  .cta-banner h2 {
-    font-size: 1.5rem;
-  }
-}
-</style>
-
-<!-- Navbar -->
-<header class="navbar">
-  <div class="logo">
-    <img src="images/cart1.png" alt="Cartlify Logo" class="logo-img">
-  </div>
-
-  <button class="menu-toggle" aria-label="Toggle menu">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <nav class="menu">
-    <a href="{{ path('app_landing') }}">Home</a>
-    <a href="{{ path('app_about') }}" class="active">About</a>
-    <a href="{{ path('app_landing') }}#products">Products</a>
-    <a href="{{ path('app_contact') }}">Contact</a>
-  </nav>
-  
-  <div class="nav-buttons">
-    <button class="btn-outline" onclick="window.location.href='{{ path('app_register') }}'">Register</button>
-    <button class="btn-primary" onclick="window.location.href='{{ path('app_login') }}'">Login</button>
-  </div>
+<!-- ========== HEADER ========== -->
+<header class="navbar" id="navbar">
+    <a href="{{ path('app_landing') }}" class="navbar__logo">
+        <img src="{{ asset('images/cart8-01.png') }}" alt="Cartlify" class="navbar__logo-img">
+    </a>
+
+    <nav class="navbar__nav" id="mainNav">
+        <ul class="navbar__menu">
+            <li><a href="{{ path('app_landing') }}" class="navbar__menu-link">Home</a></li>
+            <li><a href="{{ path('app_about') }}" class="navbar__menu-link navbar__menu-link--active">About</a></li>
+            <li><a href="{{ path('app_contact') }}" class="navbar__menu-link">Contact</a></li>
+        </ul>
+
+        <div class="navbar__mobile-auth">
+            <a href="{{ path('app_register') }}" class="btn btn--outline btn--block">Register</a>
+            <a href="{{ path('app_login') }}" class="btn btn--primary btn--block">Login</a>
+        </div>
+    </nav>
+
+    <div class="navbar__actions">
+        <a href="{{ path('app_register') }}" class="btn btn--outline">Register</a>
+        <a href="{{ path('app_login') }}" class="btn btn--primary">Login</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+    </button>
 </header>
 
-<!-- Hero Section -->
-<section class="hero-about">
-  <div class="floating-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-    <div class="shape shape-4"></div>
-    <div class="shape shape-5"></div>
-  </div>
-  
-  <div class="hero-content">
-    <div class="hero-badge">
-      <i class="fas fa-store"></i> Est. 2020
+<div class="overlay" id="overlay"></div>
+
+<!-- ========== HERO ABOUT ========== -->
+<section class="hero-about section">
+    <div class="hero-about__content">
+        <div class="hero-about__badge">
+            <i class="fas fa-store"></i> Est. 2020
+        </div>
+        <h1>We're <span>Cartlify</span></h1>
+        <p>More than just an e-commerce platform — we're your trusted shopping partner dedicated to bringing you quality products with exceptional service.</p>
+        
+        <div class="hero-about__stats">
+            <div class="stat-item">
+                <span class="stat-item__number">10K+</span>
+                <span class="stat-item__label">Happy Customers</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-item__number">500+</span>
+                <span class="stat-item__label">Products</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-item__number">24/7</span>
+                <span class="stat-item__label">Support</span>
+            </div>
+        </div>
     </div>
-    <h1>We're <span>Cartlify</span></h1>
-    <p>More than just an e-commerce platform — we're your trusted shopping partner dedicated to bringing you quality products with exceptional service.</p>
-    
-    <div class="hero-stats">
-      <div class="stat-item">
-        <span class="stat-number">10K+</span>
-        <span class="stat-label">Happy Customers</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">500+</span>
-        <span class="stat-label">Products</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">24/7</span>
-        <span class="stat-label">Support</span>
-      </div>
-    </div>
-  </div>
-  
-  <div class="hero-wave">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-    </svg>
-  </div>
 </section>
 
-<!-- About Content -->
-<section class="about-content">
-  <div class="container">
-    <div class="about-grid">
-      <div class="about-text">
-        <h2>Our Story</h2>
-        <p>Cartlify was born from a simple idea: to create a shopping platform that puts customers first. Founded in 2020 by a group of passionate entrepreneurs, we set out to revolutionize the e-commerce experience by combining quality products with exceptional service.</p>
-        <p>What started as a small online store has grown into a trusted marketplace serving thousands of customers worldwide. We believe that everyone deserves access to high-quality products at fair prices, delivered with care and speed.</p>
-        <div class="highlight">
-          <i class="fas fa-quote-left" style="margin-right: 0.5rem; color: var(--accent-color);"></i>
-          Our mission is to make online shopping seamless, secure, and enjoyable for everyone, everywhere.
+<!-- ========== STORY SECTION ========== -->
+<section class="story section">
+    <div class="story__container">
+        <div class="story__grid">
+            <div class="story__content">
+                <div class="story__badge">
+                    <i class="fas fa-book-open"></i> Our Journey
+                </div>
+                <h2>From Dream to <span>Reality</span></h2>
+                <p>Cartlify was born from a simple yet powerful idea: to create a shopping platform that puts customers first. Founded in 2020 by a group of passionate entrepreneurs, we set out to revolutionize the e-commerce experience.</p>
+                <p>What started as a small online store has grown into a trusted marketplace serving thousands of customers worldwide. We believe that everyone deserves access to high-quality products at fair prices, delivered with care and speed.</p>
+                
+                <div class="story__highlight">
+                    <i class="fas fa-quote-left"></i>
+                    <p>Our mission is to make online shopping seamless, secure, and enjoyable for everyone, everywhere.</p>
+                </div>
+                
+                <div class="story__stats">
+                    <div class="story-stat">
+                        <span class="story-stat__number">100%</span>
+                        <span class="story-stat__label">Customer Satisfaction</span>
+                    </div>
+                    <div class="story-stat">
+                        <span class="story-stat__number">24/7</span>
+                        <span class="story-stat__label">Support Available</span>
+                    </div>
+                    <div class="story-stat">
+                        <span class="story-stat__number">30 Days</span>
+                        <span class="story-stat__label">Return Policy</span>
+                    </div>
+                </div>
+            </div>
+            <div class="story__image">
+                <img src="https://images.unsplash.com/photo-1556742031-c6961e8560b0?w=600&auto=format" alt="Our Story" loading="lazy">
+            </div>
         </div>
-        <p>Today, Cartlify partners with hundreds of trusted vendors, offering a curated selection across multiple categories. We're proud to be recognized for our commitment to customer satisfaction, sustainable practices, and innovative approach to e-commerce.</p>
-      </div>
-      <div class="about-image">
-        <img src="https://images.unsplash.com/photo-1556742031-c6961e8560b0?w=600&auto=format&fit=crop" alt="Our Story" loading="lazy">
-      </div>
     </div>
+</section>
 
-    <!-- Values Section -->
-    <div class="values">
-      <div class="section-header">
+<!-- ========== VALUES SECTION ========== -->
+<section class="values section">
+    <div class="section-header">
         <h2>Our Core Values</h2>
         <p>The principles that guide everything we do</p>
-      </div>
-      <div class="values-grid">
+    </div>
+    <div class="values__grid">
         <div class="value-card">
-          <div class="value-icon">
-            <i class="fas fa-heart"></i>
-          </div>
-          <h3>Customer First</h3>
-          <p>Our customers are at the heart of every decision we make. We're committed to delivering exceptional experiences at every touchpoint.</p>
+            <div class="value-card__icon"><i class="fas fa-heart"></i></div>
+            <h3>Customer First</h3>
+            <p>Our customers are at the heart of every decision we make. We're committed to delivering exceptional experiences.</p>
         </div>
         <div class="value-card">
-          <div class="value-icon">
-            <i class="fas fa-shield-alt"></i>
-          </div>
-          <h3>Integrity</h3>
-          <p>We operate with honesty and transparency, building trust with our customers, partners, and team members.</p>
+            <div class="value-card__icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Integrity</h3>
+            <p>We operate with honesty and transparency, building trust with our customers, partners, and team members.</p>
         </div>
         <div class="value-card">
-          <div class="value-icon">
-            <i class="fas fa-lightbulb"></i>
-          </div>
-          <h3>Innovation</h3>
-          <p>We continuously explore new ways to improve and enhance the shopping experience through technology and creativity.</p>
+            <div class="value-card__icon"><i class="fas fa-lightbulb"></i></div>
+            <h3>Innovation</h3>
+            <p>We continuously explore new ways to improve and enhance the shopping experience through technology.</p>
         </div>
         <div class="value-card">
-          <div class="value-icon">
-            <i class="fas fa-leaf"></i>
-          </div>
-          <h3>Sustainability</h3>
-          <p>We're committed to eco-friendly practices, from packaging to partnerships, for a better future.</p>
+            <div class="value-card__icon"><i class="fas fa-leaf"></i></div>
+            <h3>Sustainability</h3>
+            <p>We're committed to eco-friendly practices, from packaging to partnerships, for a better future.</p>
         </div>
-      </div>
     </div>
-
-    <!-- Meet the Team Section -->
-    <div class="team">
-      <div class="section-header">
-        <h2>Meet the Team</h2>
-        <p>The passionate individuals behind Cartlify's success</p>
-      </div>
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>Sarah Johnson</h3>
-            <div class="team-position">Founder & CEO</div>
-            <p class="team-bio">Former e-commerce executive with 15+ years of experience. Sarah's vision drives Cartlify's mission to transform online shopping.</p>
-          </div>
-        </div>
-
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>Michael Chen</h3>
-            <div class="team-position">Chief Technology Officer</div>
-            <p class="team-bio">Tech visionary leading our engineering team. Michael ensures Cartlify's platform is fast, secure, and innovative.</p>
-          </div>
-        </div>
-
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Emily Rodriguez" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>Emily Rodriguez</h3>
-            <div class="team-position">Head of Product</div>
-            <p class="team-bio">Product strategist focused on creating intuitive shopping experiences that customers love and trust.</p>
-          </div>
-        </div>
-
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David Kim" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>David Kim</h3>
-            <div class="team-position">Operations Director</div>
-            <p class="team-bio">Supply chain expert ensuring fast delivery and seamless logistics for all Cartlify orders worldwide.</p>
-          </div>
-        </div>
-
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Lisa Thompson" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>Lisa Thompson</h3>
-            <div class="team-position">Marketing Director</div>
-            <p class="team-bio">Creative marketing strategist connecting Cartlify with customers through authentic storytelling and brand experiences.</p>
-          </div>
-        </div>
-
-        <div class="team-card">
-          <div class="team-image">
-            <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="James Wilson" loading="lazy">
-            <div class="team-social-overlay">
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-          <div class="team-info">
-            <h3>James Wilson</h3>
-            <div class="team-position">Customer Experience Lead</div>
-            <p class="team-bio">Dedicated to ensuring every customer interaction is positive, helpful, and memorable from start to finish.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Milestones Section -->
-    <div class="milestones">
-      <div class="section-header">
-        <h2>Our Journey</h2>
-        <p>Key milestones in Cartlify's growth story</p>
-      </div>
-      <div class="milestones-grid">
-        <div class="milestone-card">
-          <div class="milestone-year">2020</div>
-          <div class="milestone-title">Company Founded</div>
-          <div class="milestone-desc">Cartlify launches with a vision to transform e-commerce</div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-year">2021</div>
-          <div class="milestone-title">10,000 Customers</div>
-          <div class="milestone-desc">Reached our first major customer milestone</div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-year">2022</div>
-          <div class="milestone-title">Expansion</div>
-          <div class="milestone-desc">Expanded to 50+ product categories nationwide</div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-year">2023</div>
-          <div class="milestone-title">Sustainability Initiative</div>
-          <div class="milestone-desc">Launched eco-friendly packaging program</div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-year">2024</div>
-          <div class="milestone-title">Global Reach</div>
-          <div class="milestone-desc">Expanded shipping to 20+ countries worldwide</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========== REDESIGNED BOTTOM SECTIONS ========== -->
-    
-    <!-- Trust Indicators -->
-    <div class="trust-indicators">
-      <div class="section-header">
-        <h2>Why Trust Cartlify?</h2>
-        <p>We've got your back with these guarantees</p>
-      </div>
-      <div class="trust-grid">
-        <div class="trust-card">
-          <div class="trust-icon">
-            <i class="fas fa-lock"></i>
-          </div>
-          <h4>Secure Payments</h4>
-          <p>256-bit SSL encryption</p>
-        </div>
-        <div class="trust-card">
-          <div class="trust-icon">
-            <i class="fas fa-truck"></i>
-          </div>
-          <h4>Free Shipping</h4>
-          <p>On orders over ₱2,500</p>
-        </div>
-        <div class="trust-card">
-          <div class="trust-icon">
-            <i class="fas fa-undo-alt"></i>
-          </div>
-          <h4>Easy Returns</h4>
-          <p>30-day money-back guarantee</p>
-        </div>
-        <div class="trust-card">
-          <div class="trust-icon">
-            <i class="fas fa-headset"></i>
-          </div>
-          <h4>24/7 Support</h4>
-          <p>Real humans, ready to help</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Brand Partners -->
-    <div class="brand-partners">
-      <div class="section-header">
-        <h2>Trusted By Brands</h2>
-        <p>We partner with the best in the industry</p>
-      </div>
-      <div class="partners-grid">
-        <div class="partner-logo"><i class="fab fa-apple"></i></div>
-        <div class="partner-logo"><i class="fab fa-samsung"></i></div>
-        <div class="partner-logo"><i class="fab fa-microsoft"></i></div>
-        <div class="partner-logo"><i class="fab fa-google"></i></div>
-        <div class="partner-logo"><i class="fab fa-amazon"></i></div>
-        <div class="partner-logo"><i class="fab fa-nike"></i></div>
-      </div>
-    </div>
-
-    <!-- Enhanced Newsletter -->
-    <div class="newsletter-enhanced">
-      <div class="newsletter-content">
-        <h3>Stay in the Loop ✨</h3>
-        <p>Subscribe to get special offers, free giveaways, and exclusive deals!</p>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Enter your email address" required>
-          <button type="submit">Subscribe Now →</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Instagram Feed Mockup -->
-    <div class="instagram-feed">
-      <div class="section-header">
-        <h2>Follow Our Journey</h2>
-        <p>Join 10K+ followers on Instagram <i class="fab fa-instagram" style="color: #e4405f;"></i></p>
-      </div>
-      <div class="insta-grid">
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-        <div class="insta-item">
-          <img src="https://images.unsplash.com/photo-1584990347449-b85b7e6c81e4?w=200&auto=format" alt="Product">
-          <div class="insta-overlay">
-            <i class="fab fa-instagram"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Final CTA Banner -->
-    <div class="cta-banner">
-      <h2>Ready to Experience Cartlify?</h2>
-      <p>Join thousands of happy customers and start shopping today!</p>
-      <button class="btn-primary" onclick="window.location.href='{{ path('app_register') }}'">Create Free Account →</button>
-    </div>
-  </div>
 </section>
 
-<!-- Enhanced Footer -->
+<!-- ========== TEAM SECTION ========== -->
+<section class="team section">
+    <div class="section-header">
+        <h2>Meet the Team</h2>
+        <p>The passionate individuals behind Cartlify's success</p>
+    </div>
+    <div class="team__grid">
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/A.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">John Antony Amil</h3>
+                <div class="team-card__role">Founder & CEO</div>
+                <p class="team-card__bio">Former e-commerce executive with 15+ years of experience. John's vision drives Cartlify's mission to transform online shopping.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/B.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">Michael Chen</h3>
+                <div class="team-card__role">Chief Technology Officer</div>
+                <p class="team-card__bio">Tech visionary leading our engineering team. Michael ensures Cartlify's platform is fast, secure, and innovative.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/C.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">Gorge Rodriguez</h3>
+                <div class="team-card__role">Head of Product</div>
+                <p class="team-card__bio">Product strategist focused on creating intuitive shopping experiences that customers love and trust.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/D.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">David Lim</h3>
+                <div class="team-card__role">Operations Director</div>
+                <p class="team-card__bio">Supply chain expert ensuring fast delivery and seamless logistics for all Cartlify orders worldwide.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/E.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">Mike Thompson</h3>
+                <div class="team-card__role">Marketing Director</div>
+                <p class="team-card__bio">Creative marketing strategist connecting Cartlify with customers through authentic storytelling and brand experiences.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div class="team-card__image">
+                <img src="{{ asset('images/F.png') }}" alt="Team Member" loading="lazy">
+                <div class="team-card__social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card__body">
+                <h3 class="team-card__name">James Wilson</h3>
+                <div class="team-card__role">Customer Experience Lead</div>
+                <p class="team-card__bio">Dedicated to ensuring every customer interaction is positive, helpful, and memorable from start to finish.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CTA BANNER ========== -->
+<section class="cta-banner section">
+    <div class="cta-banner__container">
+        <div class="cta-banner__content">
+            <h2>Ready to Experience Cartlify?</h2>
+            <p>Join thousands of happy customers and start shopping today!</p>
+            <div class="cta-banner__features">
+                <div class="cta-banner__feature"><i class="fas fa-check-circle"></i> Free Shipping on ₱2,500+</div>
+                <div class="cta-banner__feature"><i class="fas fa-check-circle"></i> 30-Day Returns</div>
+                <div class="cta-banner__feature"><i class="fas fa-check-circle"></i> Secure Payments</div>
+            </div>
+        </div>
+        <div class="cta-banner__actions">
+            <a href="{{ path('app_register') }}" class="btn--cta-primary">
+                Create Free Account <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="{{ path('app_landing') }}#products" class="btn--cta-secondary">
+                Browse Products <i class="fas fa-shopping-bag"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
 <footer class="footer">
-  <div class="footer-content">
-    <div class="footer-section">
-      <h4>Cartlify</h4>
-      <p>Your trusted partner for quality products and exceptional service. Shop smarter with Cartlify.</p>
-      <div class="social-links">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-      </div>
+    <div class="footer__grid">
+        <div>
+            <h4>Cartlify</h4>
+            <p>Your trusted shopping partner since 2024</p>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div>
+            <h4>Quick Links</h4>
+            <a href="{{ path('app_landing') }}">Home</a><br>
+            {# <a href="{{ path('app_landing') }}#products">Products</a><br> #}
+            <a href="{{ path('app_about') }}">About</a><br>
+            <a href="{{ path('app_contact') }}">Contact</a>
+        </div>
+        <div>
+            <h4>Support</h4>
+            <a href="#">FAQs</a><br>
+            <a href="#">Shipping Policy</a><br>
+            <a href="#">Returns Policy</a><br>
+            <a href="#">Privacy Policy</a><br>
+            <a href="#">Terms of Service</a>
+        </div>
+        <div>
+            <h4>Contact Us</h4>
+            <p><i class="fas fa-phone"></i> +63 2 1234 5678</p>
+            <p><i class="fas fa-envelope"></i> hello@cartlify.com</p>
+            <p><i class="fas fa-map-marker-alt"></i> Metro Manila, Philippines</p>
+        </div>
     </div>
-    <div class="footer-section">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="{{ path('app_landing') }}">Home</a></li>
-        <li><a href="{{ path('app_about') }}">About Us</a></li>
-        <li><a href="{{ path('app_landing') }}#products">Products</a></li>
-        <li><a href="{{ path('app_contact') }}">Contact</a></li>
-      </ul>
+    <div class="footer__bottom">
+        <p>&copy; 2025 Cartlify. All rights reserved. | Crafted with <i class="fas fa-heart" style="color: var(--accent);"></i> for Filipino shoppers</p>
     </div>
-    <div class="footer-section">
-      <h4>Support</h4>
-      <ul>
-        <li><a href="#">FAQs</a></li>
-        <li><a href="#">Shipping Policy</a></li>
-        <li><a href="#">Returns & Refunds</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h4>Payment Methods</h4>
-      <div class="payment-methods">
-        <i class="fab fa-cc-visa"></i>
-        <i class="fab fa-cc-mastercard"></i>
-        <i class="fab fa-cc-paypal"></i>
-        <i class="fab fa-cc-amex"></i>
-        <i class="fas fa-mobile-alt"></i>
-      </div>
-      <h4 style="margin-top: 1.5rem;">Download App</h4>
-      <div class="payment-methods">
-        <i class="fab fa-apple"></i>
-        <i class="fab fa-android"></i>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2025 Cartlify. All rights reserved. | Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for shoppers worldwide</p>
-  </div>
 </footer>
 
-<!-- Back to Top Button -->
-<div class="back-to-top" id="backToTop">
-  <i class="fas fa-arrow-up"></i>
-</div>
-
 <script>
-// Mobile menu toggle
-const menuToggle = document.querySelector('.menu-toggle');
-const menu = document.querySelector('.menu');
+    // ========== MOBILE MENU CONTROLLER ==========
+    const MenuController = {
+        hamburger: document.getElementById('hamburger'),
+        nav: document.getElementById('mainNav'),
+        overlay: document.getElementById('overlay'),
+        navbar: document.getElementById('navbar'),
+        isOpen: false,
 
-if (menuToggle) {
-  menuToggle.addEventListener('click', function(e) {
-    e.stopPropagation();
-    menu.classList.toggle('active');
-    const icon = this.querySelector('i');
-    if (menu.classList.contains('active')) {
-      icon.classList.remove('fa-bars');
-      icon.classList.add('fa-times');
-    } else {
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
-    }
-  });
-}
+        init() {
+            this.hamburger.addEventListener('click', () => this.toggle());
+            this.overlay.addEventListener('click', () => this.close());
+            this.nav.addEventListener('click', (e) => {
+                if (e.target.closest('a')) this.close();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isOpen) this.close();
+            });
+            window.addEventListener('scroll', () => {
+                this.navbar.classList.toggle('scrolled', window.scrollY > 50);
+            });
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768 && this.isOpen) this.close();
+            });
+        },
 
-// Close menu when clicking outside
-document.addEventListener('click', function(event) {
-  if (window.innerWidth <= 768 && 
-      menu.classList.contains('active') && 
-      !menu.contains(event.target) && 
-      !menuToggle.contains(event.target)) {
-    menu.classList.remove('active');
-    const icon = menuToggle.querySelector('i');
-    icon.classList.remove('fa-times');
-    icon.classList.add('fa-bars');
-  }
-});
+        toggle() {
+            this.isOpen ? this.close() : this.open();
+        },
 
-// Handle window resize
-window.addEventListener('resize', function() {
-  if (window.innerWidth > 768 && menu.classList.contains('active')) {
-    menu.classList.remove('active');
-    const icon = menuToggle.querySelector('i');
-    icon.classList.remove('fa-times');
-    icon.classList.add('fa-bars');
-  }
-});
+        open() {
+            this.isOpen = true;
+            this.nav.classList.add('navbar__nav--open');
+            this.hamburger.classList.add('hamburger--active');
+            this.overlay.classList.add('overlay--active');
+            document.body.style.overflow = 'hidden';
+        },
 
-// Newsletter form submission
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
-  newsletterForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = newsletterForm.querySelector('input[type="email"]').value;
-    if (email) {
-      alert('Thank you for subscribing! 🎉 You\'ll receive our latest updates and exclusive offers.');
-      newsletterForm.reset();
-    }
-  });
-}
+        close() {
+            this.isOpen = false;
+            this.nav.classList.remove('navbar__nav--open');
+            this.hamburger.classList.remove('hamburger--active');
+            this.overlay.classList.remove('overlay--active');
+            document.body.style.overflow = '';
+        }
+    };
 
-// Back to Top Button
-const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 300) {
-    backToTop.classList.add('show');
-  } else {
-    backToTop.classList.remove('show');
-  }
-});
-
-backToTop.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
-
-// Newsletter form in footer
-const footerNewsletter = document.querySelector('.footer-section form');
-if (footerNewsletter) {
-  footerNewsletter.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = footerNewsletter.querySelector('input[type="email"]').value;
-    if (email) {
-      alert('Thank you for subscribing! You\'ll receive our latest updates.');
-      footerNewsletter.reset();
-    }
-  });
-}
+    document.addEventListener('DOMContentLoaded', () => {
+        MenuController.init();
+    });
 </script>
+
 {% endblock %}

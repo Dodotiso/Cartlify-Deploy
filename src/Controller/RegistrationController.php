@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\LoginAuthenticator;
+use App\Service\EmailVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -20,17 +22,16 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         Security $security,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EmailVerificationService $emailVerificationService,
+        UrlGeneratorInterface $urlGenerator
     ): Response {
 
-        // If user already logged in redirect to shop
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_shop');
+            return $this->redirectToRoute('app_order_new');
         }
 
         $user = new User();
-        
-        // Set the created date - THIS FIXES THE ERROR
         $user->setCreatedAt(new \DateTimeImmutable());
 
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -38,26 +39,34 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // get plain password
             $plainPassword = $form->get('plainPassword')->getData();
-
-            // hash password
             $user->setPassword(
                 $userPasswordHasher->hashPassword($user, $plainPassword)
             );
-
-            // ✅ SET DEFAULT ROLE
             $user->setRoles(['ROLE_USER']);
 
-            // save user
+            // ✅ STEP 1: Generate verification token
+            $verificationToken = $emailVerificationService->generateVerificationToken();
+            $user->setVerificationToken($verificationToken);
+            $user->setIsVerified(false);
+
+            // ✅ STEP 2: Save user to database FIRST (this saves the token)
             $entityManager->persist($user);
-            $entityManager->flush();
+            $entityManager->flush();  // CRITICAL: This saves the token to DB
 
-            // auto login after registration
-            $security->login($user, LoginAuthenticator::class, 'main');
+            // ✅ STEP 3: Generate verification URL
+            $verificationUrl = $urlGenerator->generate(
+                'app_verify_email',
+                ['token' => $verificationToken],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
 
-            // redirect to shop after registration
-            return $this->redirectToRoute('app_shop');
+            // ✅ STEP 4: Send verification email
+            $emailVerificationService->sendVerificationEmail($user, $verificationUrl);
+
+            $this->addFlash('success', 'Registration successful! Please check your email to verify your account.');
+
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [

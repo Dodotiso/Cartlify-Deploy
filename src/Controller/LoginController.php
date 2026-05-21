@@ -29,7 +29,7 @@ class LoginController extends AbstractController
             }
 
             if ($this->isGranted('ROLE_USER')) {
-                return $this->redirectToRoute('app_shop');
+                return $this->redirectToRoute('app_order_new');
             }
         }
 

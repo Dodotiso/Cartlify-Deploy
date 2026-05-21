@@ -1,0 +1,623 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quick Order - Cartlify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    /* ============================================ */
+    /* USER ORDER PAGE - CLEAN & SIMPLE */
+    /* ============================================ */
+    .order-page {
+        max-width: 1200px;
+        margin: 100px auto 50px;
+        padding: 0 20px;
+    }
+
+    /* Header Section */
+    .order-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .order-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1f2a44;
+        margin-bottom: 10px;
+    }
+
+    .order-header p {
+        color: #6c757d;
+        font-size: 16px;
+    }
+
+    /* Two Column Layout */
+    .order-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    /* Left Column - Product Selection */
+    .product-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1f2a44;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e67e22;
+        display: inline-block;
+    }
+
+    /* Product Grid */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .product-item {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .product-item:hover {
+        border-color: #e67e22;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-item.selected {
+        border-color: #28a745;
+        background: linear-gradient(135deg, #e8f5e9, #ffffff);
+    }
+
+    .product-item.selected::before {
+        content: '✓';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #28a745;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 100px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #1f2a44;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .product-price {
+        color: #28a745;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .product-stock {
+        font-size: 11px;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .stock-low {
+        color: #e74c3c;
+    }
+
+    .stock-good {
+        color: #28a745;
+    }
+
+    /* Right Column - Order Form */
+    .form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #1f2a44;
+        font-size: 14px;
+    }
+
+    .form-group label i {
+        margin-right: 8px;
+        color: #e67e22;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #e67e22;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .quantity-btn {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .quantity-btn:hover {
+        background: #e67e22;
+        border-color: #e67e22;
+        color: white;
+    }
+
+    .quantity-input {
+        width: 80px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* Delivery Address Toggle */
+    .address-field {
+        display: none;
+    }
+
+    .address-field.show {
+        display: block;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .summary-row.total {
+        border-bottom: none;
+        padding-top: 15px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(135deg, #28a745, #218838);
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+    }
+
+    .btn-submit:disabled {
+        background: #adb5bd;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Selected Product Info */
+    .selected-info {
+        background: #e8f5e9;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    .selected-info.show {
+        display: block;
+    }
+
+    .selected-product-name {
+        font-weight: 700;
+        color: #1f2a44;
+    }
+
+    .selected-product-price {
+        color: #28a745;
+        font-weight: 700;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .order-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .product-grid {
+            max-height: 300px;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .order-page {
+            margin: 80px auto 30px;
+        }
+        
+        .order-header h1 {
+            font-size: 24px;
+        }
+    }
+
+    /* Scrollbar Styling */
+    .product-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .product-grid::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .product-grid::-webkit-scrollbar-thumb {
+        background: #e67e22;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="order-page">
+    <!-- Header -->
+    <div class="order-header">
+        <h1>🛍️ Quick Order</h1>
+        <p>Select a product, fill in your details, and place your order in seconds!</p>
+    </div>
+
+    <div class="order-layout">
+        <!-- LEFT COLUMN - Product Selection -->
+        <div class="product-section">
+            <h2 class="section-title">📦 Choose Product</h2>
+            <div class="product-grid" id="productGrid">
+                {% for item in products %}
+                    <div class="product-item" 
+                         data-product-id="{{ item.product.id }}"
+                         data-product-name="{{ item.product.name }}"
+                         data-product-price="{{ item.product.price }}"
+                         data-max-stock="{{ item.available }}"
+                         data-product-image="{{ item.product.image ? asset('uploads/' ~ item.product.image) : '' }}">
+                        {% if item.product.image %}
+                            <img src="{{ asset('uploads/' ~ item.product.image) }}" class="product-img" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="product-img" style="display: flex; align-items: center; justify-content: center; background: #e9ecef; border-radius: 8px;">
+                                <i class="fas fa-image" style="font-size: 40px; color: #adb5bd;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="product-name">{{ item.product.name }}</div>
+                        <div class="product-price">₱{{ item.product.price|number_format(2) }}</div>
+                        <div class="product-stock">
+                            {% if item.available < 10 %}
+                                <span class="stock-low">⚠️ Only {{ item.available }} left!</span>
+                            {% else %}
+                                <span class="stock-good">✓ {{ item.available }} in stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 40px; color: #6c757d;">
+                        <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px;"></i>
+                        <p>No products available at the moment.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN - Order Form -->
+        <div class="form-section">
+            <h2 class="section-title">📝 Your Details</h2>
+            
+            <!-- Selected Product Info -->
+            <div class="selected-info" id="selectedInfo">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 12px; color: #6c757d;">Selected Product:</span>
+                        <div class="selected-product-name" id="selectedProductName">-</div>
+                    </div>
+                    <div class="selected-product-price" id="selectedProductPrice">₱0.00</div>
+                </div>
+            </div>
+
+            <form method="post" id="orderForm">
+                <input type="hidden" name="product_id" id="productId" required>
+                
+                <!-- Quantity -->
+                <div class="form-group">
+                    <label><i class="fas fa-cubes"></i> Quantity</label>
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn" id="decrementBtn">-</button>
+                        <input type="number" name="quantity" id="quantity" class="quantity-input" value="1" min="1" readonly>
+                        <button type="button" class="quantity-btn" id="incrementBtn">+</button>
+                    </div>
+                    <small id="stockWarning" style="color: #e74c3c; display: none;"></small>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" name="customer_name" value="{{ app.user.username }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" name="customer_email" value="{{ app.user.email }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" name="customer_phone" value="{{ app.user.phone ?? '' }}" placeholder="+63XXXXXXXXXX">
+                </div>
+
+                <!-- Delivery Method -->
+                <div class="form-group">
+                    <label><i class="fas fa-truck"></i> Delivery Method</label>
+                    <select name="delivery_type" id="deliveryType" required>
+                        <option value="pickup">🏪 Pickup (In-Store)</option>
+                        <option value="shipping">🚚 Ship / Delivery</option>
+                    </select>
+                </div>
+
+                <!-- Delivery Address (hidden by default) -->
+                <div class="form-group address-field" id="addressField">
+                    <label><i class="fas fa-location-dot"></i> Delivery Address</label>
+                    <textarea name="delivery_address" rows="3" placeholder="House #, Street, Barangay, City, Province, Postal Code"></textarea>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                    <select name="payment_method" required>
+                        <option value="cod">💰 Cash on Delivery</option>
+                    </select>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₱0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="totalAmount">₱0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn" disabled>
+                    <i class="fas fa-check-circle"></i> Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================
+    // USER ORDER PAGE JAVASCRIPT
+    // ============================================
+    
+    // DOM Elements
+    const productItems = document.querySelectorAll('.product-item');
+    const productIdInput = document.getElementById('productId');
+    const quantityInput = document.getElementById('quantity');
+    const decrementBtn = document.getElementById('decrementBtn');
+    const incrementBtn = document.getElementById('incrementBtn');
+    const deliveryType = document.getElementById('deliveryType');
+    const addressField = document.getElementById('addressField');
+    const submitBtn = document.getElementById('submitBtn');
+    const selectedInfo = document.getElementById('selectedInfo');
+    const selectedProductName = document.getElementById('selectedProductName');
+    const selectedProductPrice = document.getElementById('selectedProductPrice');
+    const subtotalSpan = document.getElementById('subtotal');
+    const totalSpan = document.getElementById('totalAmount');
+    const stockWarning = document.getElementById('stockWarning');
+
+    // Variables
+    let selectedProductId = null;
+    let selectedProductNameText = '';
+    let selectedProductPriceValue = 0;
+    let maxStock = 0;
+    let currentQuantity = 1;
+
+    // Update UI Function
+    function updateUI() {
+        // Update quantity display
+        quantityInput.value = currentQuantity;
+        
+        // Calculate total
+        const total = selectedProductPriceValue * currentQuantity;
+        subtotalSpan.textContent = '₱' + total.toFixed(2);
+        totalSpan.textContent = '₱' + total.toFixed(2);
+        
+        // Update selected info
+        if (selectedProductId) {
+            selectedProductName.textContent = selectedProductNameText;
+            selectedProductPrice.textContent = '₱' + selectedProductPriceValue.toFixed(2);
+            selectedInfo.classList.add('show');
+            submitBtn.disabled = false;
+        } else {
+            selectedInfo.classList.remove('show');
+            submitBtn.disabled = true;
+        }
+        
+        // Stock warning
+        if (currentQuantity >= maxStock && maxStock > 0) {
+            stockWarning.textContent = '⚠️ Only ' + maxStock + ' units available!';
+            stockWarning.style.display = 'block';
+        } else {
+            stockWarning.style.display = 'none';
+        }
+    }
+
+    // Select Product
+    function selectProduct(element) {
+        // Remove selected class from all
+        productItems.forEach(item => item.classList.remove('selected'));
+        
+        // Add selected class to clicked
+        element.classList.add('selected');
+        
+        // Get product data
+        selectedProductId = element.dataset.productId;
+        selectedProductNameText = element.dataset.productName;
+        selectedProductPriceValue = parseFloat(element.dataset.productPrice);
+        maxStock = parseInt(element.dataset.maxStock);
+        
+        // Set form values
+        productIdInput.value = selectedProductId;
+        
+        // Reset quantity
+        currentQuantity = 1;
+        
+        // Update max quantity
+        if (currentQuantity > maxStock) {
+            currentQuantity = maxStock;
+        }
+        
+        updateUI();
+    }
+
+    // Product Click Handler
+    productItems.forEach(item => {
+        item.addEventListener('click', () => selectProduct(item));
+    });
+
+    // Quantity Buttons
+    decrementBtn.addEventListener('click', () => {
+        if (selectedProductId && currentQuantity > 1) {
+            currentQuantity--;
+            updateUI();
+        }
+    });
+
+    incrementBtn.addEventListener('click', () => {
+        if (selectedProductId && currentQuantity < maxStock) {
+            currentQuantity++;
+            updateUI();
+        } else if (selectedProductId && currentQuantity >= maxStock) {
+            stockWarning.textContent = '⚠️ Maximum ' + maxStock + ' units available!';
+            stockWarning.style.display = 'block';
+            setTimeout(() => {
+                stockWarning.style.display = 'none';
+            }, 2000);
+        }
+    });
+
+    // Delivery Method Toggle
+    deliveryType.addEventListener('change', () => {
+        if (deliveryType.value === 'shipping') {
+            addressField.classList.add('show');
+        } else {
+            addressField.classList.remove('show');
+        }
+    });
+
+    // Form Validation
+    document.getElementById('orderForm').addEventListener('submit', (e) => {
+        if (!selectedProductId) {
+            e.preventDefault();
+            alert('Please select a product first');
+            return false;
+        }
+        
+        // Set quantity before submit
+        const quantityHidden = document.createElement('input');
+        quantityHidden.type = 'hidden';
+        quantityHidden.name = 'quantity';
+        quantityHidden.value = currentQuantity;
+        e.target.appendChild(quantityHidden);
+        
+        // Validate delivery address
+        if (deliveryType.value === 'shipping') {
+            const address = document.querySelector('textarea[name="delivery_address"]').value.trim();
+            if (!address) {
+                e.preventDefault();
+                alert('Please enter your delivery address');
+                return false;
+            }
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    });
+</script>
+{% endblock %}

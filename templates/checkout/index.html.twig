@@ -4,6 +4,11 @@
 
 {% block body %}
 <style>
+    /* --- Base Reset --- */
+    * {
+        box-sizing: border-box;
+    }
+
     /* --- Body & Sidebar --- */
     body {
         margin: 0;
@@ -13,6 +18,7 @@
         padding-top: 80px;
     }
 
+    /* Sidebar for Admin & Staff */
     .sidebar {
         position: fixed;
         top: 0;
@@ -24,7 +30,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        transition: width 0.3s;
+        transition: width 0.3s, transform 0.3s ease;
         z-index: 100;
     }
 
@@ -50,7 +56,7 @@
     .sidebar a {
         display: flex;
         align-items: center;
-        padding: 15px 15px;
+        padding: 10px 10px;
         text-decoration: none;
         color: #fff;
         font-weight: 500;
@@ -81,43 +87,8 @@
         border-left: 4px solid #E64C3C;
     }
 
-    /* Mobile Sidebar Toggle Button */
-    .menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 20px;
-        color: #343a40;
-        cursor: pointer;
-        padding: 8px;
-        margin-right: 10px;
-        transition: all 0.3s;
-    }
-
-    .menu-toggle:hover {
-        background-color: #f0f0f0;
-        border-radius: 8px;
-    }
-
-    /* Sidebar Overlay for Mobile */
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 99;
-        transition: all 0.3s;
-    }
-
-    .sidebar-overlay.active {
-        display: block;
-    }
-
-    /* --- Sticky Header --- */
-    .header {
+    /* Header for Admin & Staff */
+    .admin-header {
         position: fixed;
         top: 0;
         left: 60px;
@@ -133,47 +104,95 @@
         z-index: 99;
     }
 
-    .sidebar:hover ~ .header {
+    .sidebar:hover ~ .admin-header {
         left: 220px;
     }
 
-    .header h1 {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1a1a2e;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: Arial, sans-serif;
-    }
-
-    /* Header Right Icons */
-    .header-right {
+    .admin-header-left {
         display: flex;
         align-items: center;
         gap: 15px;
     }
 
-    .tracker-icon-link {
+    .admin-header-left h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Header for Regular Users */
+    .user-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 99;
+    }
+
+    /* Logo Link for Users */
+    .user-logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        gap: 10px;
+    }
+
+    .user-logo-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .user-logo-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Header Right Icons - Shared Styles */
+    .user-header-right, .admin-header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0;
+    }
+
+    .user-tracker-icon-link, .admin-tracker-icon-link,
+    .user-cart-icon-link, .admin-cart-icon-link {
         position: relative;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s;
     }
 
-    .tracker-icon-link i {
+    .user-tracker-icon-link i, .admin-tracker-icon-link i,
+    .user-cart-icon-link i, .admin-cart-icon-link i,
+    .user-notification-icon i, .admin-notification-icon i {
         font-size: 22px;
         color: #1a1a2e;
         transition: color 0.3s;
     }
 
-    .tracker-icon-link:hover i {
+    .user-tracker-icon-link:hover i, .admin-tracker-icon-link:hover i,
+    .user-cart-icon-link:hover i, .admin-cart-icon-link:hover i,
+    .user-notification-icon:hover i, .admin-notification-icon:hover i {
         color: #007bff;
     }
 
-    .tracker-badge {
+    .user-tracker-badge, .admin-tracker-badge,
+    .user-cart-badge, .admin-cart-badge,
+    .user-notification-badge, .admin-notification-badge {
         position: absolute;
         top: -8px;
         right: -10px;
@@ -192,61 +211,21 @@
         display: none;
     }
 
-    .tracker-badge.show {
-        display: flex;
-        animation: pulse 0.5s ease;
-    }
-
-    .cart-icon-link {
-        position: relative;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-    }
-
-    .cart-icon-link i {
-        font-size: 22px;
-        color: #1a1a2e;
-        transition: color 0.3s;
-    }
-
-    .cart-icon-link:hover i {
-        color: #007bff;
-    }
-
-    .cart-badge {
-        position: absolute;
-        top: -8px;
-        right: -10px;
-        background: #e74c3c;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 5px;
-        font-size: 9px;
-        font-weight: bold;
-        min-width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 0 2px white;
-        display: none;
-    }
-
-    .cart-badge.show {
+    .user-tracker-badge.show, .admin-tracker-badge.show,
+    .user-cart-badge.show, .admin-cart-badge.show,
+    .user-notification-badge.show, .admin-notification-badge.show {
         display: flex;
     }
 
-    .notification-wrapper {
+    /* Notification Dropdown - Shared */
+    .user-notification-wrapper, .admin-notification-wrapper {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .notification-icon {
+    .user-notification-icon, .admin-notification-icon {
         background: none;
         border: none;
         cursor: pointer;
@@ -255,50 +234,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s;
     }
 
-    .notification-icon i {
-        font-size: 22px;
-        color: #1a1a2e;
-        transition: color 0.3s;
-    }
-
-    .notification-icon:hover i {
-        color: #007bff;
-    }
-
-    .notification-badge {
-        position: absolute;
-        top: -8px;
-        right: -10px;
-        background: #e74c3c;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 5px;
-        font-size: 9px;
-        font-weight: bold;
-        min-width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 0 2px white;
-        display: none;
-    }
-
-    .notification-badge.show {
-        display: flex;
-        animation: pulse 0.5s ease;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
-
-    .notification-dropdown {
+    .user-notification-dropdown, .admin-notification-dropdown {
         display: none;
         position: absolute;
         top: 45px;
@@ -312,7 +250,7 @@
         overflow-y: auto;
     }
 
-    .notification-dropdown.show {
+    .user-notification-dropdown.show, .admin-notification-dropdown.show {
         display: block;
         animation: slideDown 0.3s ease;
     }
@@ -402,12 +340,12 @@
         text-decoration: underline;
     }
 
-    /* Profile Dropdown */
-    .profile-wrapper {
+    /* Profile Dropdown - Shared */
+    .user-profile-wrapper, .admin-profile-wrapper {
         position: relative;
     }
 
-    .profile-header {
+    .user-profile-header, .admin-profile-header {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -417,15 +355,15 @@
         transition: background-color 0.3s;
     }
 
-    .profile-header:hover {
+    .user-profile-header:hover, .admin-profile-header:hover {
         background-color: #f0f0f0;
     }
 
-    .profile-header.active {
+    .user-profile-header.active, .admin-profile-header.active {
         background-color: #e9ecef;
     }
 
-    .profile-avatar {
+    .user-profile-avatar, .admin-profile-avatar {
         width: 38px;
         height: 38px;
         background: #007bff;
@@ -439,31 +377,32 @@
         overflow: hidden;
     }
 
-    .profile-avatar img {
+    .user-profile-avatar img, .admin-profile-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
     }
 
-    .profile-name {
+    .user-profile-name, .admin-profile-name {
         font-weight: 500;
         color: #333;
         user-select: none;
         font-family: Arial, sans-serif;
     }
 
-    .dropdown-icon {
+    .user-dropdown-icon, .admin-dropdown-icon {
         font-size: 12px;
         color: #6c757d;
         transition: transform 0.3s;
     }
 
-    .profile-header.active .dropdown-icon {
+    .user-profile-header.active .user-dropdown-icon,
+    .admin-profile-header.active .admin-dropdown-icon {
         transform: rotate(180deg);
     }
 
-    .profile-dropdown {
+    .user-profile-dropdown, .admin-profile-dropdown {
         position: absolute;
         top: 55px;
         right: 0;
@@ -477,7 +416,7 @@
         z-index: 1000;
     }
 
-    .profile-dropdown.show {
+    .user-profile-dropdown.show, .admin-profile-dropdown.show {
         display: flex;
     }
 
@@ -520,6 +459,173 @@
         color: #e74c3c;
     }
 
+    /* Upload Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #343a40;
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .upload-area:hover {
+        border-color: #007bff;
+    }
+
+    .upload-area i {
+        font-size: 48px;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+
+    .upload-area p {
+        margin: 0;
+        color: #6c757d;
+        font-family: Arial, sans-serif;
+    }
+
+    .upload-area small {
+        color: #adb5bd;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+    }
+
+    .image-preview {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+    }
+
+    .upload-progress {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #007bff;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    #progressText {
+        font-size: 12px;
+        color: #6c757d;
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-primary-modal {
+        background: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-primary-modal:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+
+    .btn-primary-modal:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary-modal {
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-secondary-modal:hover {
+        opacity: 0.9;
+    }
+
     /* Toast Notifications */
     .toast-container {
         position: fixed;
@@ -541,6 +647,8 @@
         animation: slideInRight 0.3s ease;
         border-left: 4px solid;
         font-family: Arial, sans-serif;
+        position: relative;
+        overflow: hidden;
     }
 
     .toast-success {
@@ -589,23 +697,18 @@
     }
 
     @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
     }
 
     @keyframes progress {
-        from {
-            width: 100%;
-        }
-        to {
-            width: 0%;
-        }
+        from { width: 100%; }
+        to { width: 0%; }
     }
 
     /* Main Content */
@@ -614,6 +717,11 @@
         padding: 30px;
         transition: margin-left 0.3s;
         min-height: calc(100vh - 80px);
+    }
+
+    /* For regular users (no sidebar) */
+    .main-content.user-mode {
+        margin-left: 0;
     }
 
     .sidebar:hover ~ .main-content {
@@ -830,88 +938,104 @@
 
     .btn-back:hover { background: #5a6268; transform: translateY(-1px); }
 
+    /* Mobile Sidebar Toggle Button */
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #343a40;
+        cursor: pointer;
+        padding: 8px;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+
+    .menu-toggle:hover {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+    }
+
+    /* Sidebar Overlay for Mobile */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
+        transition: all 0.3s;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
-        body {
-            padding-top: 70px;
+        body { padding-top: 70px; }
+        .menu-toggle { display: block; }
+        .admin-header { left: 0 !important; height: 70px; padding: 0 15px; }
+        .user-header { height: 70px; padding: 0 15px; }
+        .user-logo-wrapper { width: 65px; height: 65px; }
+        .sidebar { transform: translateX(-100%); width: 260px; }
+        .sidebar.mobile-open { transform: translateX(0); }
+        .sidebar.mobile-open:hover { width: 260px; }
+        .sidebar.mobile-open a span { display: inline; }
+        .sidebar.mobile-open .logo img { height: 80px; }
+        .main-content { margin-left: 0 !important; padding: 15px; }
+        .main-content.user-mode { margin-left: 0; }
+        .user-profile-name, .admin-profile-name,
+        .user-dropdown-icon, .admin-dropdown-icon { display: none; }
+        .user-tracker-icon-link i, .admin-tracker-icon-link i,
+        .user-cart-icon-link i, .admin-cart-icon-link i,
+        .user-notification-icon i, .admin-notification-icon i { font-size: 18px; }
+        
+        .checkout-container { padding: 20px; margin: 0 10px; }
+        .form-actions { flex-direction: column; }
+        .btn-place-order, .btn-back { justify-content: center; }
+        .payment-methods { flex-direction: column; }
+        .payment-method { max-width: 100%; }
+        
+        .toast-container { top: 80px; right: 10px; left: 10px; }
+        .toast { min-width: auto; width: 100%; }
+        .user-notification-dropdown, .admin-notification-dropdown { 
+            position: fixed; top: 70px; left: 10px; right: 10px; width: auto; max-width: none; border-radius: 12px; 
         }
-        .menu-toggle {
-            display: block;
-        }
-        .header {
-            left: 0 !important;
-            height: 70px;
-            padding: 0 15px;
-        }
-        .header h1 {
-            font-size: 18px;
-        }
-        .sidebar {
-            transform: translateX(-100%);
-            width: 260px;
-        }
-        .sidebar.mobile-open {
-            transform: translateX(0);
-        }
-        .main-content {
-            margin-left: 0 !important;
-            padding: 15px;
-        }
-        .profile-name, .dropdown-icon {
-            display: none;
-        }
-        .checkout-container {
-            padding: 20px;
-            margin: 0 10px;
-        }
-        .form-actions {
-            flex-direction: column;
-        }
-        .btn-place-order, .btn-back {
-            justify-content: center;
-        }
-        .payment-methods {
-            flex-direction: column;
-        }
-        .payment-method {
-            max-width: 100%;
-        }
-        .toast-container {
-            top: 80px;
-            right: 15px;
-        }
-        .toast {
-            min-width: 250px;
-            padding: 12px 16px;
-        }
-        .notification-dropdown {
-            width: 300px;
-            right: -60px;
-        }
-        .profile-dropdown {
-            position: fixed;
-            top: 60px;
-            right: 10px;
-            width: calc(100% - 20px);
-            max-width: 280px;
+        .user-profile-dropdown, .admin-profile-dropdown { 
+            position: fixed; top: 70px; right: 10px; left: 10px; width: auto; max-width: none; 
         }
     }
 
+    @media (max-width: 576px) {
+        body { padding-top: 60px; }
+        .admin-header, .user-header { height: 60px; padding: 0 12px; }
+        .user-logo-wrapper { width: 50px; height: 50px; }
+        .admin-header-left h1 { font-size: 14px; }
+        .user-header-right, .admin-header-right { gap: 10px; }
+        .user-tracker-icon-link i, .admin-tracker-icon-link i,
+        .user-cart-icon-link i, .admin-cart-icon-link i,
+        .user-notification-icon i, .admin-notification-icon i { font-size: 16px; }
+        .user-profile-avatar, .admin-profile-avatar { width: 32px; height: 32px; font-size: 14px; }
+        .main-content { padding: 10px; }
+        .checkout-container { padding: 15px; }
+        .checkout-header h2 { font-size: 18px; }
+        .order-total span:last-child { font-size: 18px; }
+        .user-notification-dropdown, .admin-notification-dropdown { top: 60px; }
+        .user-profile-dropdown, .admin-profile-dropdown { top: 60px; }
+    }
+
     @media (min-width: 769px) {
-        .sidebar {
-            transform: translateX(0) !important;
-        }
-        .menu-toggle {
-            display: none !important;
-        }
-        .sidebar-overlay {
-            display: none !important;
-        }
+        .sidebar { transform: translateX(0) !important; }
+        .menu-toggle { display: none !important; }
+        .sidebar-overlay { display: none !important; }
     }
 </style>
 
 <!-- ============================================ -->
-<!-- SIDEBAR
+<!-- SIDEBAR (Only for Admin and Staff, NOT for regular users)
 <!-- ============================================ -->
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
@@ -931,12 +1055,12 @@
         <span>Stocks</span>
     </a>
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-store"></i>
-        <span>Marketplace</span>
+        <i class="fas fa-shopping-cart"></i>
+        <span>Shop</span>
     </a>
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
+        <span>Orders</span>
     </a>
     <a href="{{ path('app_user_index') }}">
         <i class="fas fa-user-tie"></i>
@@ -973,12 +1097,12 @@
         <span>Stocks</span>
     </a>
     <a href="{{ path('app_order_new') }}">
-        <i class="fas fa-store"></i>
-        <span>Marketplace</span>
+        <i class="fas fa-shopping-cart"></i>
+        <span>Shop</span>
     </a>
     <a href="{{ path('app_order_index') }}">
         <i class="fas fa-receipt"></i>
-        <span>Transactions</span>
+        <span>Orders</span>
     </a>
     <a href="{{ path('app_profile_index') }}">
         <i class="fas fa-user"></i>
@@ -1002,52 +1126,54 @@
 {% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 
 <!-- ============================================ -->
-<!-- HEADER
+<!-- HEADER - Separate for Admin/Staff vs Regular Users
 <!-- ============================================ -->
-<div class="header">
-    <h1>
+
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+<!-- ADMIN/STAFF HEADER -->
+<div class="admin-header">
+    <div class="admin-header-left">
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <i class="fas fa-credit-card"></i> Checkout
-    </h1>
-
-    <div class="header-right">
-        <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
+        <h1><i class="fas fa-credit-card"></i> Checkout</h1>
+    </div>
+    <div class="admin-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="admin-tracker-icon-link" title="My Orders Tracker">
             <i class="fas fa-box"></i>
-            <span class="tracker-badge" id="trackerBadge">0</span>
+            <span class="admin-tracker-badge" id="adminTrackerBadge">0</span>
         </a>
-        <a href="{{ path('app_cart_view') }}" class="cart-icon-link" title="Shopping Cart">
+        <a href="{{ path('app_cart_view') }}" class="admin-cart-icon-link" title="Shopping Cart">
             <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" id="cartBadge">0</span>
+            <span class="admin-cart-badge" id="adminCartBadge">0</span>
         </a>
-        <div class="notification-wrapper">
-            <button class="notification-icon" id="notificationIcon" onclick="toggleNotificationDropdown()">
+        <div class="admin-notification-wrapper">
+            <button class="admin-notification-icon" id="adminNotificationIcon" onclick="toggleAdminNotificationDropdown()">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">0</span>
+                <span class="admin-notification-badge" id="adminNotificationBadge">0</span>
             </button>
-            <div class="notification-dropdown" id="notificationDropdown">
+            <div class="admin-notification-dropdown" id="adminNotificationDropdown">
                 <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
-                <div id="notificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div id="adminNotificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
                 <div class="notification-footer">
-                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllNotificationsAsReadBeforeRedirect()">View all notifications</a>
-                    <button class="clear-notif-btn" onclick="clearAllNotifications()">Clear all</button>
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllAdminNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllAdminNotifications()">Clear all</button>
                 </div>
             </div>
         </div>
-        <div class="profile-wrapper">
-            <div class="profile-header" id="profileHeader">
-                <div class="profile-avatar">
+        <div class="admin-profile-wrapper">
+            <div class="admin-profile-header" id="adminProfileHeader">
+                <div class="admin-profile-avatar">
                     {% if hasProfilePic %}
                         <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
                     {% else %}
                         {{ app.user.username|first|upper }}
                     {% endif %}
                 </div>
-                <span class="profile-name">{{ app.user.username }}</span>
-                <i class="fas fa-chevron-down dropdown-icon"></i>
+                {# <span class="admin-profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down admin-dropdown-icon"></i> #}
             </div>
-            <div class="profile-dropdown" id="profileDropdown">
+            <div class="admin-profile-dropdown" id="adminProfileDropdown">
                 <div class="dropdown-role-header">
                     <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
                 </div>
@@ -1063,7 +1189,7 @@
                     <i class="fas fa-bell"></i>
                     <span>Notifications</span>
                 </a>
-                <a href="#" class="dropdown-item" id="changeProfilePicBtn">
+                <a href="#" class="dropdown-item" id="adminChangeProfilePicBtn">
                     <i class="fas fa-camera"></i>
                     <span>Change Picture</span>
                 </a>
@@ -1076,6 +1202,80 @@
         </div>
     </div>
 </div>
+{% else %}
+<!-- REGULAR USER HEADER (With Logo) -->
+<div class="user-header">
+    <a href="{{ path('app_order_new') }}" class="user-logo-link">
+        <div class="user-logo-wrapper">
+            <img src="{{ asset('images/cart8-01.png') }}" alt="Cartlify">
+        </div>
+    </a>
+
+    <div class="user-header-right">
+        <a href="{{ path('app_order_tracker') }}" class="user-tracker-icon-link" title="My Orders Tracker">
+            <i class="fas fa-box"></i>
+            <span class="user-tracker-badge" id="userTrackerBadge">0</span>
+        </a>
+        <a href="{{ path('app_cart_view') }}" class="user-cart-icon-link" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="user-cart-badge" id="userCartBadge">0</span>
+        </a>
+        <div class="user-notification-wrapper">
+            <button class="user-notification-icon" id="userNotificationIcon" onclick="toggleUserNotificationDropdown()">
+                <i class="fas fa-bell"></i>
+                <span class="user-notification-badge" id="userNotificationBadge">0</span>
+            </button>
+            <div class="user-notification-dropdown" id="userNotificationDropdown">
+                <div class="notification-header"><i class="fas fa-bell"></i> Notifications</div>
+                <div id="userNotificationList"><div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div></div>
+                <div class="notification-footer">
+                    <a href="{{ path('app_notifications_index') }}" class="view-all-link" onclick="markAllUserNotificationsAsReadBeforeRedirect()">View all notifications</a>
+                    <button class="clear-notif-btn" onclick="clearAllUserNotifications()">Clear all</button>
+                </div>
+            </div>
+        </div>
+        <div class="user-profile-wrapper">
+            <div class="user-profile-header" id="userProfileHeader">
+                <div class="user-profile-avatar">
+                    {% if hasProfilePic %}
+                        <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePicture) }}" alt="{{ app.user.username }}">
+                    {% else %}
+                        {{ app.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                {# <span class="user-profile-name">{{ app.user.username }}</span>
+                <i class="fas fa-chevron-down user-dropdown-icon"></i> #}
+            </div>
+            <div class="user-profile-dropdown" id="userProfileDropdown">
+                <div class="dropdown-role-header">
+                    <i class="fas fa-{{ userRoleIcon }}"></i> {{ userRoleName }}
+                </div>
+                <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="{{ path('app_order_tracker') }}" class="dropdown-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Order Tracker</span>
+                </a>
+                <a href="{{ path('app_notifications_index') }}" class="dropdown-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="dropdown-item" id="userChangeProfilePicBtn">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Picture</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('app_logout') }}" class="dropdown-item logout-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <form id="profilePicUploadForm" method="post" enctype="multipart/form-data" style="display: none;">
     <input type="file" id="profilePicInput" name="profile_picture" accept="image/*">
@@ -1085,7 +1285,7 @@
 <!-- ============================================ -->
 <!-- MAIN CONTENT
 <!-- ============================================ -->
-<div class="main-content">
+<div class="main-content {% if not is_granted('ROLE_ADMIN') and not is_granted('ROLE_STAFF') %}user-mode{% endif %}">
     <div class="checkout-container">
         <div class="checkout-header">
             <h2><i class="fas fa-credit-card"></i> Checkout</h2>
@@ -1108,21 +1308,21 @@
         <form method="post" class="delivery-form" id="checkoutForm">
             <div class="form-group">
                 <label><i class="fas fa-user"></i> Full Name *</label>
-                <input type="text" name="customer_name" id="customerName" placeholder="Enter your full name" value="" required>
+                <input type="text" name="customer_name" id="customerName" placeholder="Enter your full name" value="{{ app.user.name ?? app.user.username ?? '' }}" required>
             </div>
 
             <div class="form-group">
                 <label><i class="fas fa-envelope"></i> Email Address *</label>
                 <input type="email" name="customer_email" id="customerEmail" placeholder="Enter your email" value="{{ app.user.email ?? '' }}" required>
                 <div id="emailError" class="email-error"></div>
-                <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Use valid email like name@gmail.com or name@yahoo.com</small>
+                {# <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Use valid email like name@gmail.com or name@yahoo.com</small> #}
             </div>
 
             <div class="form-group">
                 <label><i class="fas fa-phone"></i> Contact Number *</label>
-                <input type="tel" id="customerPhone" class="phone-input" placeholder="e.g., +639171234567 or +14155552671" maxlength="20" required>
+                <input type="tel" id="customerPhone" class="phone-input" name="customer_phone" maxlength="20" required>
                 <div id="phoneError" class="phone-error"></div>
-                <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Select your country flag and enter your phone number with country code</small>
+                {# <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 11px;">Select your country flag and enter your phone number with country code</small> #}
             </div>
 
             <div class="form-group">
@@ -1145,6 +1345,10 @@
                         <i class="fas fa-money-bill-wave"></i>
                         <span>Cash on Delivery</span>
                     </div>
+                    {# <div class="payment-method" data-payment="gcash" onclick="selectPaymentMethod('gcash')">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>GCash</span>
+                    </div> #}
                 </div>
                 <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="cod">
             </div>
@@ -1167,27 +1371,202 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-    let notifications = [];
+    // Separate notification arrays for admin and user
+    let adminNotifications = [];
+    let userNotifications = [];
     let shownFlashes = [];
     let phoneInputInstance = null;
 
+    // Determine user role
+    const isAdminOrStaff = {{ is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') ? 'true' : 'false' }};
+
     // ============================================
-    // MARK ALL NOTIFICATIONS AS READ
+    // NOTIFICATION SYSTEM - ADMIN/STAFF
     // ============================================
-    function markAllNotificationsAsRead() {
-        if (notifications.length > 0) {
-            let hasUnread = notifications.some(n => !n.read);
+    function loadAdminNotifications() { 
+        const saved = localStorage.getItem('admin_order_notifications'); 
+        adminNotifications = saved ? JSON.parse(saved) : []; 
+        updateAdminNotificationUI(); 
+        updateAdminNotificationBadge();
+    }
+    
+    function saveAdminNotifications() { 
+        localStorage.setItem('admin_order_notifications', JSON.stringify(adminNotifications)); 
+        updateAdminNotificationUI(); 
+        updateAdminNotificationBadge();
+    }
+    
+    function updateAdminNotificationBadge() {
+        const unreadCount = adminNotifications.filter(n => !n.read).length;
+        const badge = document.getElementById('adminNotificationBadge');
+        if (badge) { 
+            if (unreadCount > 0) { 
+                badge.classList.add('show'); 
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+            } else { 
+                badge.classList.remove('show'); 
+            } 
+        }
+    }
+    
+    function markAllAdminNotificationsAsRead() {
+        if (adminNotifications.length > 0) {
+            let hasUnread = adminNotifications.some(n => !n.read);
             if (hasUnread) {
-                notifications.forEach(n => n.read = true);
-                saveNotifications();
-                updateNotificationBadge();
+                adminNotifications.forEach(n => n.read = true);
+                saveAdminNotifications();
+                updateAdminNotificationBadge();
             }
         }
     }
     
-    function markAllNotificationsAsReadBeforeRedirect() {
-        markAllNotificationsAsRead();
+    function markAllAdminNotificationsAsReadBeforeRedirect() {
+        markAllAdminNotificationsAsRead();
         window.location.href = '{{ path('app_notifications_index') }}';
+    }
+    
+    function updateAdminNotificationUI() {
+        const list = document.getElementById('adminNotificationList');
+        if (!list) return;
+        
+        if (adminNotifications.length === 0) { 
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+        } else { 
+            const recentNotifications = adminNotifications.slice(0, 5);
+            list.innerHTML = recentNotifications.map(n => `
+                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markAdminNotificationAsRead(${n.id})">
+                    <div class="notification-title">${escapeHtml(n.title)}</div>
+                    <div class="notification-message">${escapeHtml(n.message)}</div>
+                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+                </div>
+            `).join('');
+        }
+    }
+    
+    function markAdminNotificationAsRead(id) { 
+        const notification = adminNotifications.find(n => n.id === id); 
+        if (notification) { 
+            notification.read = true; 
+            saveAdminNotifications(); 
+        } 
+    }
+    
+    function clearAllAdminNotifications() { 
+        if (confirm('Clear all notifications?')) { 
+            adminNotifications = []; 
+            saveAdminNotifications(); 
+            showToast('All notifications cleared', 'info'); 
+        } 
+    }
+    
+    function toggleAdminNotificationDropdown() { 
+        const dropdown = document.getElementById('adminNotificationDropdown');
+        if (dropdown) {
+            markAllAdminNotificationsAsRead();
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    // ============================================
+    // NOTIFICATION SYSTEM - REGULAR USER
+    // ============================================
+    function loadUserNotifications() { 
+        const saved = localStorage.getItem('user_order_notifications'); 
+        userNotifications = saved ? JSON.parse(saved) : []; 
+        updateUserNotificationUI(); 
+        updateUserNotificationBadge();
+    }
+    
+    function saveUserNotifications() { 
+        localStorage.setItem('user_order_notifications', JSON.stringify(userNotifications)); 
+        updateUserNotificationUI(); 
+        updateUserNotificationBadge();
+    }
+    
+    function updateUserNotificationBadge() {
+        const unreadCount = userNotifications.filter(n => !n.read).length;
+        const badge = document.getElementById('userNotificationBadge');
+        if (badge) { 
+            if (unreadCount > 0) { 
+                badge.classList.add('show'); 
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
+            } else { 
+                badge.classList.remove('show'); 
+            } 
+        }
+    }
+    
+    function markAllUserNotificationsAsRead() {
+        if (userNotifications.length > 0) {
+            let hasUnread = userNotifications.some(n => !n.read);
+            if (hasUnread) {
+                userNotifications.forEach(n => n.read = true);
+                saveUserNotifications();
+                updateUserNotificationBadge();
+            }
+        }
+    }
+    
+    function markAllUserNotificationsAsReadBeforeRedirect() {
+        markAllUserNotificationsAsRead();
+        window.location.href = '{{ path('app_notifications_index') }}';
+    }
+    
+    function updateUserNotificationUI() {
+        const list = document.getElementById('userNotificationList');
+        if (!list) return;
+        
+        if (userNotifications.length === 0) { 
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
+        } else { 
+            const recentNotifications = userNotifications.slice(0, 5);
+            list.innerHTML = recentNotifications.map(n => `
+                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markUserNotificationAsRead(${n.id})">
+                    <div class="notification-title">${escapeHtml(n.title)}</div>
+                    <div class="notification-message">${escapeHtml(n.message)}</div>
+                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
+                </div>
+            `).join('');
+        }
+    }
+    
+    function markUserNotificationAsRead(id) { 
+        const notification = userNotifications.find(n => n.id === id); 
+        if (notification) { 
+            notification.read = true; 
+            saveUserNotifications(); 
+        } 
+    }
+    
+    function clearAllUserNotifications() { 
+        if (confirm('Clear all notifications?')) { 
+            userNotifications = []; 
+            saveUserNotifications(); 
+            showToast('All notifications cleared', 'info'); 
+        } 
+    }
+    
+    function toggleUserNotificationDropdown() { 
+        const dropdown = document.getElementById('userNotificationDropdown');
+        if (dropdown) {
+            markAllUserNotificationsAsRead();
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    function formatTimeAgo(timestamp) { 
+        const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
+        if (mins < 1) return 'Just now'; 
+        if (mins < 60) return `${mins} min ago`; 
+        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
+        return `${days} day${days > 1 ? 's' : ''} ago`; 
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     // ============================================
@@ -1197,13 +1576,25 @@
         fetch('/cart/count')
             .then(res => res.json())
             .then(data => {
-                const badge = document.getElementById('cartBadge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count > 9 ? '9+' : data.count;
-                        badge.classList.add('show');
-                    } else {
-                        badge.classList.remove('show');
+                if (isAdminOrStaff) {
+                    const badge = document.getElementById('adminCartBadge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.classList.add('show');
+                        } else {
+                            badge.classList.remove('show');
+                        }
+                    }
+                } else {
+                    const badge = document.getElementById('userCartBadge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.classList.add('show');
+                        } else {
+                            badge.classList.remove('show');
+                        }
                     }
                 }
             })
@@ -1214,13 +1605,25 @@
         fetch('{{ path('app_new_orders_count') }}')
             .then(res => res.json())
             .then(data => {
-                const badge = document.getElementById('trackerBadge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count > 9 ? '9+' : data.count;
-                        badge.classList.add('show');
-                    } else {
-                        badge.classList.remove('show');
+                if (isAdminOrStaff) {
+                    const badge = document.getElementById('adminTrackerBadge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.classList.add('show');
+                        } else {
+                            badge.classList.remove('show');
+                        }
+                    }
+                } else {
+                    const badge = document.getElementById('userTrackerBadge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.classList.add('show');
+                        } else {
+                            badge.classList.remove('show');
+                        }
                     }
                 }
             })
@@ -1248,126 +1651,6 @@
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
-
-    // ============================================
-    // NOTIFICATION SYSTEM
-    // ============================================
-    function loadNotifications() {
-        const saved = localStorage.getItem('order_notifications');
-        notifications = saved ? JSON.parse(saved) : [];
-        updateNotificationUI();
-        updateNotificationBadge();
-    }
-    
-    function saveNotifications() {
-        localStorage.setItem('order_notifications', JSON.stringify(notifications));
-        updateNotificationUI();
-        updateNotificationBadge();
-    }
-    
-    function addNotification(title, message, orderId, type) {
-        const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
-        notifications.unshift(notification);
-        if (notifications.length > 100) notifications = notifications.slice(0, 100);
-        saveNotifications();
-        showToast(message, type);
-        updateTrackerBadge();
-    }
-    
-    function updateNotificationBadge() {
-        const unreadCount = notifications.filter(n => !n.read).length;
-        const badge = document.getElementById('notificationBadge');
-        if (badge) { 
-            if (unreadCount > 0) { 
-                badge.classList.add('show'); 
-                badge.textContent = unreadCount > 99 ? '99+' : unreadCount; 
-            } else { 
-                badge.classList.remove('show'); 
-            } 
-        }
-    }
-    
-    function updateNotificationUI() {
-        const list = document.getElementById('notificationList');
-        if (!list) return;
-        
-        if (notifications.length === 0) { 
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#6c757d;"><i class="fas fa-bell-slash"></i> No notifications</div>'; 
-        } else { 
-            const recentNotifications = notifications.slice(0, 5);
-            list.innerHTML = recentNotifications.map(n => `
-                <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
-                    <div class="notification-title">${n.title}</div>
-                    <div class="notification-message">${n.message}</div>
-                    <div class="notification-time">${formatTimeAgo(n.timestamp)}</div>
-                </div>
-            `).join('');
-            
-            if (notifications.length > 5) {
-                list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3498db;text-decoration:none;font-size:12px;">View all ' + notifications.length + ' notifications →</a></div>';
-            }
-        }
-    }
-    
-    function markNotificationAsRead(id) { 
-        const notification = notifications.find(n => n.id === id); 
-        if (notification) { 
-            notification.read = true; 
-            saveNotifications(); 
-        } 
-    }
-    
-    function clearAllNotifications() { 
-        if (confirm('Clear all notifications?')) { 
-            notifications = []; 
-            saveNotifications(); 
-            showToast('All notifications cleared', 'info'); 
-        } 
-    }
-    
-    function formatTimeAgo(timestamp) { 
-        const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); 
-        if (mins < 1) return 'Just now'; 
-        if (mins < 60) return `${mins} min ago`; 
-        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; 
-        return `${days} day${days > 1 ? 's' : ''} ago`; 
-    }
-    
-    function toggleNotificationDropdown() { 
-        const dropdown = document.getElementById('notificationDropdown');
-        if (dropdown) {
-            markAllNotificationsAsRead();
-            dropdown.classList.toggle('show');
-        }
-    }
-
-    // ============================================
-    // PROFILE DROPDOWN FUNCTIONS
-    // ============================================
-    function toggleProfileDropdown() {
-        const dropdown = document.getElementById('profileDropdown');
-        const header = document.getElementById('profileHeader');
-        if (dropdown && header) {
-            dropdown.classList.toggle('show');
-            header.classList.toggle('active');
-        }
-    }
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const notificationIcon = document.getElementById('notificationIcon');
-        if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
-            notificationDropdown.classList.remove('show');
-        }
-        
-        const profileDropdown = document.getElementById('profileDropdown');
-        const profileHeader = document.getElementById('profileHeader');
-        if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
-            profileDropdown.classList.remove('show');
-            profileHeader.classList.remove('active');
-        }
-    });
 
     // ============================================
     // EMAIL VALIDATION FUNCTION
@@ -1493,22 +1776,38 @@
                 if (data.updates && data.updates.length > 0) {
                     updateTrackerBadge();
                     data.updates.forEach(update => {
-                        let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
-                        if (!exists) {
-                            let title = '', message = '', type = 'info';
-                            switch(update.newStatus) {
-                                case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
-                                case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
-                                case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
-                                case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
-                                case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
-                                case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
-                                case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
-                                case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
-                                case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
-                                default: return;
+                        let title = '', message = '', type = 'info';
+                        switch(update.newStatus) {
+                            case 'processing': title = '📦 Order Processing'; message = `Order #${update.orderId} is now being processed.`; break;
+                            case 'packaging': title = '📦 Packaging Your Order'; message = `Order #${update.orderId} is being packed.`; break;
+                            case 'ready_for_pickup': title = '✅ Ready for Pickup!'; message = `Order #${update.orderId} is ready for pickup.`; type = 'success'; break;
+                            case 'shipped': title = '🚚 Order Shipped!'; message = `Order #${update.orderId} has been shipped.`; type = 'success'; break;
+                            case 'delivered': title = '🏠 Order Delivered'; message = `Order #${update.orderId} has been delivered.`; type = 'success'; break;
+                            case 'completed': title = '✅ Order Completed'; message = `Order #${update.orderId} has been completed.`; type = 'success'; break;
+                            case 'accepted': title = '✅ Order Accepted'; message = `Order #${update.orderId} has been accepted.`; type = 'success'; break;
+                            case 'rejected': title = '❌ Order Rejected'; message = `Order #${update.orderId} has been rejected.`; type = 'warning'; break;
+                            case 'cancelled': title = '❌ Order Cancelled'; message = `Order #${update.orderId} has been cancelled.`; type = 'warning'; break;
+                            default: return;
+                        }
+                        
+                        if (isAdminOrStaff) {
+                            let exists = adminNotifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                            if (!exists) {
+                                const notification = { id: Date.now(), title, message, orderId: update.orderId, type, timestamp: new Date().toISOString(), read: false };
+                                adminNotifications.unshift(notification);
+                                if (adminNotifications.length > 100) adminNotifications = adminNotifications.slice(0, 100);
+                                saveAdminNotifications();
+                                showToast(message, type);
                             }
-                            addNotification(title, message, update.orderId, type);
+                        } else {
+                            let exists = userNotifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
+                            if (!exists) {
+                                const notification = { id: Date.now(), title, message, orderId: update.orderId, type, timestamp: new Date().toISOString(), read: false };
+                                userNotifications.unshift(notification);
+                                if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100);
+                                saveUserNotifications();
+                                showToast(message, type);
+                            }
                         }
                     });
                 }
@@ -1517,7 +1816,7 @@
     }
 
     // ============================================
-    // MOBILE SIDEBAR
+    // MOBILE SIDEBAR (Only for Admin/Staff)
     // ============================================
     let sidebarInit = false;
     function initMobileSidebar() {
@@ -1546,22 +1845,56 @@
     }
 
     // ============================================
-    // PROFILE DROPDOWN
+    // PROFILE DROPDOWN FUNCTIONS
     // ============================================
-    let dropdownInit = false;
-    function initializeDropdown() {
-        if (dropdownInit) return;
-        let header = document.getElementById('profileHeader'), dropdown = document.getElementById('profileDropdown');
-        if (header && dropdown) {
-            header.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleProfileDropdown();
-            });
-            dropdownInit = true;
+    function toggleAdminProfileDropdown() {
+        const dropdown = document.getElementById('adminProfileDropdown');
+        const header = document.getElementById('adminProfileHeader');
+        if (dropdown && header) {
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
         }
-        let changeBtn = document.getElementById('changeProfilePicBtn');
-        if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
     }
+    
+    function toggleUserProfileDropdown() {
+        const dropdown = document.getElementById('userProfileDropdown');
+        const header = document.getElementById('userProfileHeader');
+        if (dropdown && header) {
+            dropdown.classList.toggle('show');
+            header.classList.toggle('active');
+        }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (isAdminOrStaff) {
+            const notificationDropdown = document.getElementById('adminNotificationDropdown');
+            const notificationIcon = document.getElementById('adminNotificationIcon');
+            if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.classList.remove('show');
+            }
+            
+            const profileDropdown = document.getElementById('adminProfileDropdown');
+            const profileHeader = document.getElementById('adminProfileHeader');
+            if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+                profileHeader.classList.remove('active');
+            }
+        } else {
+            const notificationDropdown = document.getElementById('userNotificationDropdown');
+            const notificationIcon = document.getElementById('userNotificationIcon');
+            if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.classList.remove('show');
+            }
+            
+            const profileDropdown = document.getElementById('userProfileDropdown');
+            const profileHeader = document.getElementById('userProfileHeader');
+            if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+                profileHeader.classList.remove('active');
+            }
+        }
+    });
 
     // ============================================
     // PROFILE PICTURE UPLOAD MODAL
@@ -1578,7 +1911,7 @@
         uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
         uploadArea.addEventListener('drop', e => { e.preventDefault(); let file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) { if (file.size > 2*1024*1024) { showToast('File too large', 'error'); return; } let reader = new FileReader(); reader.onload = e => { previewImg.src = e.target.result; preview.style.display = 'block'; uploadArea.style.display = 'none'; saveBtn.disabled = false; let dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; }; reader.readAsDataURL(file); } });
         saveBtn.addEventListener('click', () => { if (fileInput.files.length > 0) uploadProfilePicture(fileInput.files[0]); });
-        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { document.querySelector('.profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
+        function uploadProfilePicture(file) { let fd = new FormData(); fd.append('profile_picture', file); progressContainer.style.display = 'block'; saveBtn.disabled = true; let xhr = new XMLHttpRequest(); xhr.upload.addEventListener('progress', e => { if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 100); progressFill.style.width = pct + '%'; progressText.textContent = pct + '%'; } }); xhr.addEventListener('load', () => { if (xhr.status === 200) { try { let resp = JSON.parse(xhr.responseText); if (resp.success) { if (isAdminOrStaff) { document.querySelector('.admin-profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; } else { document.querySelector('.user-profile-avatar').innerHTML = `<img src="${resp.imageUrl}?t=${Date.now()}" alt="{{ app.user.username }}">`; } showToast('Profile picture updated!', 'success'); closeUploadModal(); } else { showToast(resp.message || 'Upload failed', 'error'); resetUpload(); } } catch(e) { showToast('Invalid response', 'error'); resetUpload(); } } else { showToast('Upload failed', 'error'); resetUpload(); } }); xhr.addEventListener('error', () => { showToast('Network error', 'error'); resetUpload(); }); xhr.open('POST', '/dashboard/upload-profile-picture', true); xhr.send(fd); }
         function resetUpload() { progressContainer.style.display = 'none'; progressFill.style.width = '0%'; progressText.textContent = '0%'; saveBtn.disabled = false; }
         window.closeUploadModal = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 300); };
         cancelBtn.addEventListener('click', closeUploadModal);
@@ -1590,10 +1923,36 @@
     // INIT ALL
     // ============================================
     function initAll() {
-        initMobileSidebar(); 
-        initFlashMessages(); 
-        initializeDropdown(); 
-        loadNotifications();
+        if (isAdminOrStaff) {
+            initMobileSidebar();
+            loadAdminNotifications();
+        } else {
+            loadUserNotifications();
+        }
+        initFlashMessages();
+        
+        // Initialize profile dropdowns
+        if (isAdminOrStaff) {
+            let header = document.getElementById('adminProfileHeader');
+            if (header) {
+                header.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleAdminProfileDropdown();
+                });
+            }
+            let changeBtn = document.getElementById('adminChangeProfilePicBtn');
+            if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+        } else {
+            let header = document.getElementById('userProfileHeader');
+            if (header) {
+                header.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleUserProfileDropdown();
+                });
+            }
+            let changeBtn = document.getElementById('userChangeProfilePicBtn');
+            if (changeBtn) changeBtn.addEventListener('click', e => { e.preventDefault(); showUploadModal(); });
+        }
         
         checkOrderUpdates(); 
         setInterval(checkOrderUpdates, 30000);

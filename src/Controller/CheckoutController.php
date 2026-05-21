@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Repository\CartRepository;
+use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,8 @@ class CheckoutController extends AbstractController
         Request $request,
         CartRepository $cartRepo,
         EntityManagerInterface $em,
-        SessionInterface $session
+        SessionInterface $session,
+        OrderService $orderService
     ): Response {
         $user = $this->getUser();
         
@@ -71,7 +73,7 @@ class CheckoutController extends AbstractController
         if ($request->isMethod('POST')) {
             $customerName = $request->request->get('customer_name');
             $customerEmail = $request->request->get('customer_email');
-            $contactNumber = $request->request->get('contact_number');
+            $contactNumber = $request->request->get('customer_phone');
             $deliveryType = $request->request->get('delivery_type');
             $deliveryAddress = $request->request->get('delivery_address');
             $paymentMethod = $request->request->get('payment_method', 'cod');
@@ -117,8 +119,22 @@ class CheckoutController extends AbstractController
             
             $em->flush();
             
-            $this->addFlash('success', '✅ Order placed successfully! Please check your Order Tracker for updates.');
-            return $this->redirectToRoute('app_order_index');
+            // Send email notifications for all orders
+            foreach ($orders as $order) {
+                try {
+                    $orderService->sendOrderConfirmation($order);
+                    $orderService->sendAdminOrderNotification($order);
+                } catch (\Exception $e) {
+                    // Log error but don't stop the process
+                    error_log('Failed to send order email for Order #' . $order->getId() . ': ' . $e->getMessage());
+                }
+            }
+            
+            $orderCount = count($orders);
+            $this->addFlash('success', '✅ ' . $orderCount . ' order(s) placed successfully! A confirmation email has been sent to ' . htmlspecialchars($customerEmail) . '. Continue shopping at the marketplace.');
+            
+            // Redirect to marketplace (order_new) instead of order index
+            return $this->redirectToRoute('app_order_new');
         }
         
         $total = array_sum(array_map(fn($o) => $o->getTotalAmount(), $orders));

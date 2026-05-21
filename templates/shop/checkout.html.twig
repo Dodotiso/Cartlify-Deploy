@@ -1,0 +1,243 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout - Cartlify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 100px auto 50px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+    .checkout-form {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .order-summary {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #1f2a44;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #28a745;
+        border-top: 2px solid #e9ecef;
+        margin-top: 10px;
+    }
+    .btn-place-order {
+        width: 100%;
+        background: #28a745;
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    .delivery-address {
+        display: none;
+    }
+    .delivery-address.show {
+        display: block;
+    }
+    @media (max-width: 768px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+        }
+        .order-summary {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="checkout-container">
+    <!-- Checkout Form -->
+    <div class="checkout-form">
+        <h2 style="margin-bottom: 20px;">Customer Information</h2>
+        
+        <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="customerName" placeholder="Enter your full name" value="{{ app.user.username }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="customerEmail" placeholder="Enter your email" value="{{ app.user.email }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Contact Number *</label>
+            <input type="tel" id="customerPhone" placeholder="e.g., +639171234567">
+            <small style="color: #6c757d;">Include country code (e.g., +63 for Philippines)</small>
+        </div>
+        
+        <div class="form-group">
+            <label>Delivery Method *</label>
+            <select id="deliveryMethod">
+                <option value="pickup">🏪 Pickup (In-Store)</option>
+                <option value="shipping">🚚 Ship / Delivery</option>
+            </select>
+        </div>
+        
+        <div class="form-group delivery-address" id="addressField">
+            <label>Delivery Address *</label>
+            <textarea id="deliveryAddress" rows="3" placeholder="House #, Street, Barangay, City, Province, Postal Code"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Payment Method *</label>
+            <select id="paymentMethod">
+                <option value="cod">💰 Cash on Delivery</option>
+            </select>
+        </div>
+        
+        <button class="btn-place-order" id="placeOrderBtn">Place Order</button>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="order-summary">
+        <h2 style="margin-bottom: 20px;">Order Summary</h2>
+        
+        {% for item in items %}
+            <div class="summary-item">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>₱{{ (item.price * item.quantity)|number_format(2) }}</span>
+            </div>
+        {% endfor %}
+        
+        <div class="summary-total">
+            <span>Total</span>
+            <span id="totalAmount">₱{{ total|number_format(2) }}</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle delivery address field
+    const deliveryMethod = document.getElementById('deliveryMethod');
+    const addressField = document.getElementById('addressField');
+    
+    deliveryMethod.addEventListener('change', () => {
+        if (deliveryMethod.value === 'shipping') {
+            addressField.classList.add('show');
+        } else {
+            addressField.classList.remove('show');
+        }
+    });
+    
+    // Place Order
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    
+    placeOrderBtn.addEventListener('click', async () => {
+        const customerName = document.getElementById('customerName').value.trim();
+        const customerEmail = document.getElementById('customerEmail').value.trim();
+        const customerPhone = document.getElementById('customerPhone').value.trim();
+        const deliveryMethodVal = deliveryMethod.value;
+        const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        
+        // Validation
+        if (!customerName) {
+            alert('Please enter your full name');
+            return;
+        }
+        if (!customerEmail) {
+            alert('Please enter your email address');
+            return;
+        }
+        if (!customerEmail.includes('@')) {
+            alert('Please enter a valid email address');
+            return;
+        }
+        if (!customerPhone) {
+            alert('Please enter your contact number');
+            return;
+        }
+        if (deliveryMethodVal === 'shipping' && !deliveryAddress) {
+            alert('Please enter delivery address');
+            return;
+        }
+        
+        const items = [
+            {% for item in items %}
+            {
+                product_id: {{ item.product.id }},
+                product_name: '{{ item.product.name|escape('js') }}',
+                quantity: {{ item.quantity }},
+                price: {{ item.price }}
+            },
+            {% endfor %}
+        ];
+        
+        const isBuyNow = {{ isBuyNow ? 'true' : 'false' }};
+        
+        try {
+            const response = await fetch('{{ path('app_shop_place_order') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_name: customerName,
+                    customer_email: customerEmail,
+                    customer_phone: customerPhone,
+                    delivery_method: deliveryMethodVal,
+                    delivery_address: deliveryAddress,
+                    payment_method: paymentMethod,
+                    items: items,
+                    total: {{ total }},
+                    is_buy_now: isBuyNow
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('✅ Order placed successfully!');
+                window.location.href = '{{ path('app_order_tracker') }}';
+            } else {
+                alert('Error: ' + (data.error || 'Something went wrong'));
+            }
+        } catch (error) {
+            alert('Error placing order. Please try again.');
+        }
+    });
+</script>
+{% endblock %}

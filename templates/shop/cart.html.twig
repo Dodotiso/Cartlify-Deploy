@@ -1,0 +1,231 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Cart - Cartlify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .cart-container {
+        max-width: 1200px;
+        margin: 100px auto 50px;
+        padding: 0 20px;
+    }
+    .cart-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2a44;
+        margin-bottom: 30px;
+    }
+    .cart-empty {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 12px;
+    }
+    .cart-empty i {
+        font-size: 64px;
+        color: #bdc3c7;
+        margin-bottom: 20px;
+    }
+    .cart-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .cart-table th {
+        background: #1f2a44;
+        color: white;
+        padding: 15px;
+        text-align: left;
+    }
+    .cart-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .quantity-input {
+        width: 60px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        text-align: center;
+    }
+    .btn-remove {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .cart-summary {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .btn-checkout {
+        background: #28a745;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    @media (max-width: 768px) {
+        .cart-table, .cart-table tbody, .cart-table tr, .cart-table td {
+            display: block;
+        }
+        .cart-table thead {
+            display: none;
+        }
+        .cart-table tr {
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .cart-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+        }
+        .cart-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            margin-right: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="cart-container">
+    <h1 class="cart-title">My Shopping Cart</h1>
+    
+    {% if items is empty %}
+        <div class="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added any items yet.</p>
+            <a href="{{ path('app_shop') }}" class="btn-primary">Continue Shopping</a>
+        </div>
+    {% else %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr data-item-id="{{ item.id }}">
+                        <td data-label="Product">
+                            {% if item.product.image %}
+                                <img src="{{ asset('uploads/' ~ item.product.image) }}" class="product-image" alt="{{ item.product.name }}">
+                            {% else %}
+                                <img src="{{ asset('images/placeholder.jpg') }}" class="product-image" alt="No Image">
+                            {% endif %}
+                        </td>
+                        <td data-label="Name">{{ item.product.name }}</td>
+                        <td data-label="Price">₱{{ item.price|number_format(2) }}</td>
+                        <td data-label="Quantity">
+                            <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" data-item-id="{{ item.id }}">
+                        </td>
+                        <td data-label="Total" class="item-total">₱{{ (item.price * item.quantity)|number_format(2) }}</td>
+                        <td data-label="Action">
+                            <button class="btn-remove" data-item-id="{{ item.id }}">Remove</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="cart-summary">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <strong>Subtotal:</strong> 
+                    <span style="font-size: 24px; color: #28a745;" id="cartSubtotal">₱{{ subtotal|number_format(2) }}</span>
+                </div>
+                <a href="{{ path('app_shop_checkout') }}" class="btn-checkout">Proceed to Checkout →</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function updateCartBadge() {
+        fetch('/shop/cart/count')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('cartBadge');
+                if (badge && data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.classList.add('show');
+                } else if (badge) {
+                    badge.classList.remove('show');
+                }
+            })
+            .catch(e => console.log('Cart error:', e));
+    }
+
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', async function() {
+            const itemId = this.dataset.itemId;
+            const quantity = this.value;
+            
+            try {
+                const response = await fetch(`/shop/cart/update/${itemId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity: quantity })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const row = this.closest('tr');
+                    row.querySelector('.item-total').textContent = '₱' + data.itemTotal.toFixed(2);
+                    document.getElementById('cartSubtotal').textContent = '₱' + data.cartSubtotal.toFixed(2);
+                    updateCartBadge();
+                }
+            } catch(e) { console.error(e); }
+        });
+    });
+
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const itemId = this.dataset.itemId;
+            if (!confirm('Remove this item from cart?')) return;
+            
+            try {
+                const response = await fetch(`/shop/cart/remove/${itemId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.closest('tr').remove();
+                    updateCartBadge();
+                    location.reload();
+                }
+            } catch(e) { console.error(e); }
+        });
+    });
+</script>
+{% endblock %}

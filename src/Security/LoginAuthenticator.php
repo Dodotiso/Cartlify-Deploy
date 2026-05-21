@@ -56,7 +56,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // Default redirect for ROLE_USER
-        return new RedirectResponse($this->urlGenerator->generate('app_shop'));
+        return new RedirectResponse($this->urlGenerator->generate('app_order_new'));
     }
 
     protected function getLoginUrl(Request $request): string

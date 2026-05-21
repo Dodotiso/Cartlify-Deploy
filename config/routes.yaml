@@ -3,3 +3,12 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+# Google OAuth Routes
+google_auth_connect:
+    path: /connect/google
+    controller: App\Controller\GoogleAuthController::connect
+
+google_auth_callback:
+    path: /connect/google/check
+    controller: App\Controller\GoogleAuthController::callback

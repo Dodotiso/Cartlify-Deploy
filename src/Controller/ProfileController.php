@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class ProfileController extends AbstractController
 {
     #[Route('/', name: 'app_profile_index', methods: ['GET'])]
-    #[IsGranted('ROLE_STAFF')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(): Response
     {
         $user = $this->getUser();
@@ -33,7 +33,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_STAFF')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function edit(
         Request $request, 
         EntityManagerInterface $entityManager,
