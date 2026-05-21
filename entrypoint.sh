@@ -2,23 +2,28 @@
 set -e
 
 echo "🚀 Starting Cartlify on Railway..."
+
+# Debug: Print variables (remove after debugging)
+echo "MySQL Host: ${MYSQLHOST}"
+echo "MySQL Port: ${MYSQLPORT}"
+echo "MySQL User: ${MYSQLUSER}"
+echo "MySQL Database: ${MYSQLDATABASE}"
+echo "MySQL Password exists: $(if [ -n "${MYSQLPASSWORD}" ]; then echo 'YES'; else echo 'NO'; fi)"
+
+# Check if password is empty
+if [ -z "${MYSQLPASSWORD}" ]; then
+    echo "❌ ERROR: MYSQLPASSWORD is not set!"
+    exit 1
+fi
+
 echo "⏳ Waiting for database..."
-
-# Use Railway's MySQL variables
-DB_HOST="${MYSQLHOST:-mysql.railway.internal}"
-DB_PORT="${MYSQLPORT:-3306}"
-DB_USER="${MYSQLUSER:-root}"
-DB_PASSWORD="${MYSQLPASSWORD}"
-DB_NAME="${MYSQLDATABASE:-railway}"
-
-echo "Connecting to MySQL at $DB_HOST:$DB_PORT"
 
 max_retries=30
 counter=0
 
 until php -r "
 try {
-    \$pdo = new PDO('mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_NAME', '$DB_USER', '$DB_PASSWORD');
+    \$pdo = new PDO('mysql:host=${MYSQLHOST};port=${MYSQLPORT};dbname=${MYSQLDATABASE}', '${MYSQLUSER}', '${MYSQLPASSWORD}');
     echo 'Connected successfully';
     exit(0);
 } catch (PDOException \$e) {
