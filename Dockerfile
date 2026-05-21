@@ -15,7 +15,10 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
-# FIX: Install dependencies WITH scripts (don't use --no-scripts)
+# CRITICAL FIX: Allow plugins when running as root
+RUN composer config --global allow-plugins true
+
+# Install dependencies with plugins enabled
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-posix
 
 # Generate JWT keys
