@@ -7,6 +7,4 @@ node_modules/
 .git/
 Dockerfile
 docker-compose.yaml
-.railway/
 .gitignore
-*.md
