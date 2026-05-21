@@ -17,11 +17,13 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY composer.json composer.lock ./
 
-RUN composer install --no-interaction --optimize-autoloader
+# FIX: Install WITHOUT scripts first
+RUN composer install --no-interaction --optimize-autoloader --no-scripts
 
 COPY . .
 
-RUN php bin/console cache:warmup --env=prod --no-debug || true
+# FIX: Now run scripts after all files are copied
+RUN composer install --no-interaction --optimize-autoloader
 
 FROM php:8.3-fpm as runtime
 
