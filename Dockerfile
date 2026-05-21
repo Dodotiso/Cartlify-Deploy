@@ -15,16 +15,27 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /app
 
+# Copy composer files first and install as root (but without scripts)
+COPY composer.json composer.lock ./
+
+# Install as root first to create vendor directory
+RUN composer install --no-interaction --optimize-autoloader --no-scripts --ignore-platform-req=ext-posix
+
+# Now copy all files
 COPY --chown=appuser:appuser . .
 
-# Run as non-root user
+# Fix permissions
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user for the rest
 USER appuser
 
+# Now run the full install (scripts will run as non-root)
 RUN composer install --no-interaction --optimize-autoloader --ignore-platform-req=ext-posix
 
-RUN mkdir -p var/cache var/log && chmod -R 777 var
+RUN mkdir -p var/cache var/log
 
-# Switch back to root for nginx (needs root)
+# Switch back to root for nginx
 USER root
 
 COPY nginx-main.conf /etc/nginx/nginx.conf
