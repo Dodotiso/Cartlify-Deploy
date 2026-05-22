@@ -36,6 +36,11 @@ echo "Clearing and warming cache..."
 php /app/bin/console cache:clear --env=prod --no-debug 2>&1 || echo "Cache clear warning (non-fatal)"
 php /app/bin/console cache:warmup --env=prod 2>&1 || echo "Cache warmup warning (non-fatal)"
 
+# Fix permissions after cache operations
+echo "Fixing filesystem permissions..."
+chown -R www-data:www-data /app/var
+chmod -R 775 /app/var
+
 # Wait for database and run migrations
 if [ ! -z "$MYSQLHOST" ]; then
     echo "Waiting for database connection..."
@@ -52,6 +57,11 @@ if [ ! -z "$MYSQLHOST" ]; then
             php /app/bin/console doctrine:schema:drop --force --full-database --env=prod 2>&1 || true
             echo "Running migrations..."
             php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
+            
+            # Fix permissions again after migrations (they may create files)
+            echo "Fixing permissions after migrations..."
+            chown -R www-data:www-data /app/var
+            chmod -R 775 /app/var
             break
         fi
         echo "Waiting... ($i/20)"
