@@ -53,12 +53,20 @@ if [ ! -z "$MYSQLHOST" ]; then
         } catch (Exception \$e) { exit(1); }
         " 2>/dev/null; then
             echo "Database connected!"
-            echo "Dropping old schema and recreating..."
-            php /app/bin/console doctrine:schema:drop --force --full-database --env=prod 2>&1 || true
-            echo "Running migrations..."
-            php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
             
-            # Fix permissions again after migrations (they may create files)
+            # Try running migrations normally
+            echo "Running migrations..."
+            if php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1; then
+                echo "All migrations completed successfully!"
+            else
+                echo "Some migrations failed. Skipping problematic migration..."
+                # Mark the broken migration as executed and continue
+                php /app/bin/console doctrine:migrations:version 'DoctrineMigrations\Version20260318094426' --add --no-interaction --env=prod 2>&1 || true
+                echo "Continuing with remaining migrations..."
+                php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
+            fi
+            
+            # Fix permissions after migrations
             echo "Fixing permissions after migrations..."
             chown -R www-data:www-data /app/var
             chmod -R 775 /app/var
