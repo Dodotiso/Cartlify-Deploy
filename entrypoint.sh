@@ -44,14 +44,14 @@ if [ ! -f /app/config/jwt/private.pem ]; then
     chmod 644 /app/config/jwt/*.pem
 fi
 
-# Run database migrations
-echo "Running database migrations..."
-php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
-
 # Clear and warmup cache for production
 echo "Clearing and warming cache..."
 php /app/bin/console cache:clear --env=prod --no-debug || true
 php /app/bin/console cache:warmup --env=prod || true
+
+# Run database migrations
+echo "Running database migrations..."
+php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
 
 # Start services
 echo "Starting PHP-FPM..."

@@ -15,8 +15,8 @@ WORKDIR /app
 
 COPY . .
 
-# Install production dependencies only
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install production dependencies (skip auto-scripts to avoid symfony-cmd error)
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Fix permissions
 RUN mkdir -p var/cache var/log && chmod -R 777 var
