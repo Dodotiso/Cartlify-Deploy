@@ -15,11 +15,12 @@ WORKDIR /app
 
 COPY . .
 
-# Install ALL dependencies including dev (runtime is there)
-RUN composer install --optimize-autoloader --no-interaction
+# Install production dependencies only
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Fix permissions
 RUN mkdir -p var/cache var/log && chmod -R 777 var
+RUN mkdir -p config/jwt && chmod -R 777 config/jwt
 
 COPY nginx-main.conf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
