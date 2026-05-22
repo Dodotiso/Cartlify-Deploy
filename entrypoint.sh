@@ -8,7 +8,7 @@ echo "Creating .env from environment variables..."
 cat > /app/.env << ENVEOF
 APP_ENV=prod
 APP_SECRET=${APP_SECRET}
-DEFAULT_URI=https://\${RAILWAY_PUBLIC_DOMAIN:-localhost}
+DEFAULT_URI=https://${RAILWAY_PUBLIC_DOMAIN:-localhost}
 DATABASE_URL="mysql://${MYSQLUSER}:${MYSQLPASSWORD}@${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?serverVersion=8.0&charset=utf8mb4"
 CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
@@ -61,6 +61,11 @@ else
     echo "No MySQL service detected. Skipping database setup."
 fi
 
+# Replace ${PORT} in nginx config with actual Railway PORT
+export PORT=${PORT:-80}
+echo "Configuring Nginx to listen on port $PORT..."
+sed -i "s/\${PORT}/$PORT/g" /etc/nginx/conf.d/default.conf
+
 # Start PHP-FPM
 echo "Starting PHP-FPM..."
 php-fpm -D
@@ -73,5 +78,5 @@ else
     echo "WARNING: PHP-FPM may not have started properly"
 fi
 
-echo "Starting Nginx..."
+echo "Starting Nginx on port $PORT..."
 nginx -g "daemon off;"
