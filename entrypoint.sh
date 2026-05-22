@@ -3,6 +3,22 @@ set -e
 
 echo "=== Starting Cartlify on Railway ==="
 
+# Create .env file from Railway environment variables
+echo "Creating .env from environment variables..."
+cat > /app/.env << ENVEOF
+APP_ENV=prod
+APP_SECRET=${APP_SECRET}
+DATABASE_URL="mysql://${MYSQLUSER}:${MYSQLPASSWORD}@${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?serverVersion=8.0&charset=utf8mb4"
+CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
+MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+MAILER_DSN=${MAILER_DSN}
+JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+JWT_PASSPHRASE=${JWT_PASSPHRASE}
+ENVEOF
+
 # Wait for MySQL to be ready
 echo "Waiting for database connection..."
 ATTEMPTS=0
