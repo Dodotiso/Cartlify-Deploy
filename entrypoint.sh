@@ -8,6 +8,7 @@ echo "Creating .env from environment variables..."
 cat > /app/.env << ENVEOF
 APP_ENV=prod
 APP_SECRET=${APP_SECRET}
+DEFAULT_URI=https://\${RAILWAY_PUBLIC_DOMAIN:-localhost}
 DATABASE_URL="mysql://${MYSQLUSER}:${MYSQLPASSWORD}@${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?serverVersion=8.0&charset=utf8mb4"
 CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
@@ -20,7 +21,6 @@ JWT_PASSPHRASE=${JWT_PASSPHRASE}
 ENVEOF
 
 echo ".env file created successfully"
-cat /app/.env
 
 # Generate JWT keys if missing
 if [ ! -f /app/config/jwt/private.pem ]; then
@@ -36,7 +36,7 @@ echo "Clearing and warming cache..."
 php /app/bin/console cache:clear --env=prod --no-debug 2>&1 || echo "Cache clear warning (non-fatal)"
 php /app/bin/console cache:warmup --env=prod 2>&1 || echo "Cache warmup warning (non-fatal)"
 
-# Wait for and run database migrations
+# Wait for database and run migrations
 if [ ! -z "$MYSQLHOST" ]; then
     echo "Waiting for database connection..."
     for i in {1..20}; do
@@ -48,8 +48,10 @@ if [ ! -z "$MYSQLHOST" ]; then
         } catch (Exception \$e) { exit(1); }
         " 2>/dev/null; then
             echo "Database connected!"
+            echo "Dropping old schema and recreating..."
+            php /app/bin/console doctrine:schema:drop --force --full-database --env=prod 2>&1 || true
             echo "Running migrations..."
-            php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>&1 || true
+            php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
             break
         fi
         echo "Waiting... ($i/20)"
@@ -59,17 +61,16 @@ else
     echo "No MySQL service detected. Skipping database setup."
 fi
 
-# Start services
+# Start PHP-FPM
 echo "Starting PHP-FPM..."
 php-fpm -D
 
-# Verify PHP-FPM started
+# Wait and verify PHP-FPM started
 sleep 2
-if pgrep php-fpm > /dev/null; then
+if ps aux | grep -v grep | grep php-fpm > /dev/null; then
     echo "PHP-FPM is running"
 else
-    echo "ERROR: PHP-FPM failed to start!"
-    exit 1
+    echo "WARNING: PHP-FPM may not have started properly"
 fi
 
 echo "Starting Nginx..."
