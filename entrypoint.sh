@@ -19,37 +19,8 @@ JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=${JWT_PASSPHRASE}
 ENVEOF
 
-# Wait for MySQL to be ready
-echo "Waiting for database connection..."
-ATTEMPTS=0
-MAX_ATTEMPTS=30
-until php -r "
-try {
-    \$host = getenv('MYSQLHOST');
-    \$port = getenv('MYSQLPORT') ?: '3306';
-    \$dbname = getenv('MYSQLDATABASE');
-    \$user = getenv('MYSQLUSER');
-    \$pass = getenv('MYSQLPASSWORD');
-    
-    new PDO(
-        \"mysql:host=\$host;port=\$port;dbname=\$dbname\",
-        \$user,
-        \$pass,
-        [PDO::ATTR_TIMEOUT => 5]
-    );
-    exit(0);
-} catch (Exception \$e) {
-    exit(1);
-}
-" 2>/dev/null; do
-    ATTEMPTS=$((ATTEMPTS + 1))
-    if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
-        echo "Failed to connect to database after $MAX_ATTEMPTS attempts"
-        break
-    fi
-    echo "Waiting... ($ATTEMPTS/$MAX_ATTEMPTS)"
-    sleep 2
-done
+echo ".env file created successfully"
+cat /app/.env
 
 # Generate JWT keys if missing
 if [ ! -f /app/config/jwt/private.pem ]; then
@@ -62,16 +33,44 @@ fi
 
 # Clear and warmup cache for production
 echo "Clearing and warming cache..."
-php /app/bin/console cache:clear --env=prod --no-debug || true
-php /app/bin/console cache:warmup --env=prod || true
+php /app/bin/console cache:clear --env=prod --no-debug 2>&1 || echo "Cache clear warning (non-fatal)"
+php /app/bin/console cache:warmup --env=prod 2>&1 || echo "Cache warmup warning (non-fatal)"
 
-# Run database migrations
-echo "Running database migrations..."
-php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
+# Wait for and run database migrations
+if [ ! -z "$MYSQLHOST" ]; then
+    echo "Waiting for database connection..."
+    for i in {1..20}; do
+        if php -r "
+        try {
+            new PDO('mysql:host=${MYSQLHOST};port=${MYSQLPORT:-3306};dbname=${MYSQLDATABASE}', '${MYSQLUSER}', '${MYSQLPASSWORD}', [PDO::ATTR_TIMEOUT => 3]);
+            echo 'connected';
+            exit(0);
+        } catch (Exception \$e) { exit(1); }
+        " 2>/dev/null; then
+            echo "Database connected!"
+            echo "Running migrations..."
+            php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>&1 || true
+            break
+        fi
+        echo "Waiting... ($i/20)"
+        sleep 3
+    done
+else
+    echo "No MySQL service detected. Skipping database setup."
+fi
 
 # Start services
 echo "Starting PHP-FPM..."
 php-fpm -D
+
+# Verify PHP-FPM started
+sleep 2
+if pgrep php-fpm > /dev/null; then
+    echo "PHP-FPM is running"
+else
+    echo "ERROR: PHP-FPM failed to start!"
+    exit 1
+fi
 
 echo "Starting Nginx..."
 nginx -g "daemon off;"
