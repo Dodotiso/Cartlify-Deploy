@@ -3,6 +3,10 @@ set -e
 
 echo "=== Starting Cartlify on Railway ==="
 
+echo "=== Checking images ==="
+ls /app/public/images/ 2>&1 || echo "Images folder NOT FOUND"
+echo "=== End images check ==="
+
 # Create .env file from Railway environment variables
 echo "Creating .env from environment variables..."
 cat > /app/.env << ENVEOF
