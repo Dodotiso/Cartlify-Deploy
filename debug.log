@@ -31551,3 +31551,5 @@ Determining action for route: app_product_edit, isAdmin: NO
 Determining target for route: app_product_edit, id: 4
 Creating log - Action: STAFF_EDITS_RECORD Target: Staff edited product: Light Bulbie (Price: $400.00)
 ✅ Log saved successfully: STAFF_EDITS_RECORD
+✅ Logout log saved
+✅ Login log saved

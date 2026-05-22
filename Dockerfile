@@ -19,6 +19,10 @@ COPY . .
 # Install production dependencies only
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
+# Compile assets
+RUN php bin/console importmap:install --no-interaction
+RUN APP_ENV=prod php bin/console asset-map:compile --no-interaction
+
 # Create directories and set ownership to www-data
 RUN mkdir -p var/cache var/log config/jwt && \
     chown -R www-data:www-data var config/jwt && \
