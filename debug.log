@@ -31553,3 +31553,42 @@ Creating log - Action: STAFF_EDITS_RECORD Target: Staff edited product: Light Bu
 ✅ Log saved successfully: STAFF_EDITS_RECORD
 ✅ Logout log saved
 ✅ Login log saved
+✅ Login log saved
+2026-05-22 10:02:53 - POST Route: api_cart_add
+POST Data: Array
+(
+    [quantity] => 1
+)
+
+Route attributes: Array
+(
+    [stockId] => 42
+)
+
+----------------------------------------
+2026-05-22 10:03:22 - POST Route: api_cart_add
+POST Data: Array
+(
+    [quantity] => 1
+)
+
+Route attributes: Array
+(
+    [stockId] => 53
+)
+
+----------------------------------------
+2026-05-22 10:05:53 - POST Route: app_cart_add
+POST Data: Array
+(
+    [quantity] => 1
+)
+
+Route attributes: Array
+(
+    [stockId] => 43
+)
+
+----------------------------------------
+✅ Login log saved
+✅ Login log saved
