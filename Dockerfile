@@ -19,9 +19,17 @@ COPY . .
 # Install production dependencies only
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
+# Create minimal .env for asset compilation
+RUN echo "APP_ENV=prod" > /app/.env && \
+    echo "APP_SECRET=placeholder" >> /app/.env && \
+    echo "DATABASE_URL=mysql://root:root@localhost:3306/app?serverVersion=8.0" >> /app/.env
+
 # Compile assets
 RUN php bin/console importmap:install --no-interaction
 RUN APP_ENV=prod php bin/console asset-map:compile --no-interaction
+
+# Remove temporary .env (entrypoint will create the real one)
+RUN rm /app/.env
 
 # Create directories and set ownership to www-data
 RUN mkdir -p var/cache var/log config/jwt && \
