@@ -22,6 +22,9 @@ MAILER_DSN=${MAILER_DSN}
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=${JWT_PASSPHRASE}
+MERCURE_URL=${MERCURE_URL}
+MERCURE_PUBLIC_URL=${MERCURE_PUBLIC_URL}
+MERCURE_JWT_SECRET=${MERCURE_JWT_SECRET}
 ENVEOF
 
 echo ".env file created successfully"
