@@ -17,6 +17,27 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[Route('/order')]
 class OrderController extends AbstractController
 {
+    private function notifyViaWebSocket(int $userId, string $type, string $title, string $message): void
+    {
+        try {
+            file_get_contents('https://cartlify-websocket-production.up.railway.app/send-notification', false, stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => 'Content-Type: application/json',
+                    'content' => json_encode([
+                        'userId' => $userId,
+                        'type' => $type,
+                        'title' => $title,
+                        'message' => $message
+                    ]),
+                    'timeout' => 3,
+                ]
+            ]));
+        } catch (\Exception $e) {
+            // Silently fail — WebSocket is optional
+        }
+    }
+
     #[Route('/', name: 'app_order_index', methods: ['GET'])]
     #[IsGranted('ROLE_STAFF')]
     public function index(OrderRepository $orderRepository, Request $request): Response
@@ -107,9 +128,14 @@ class OrderController extends AbstractController
                 $entityManager->persist($order);
                 $entityManager->flush();
 
-                // Send email notifications
                 $orderService->sendOrderConfirmation($order);
                 $orderService->sendAdminOrderNotification($order);
+
+                // WebSocket notification
+                $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+                if ($customerId) {
+                    $this->notifyViaWebSocket($customerId, 'order_update', 'New Order', "Your order #{$order->getId()} has been placed!");
+                }
 
                 $this->addFlash('success', 'Order placed successfully! A confirmation email has been sent.');
                 return $this->redirectToRoute('app_order_index');
@@ -160,7 +186,6 @@ class OrderController extends AbstractController
         if (in_array($newStatus, ['pending', 'complete', 'cancelled', 'accepted', 'rejected', 'completed'])) {
             $order->setOrderStatus($newStatus);
             
-            // Restore stock if order is being rejected or cancelled
             if (($newStatus === 'rejected' || $newStatus === 'cancelled') && $oldStatus !== 'rejected' && $oldStatus !== 'cancelled') {
                 $stock = $order->getStock();
                 $stock->setStock($stock->getStock() + $order->getQuantity());
@@ -170,8 +195,13 @@ class OrderController extends AbstractController
             
             $em->flush();
             
-            // Send status update email to customer
             $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus);
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Order Updated', "Your order #{$order->getId()} is now {$newStatus}");
+            }
             
             $this->addFlash('success', 'Order status updated to: ' . ucfirst($newStatus) . ' and customer has been notified.');
         }
@@ -186,7 +216,6 @@ class OrderController extends AbstractController
         EntityManagerInterface $em,
         OrderService $orderService
     ): Response {
-        // Check if order is editable (not rejected or completed)
         if (in_array($order->getOrderStatus(), ['rejected', 'completed'])) {
             $this->addFlash('error', 'Cannot update process status for ' . $order->getOrderStatus() . ' orders.');
             return $this->redirectToRoute('app_order_index');
@@ -200,8 +229,13 @@ class OrderController extends AbstractController
             $order->setProcessStatus($newStatus);
             $em->flush();
             
-            // Send status update email to customer
             $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus);
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Processing Update', "Your order #{$order->getId()} is now " . str_replace('_', ' ', $newStatus));
+            }
             
             $this->addFlash('success', 'Process status updated to: ' . ucfirst(str_replace('_', ' ', $newStatus)) . ' and customer has been notified.');
         }
@@ -221,8 +255,13 @@ class OrderController extends AbstractController
             $order->setOrderStatus('accepted');
             $em->flush();
             
-            // Send status update email
             $orderService->sendOrderStatusUpdate($order, $oldStatus, 'accepted');
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Order Accepted', "Your order #{$order->getId()} has been accepted!");
+            }
             
             $this->addFlash('success', 'Order #' . $order->getId() . ' accepted! Customer has been notified.');
         } else {
@@ -241,7 +280,6 @@ class OrderController extends AbstractController
         $oldStatus = $order->getOrderStatus();
         
         if (!in_array($order->getOrderStatus(), ['rejected', 'completed'])) {
-            // Restore stock
             $stock = $order->getStock();
             $stock->setStock($stock->getStock() + $order->getQuantity());
             $em->persist($stock);
@@ -249,8 +287,13 @@ class OrderController extends AbstractController
             $order->setOrderStatus('rejected');
             $em->flush();
             
-            // Send status update email
             $orderService->sendOrderStatusUpdate($order, $oldStatus, 'rejected');
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Order Rejected', "Your order #{$order->getId()} has been rejected.");
+            }
             
             $this->addFlash('warning', 'Order #' . $order->getId() . ' rejected. Stock restored and customer notified.');
         } else {
@@ -272,8 +315,13 @@ class OrderController extends AbstractController
             $order->setOrderStatus('completed');
             $em->flush();
             
-            // Send status update email
             $orderService->sendOrderStatusUpdate($order, $oldStatus, 'completed');
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Order Completed', "Your order #{$order->getId()} has been completed!");
+            }
             
             $this->addFlash('success', 'Order #' . $order->getId() . ' completed! Customer has been notified.');
         } else {
@@ -299,8 +347,13 @@ class OrderController extends AbstractController
             $order->setOrderStatus('cancelled');
             $em->flush();
             
-            // Send status update email
             $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled');
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'Order Cancelled', "Your order #{$order->getId()} has been cancelled.");
+            }
             
             $this->addFlash('warning', 'Order #' . $order->getId() . ' cancelled. Stock restored and customer notified.');
         } else {
@@ -314,7 +367,6 @@ class OrderController extends AbstractController
     public function delete(Request $request, Order $order, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$order->getId(), $request->request->get('_token'))) {
-            // Only restore stock if order is not already rejected or completed (stock already restored or not deducted)
             if (!in_array($order->getOrderStatus(), ['rejected', 'completed'])) {
                 $stock = $order->getStock();
                 $stock->setStock($stock->getStock() + $order->getQuantity());
@@ -380,19 +432,16 @@ class OrderController extends AbstractController
         EntityManagerInterface $em,
         OrderService $orderService
     ): Response {
-        // Verify CSRF token
         if (!$this->isCsrfTokenValid('cancel' . $order->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Invalid request.');
             return $this->redirectToRoute('app_order_tracker');
         }
         
-        // Check if order belongs to current user
         if ($order->getCustomer() !== $this->getUser()) {
             $this->addFlash('error', 'You do not have permission to cancel this order.');
             return $this->redirectToRoute('app_order_tracker');
         }
         
-        // Only pending or accepted orders can be cancelled by customer
         if (!in_array($order->getOrderStatus(), ['pending', 'accepted'])) {
             $this->addFlash('error', 'This order cannot be cancelled at this stage.');
             return $this->redirectToRoute('app_order_tracker');
@@ -400,7 +449,6 @@ class OrderController extends AbstractController
         
         $oldStatus = $order->getOrderStatus();
         
-        // Restore stock
         $stock = $order->getStock();
         $stock->setStock($stock->getStock() + $order->getQuantity());
         $em->persist($stock);
@@ -408,10 +456,15 @@ class OrderController extends AbstractController
         $order->setOrderStatus('cancelled');
         $em->flush();
         
-        // Send cancellation email
         $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled');
+
+        // WebSocket notification
+        $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+        if ($customerId) {
+            $this->notifyViaWebSocket($customerId, 'order_update', 'Order Cancelled', "Your order #{$order->getId()} has been cancelled.");
+        }
         
-        $this->addFlash('success', 'Order #' . $order->getId() . ' has been cancelled successfully. Stock has been restored. A confirmation email has been sent.');
+        $this->addFlash('success', 'Order #' . $order->getId() . ' has been cancelled successfully.');
         return $this->redirectToRoute('app_order_tracker');
     }
 
@@ -419,21 +472,18 @@ class OrderController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function customerDeleteOrder(Order $order, Request $request, EntityManagerInterface $em): Response
     {
-        // Verify CSRF token
         if (!$this->isCsrfTokenValid('delete' . $order->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Invalid request.');
             return $this->redirectToRoute('app_order_tracker');
         }
         
-        // Check if order belongs to current user
         if ($order->getCustomer() !== $this->getUser()) {
             $this->addFlash('error', 'You do not have permission to delete this order.');
             return $this->redirectToRoute('app_order_tracker');
         }
         
-        // Only completed, rejected, or cancelled orders can be deleted by customer
         if (!in_array($order->getOrderStatus(), ['completed', 'rejected', 'cancelled'])) {
-            $this->addFlash('error', 'This order cannot be deleted. Only completed, rejected, or cancelled orders can be deleted.');
+            $this->addFlash('error', 'This order cannot be deleted.');
             return $this->redirectToRoute('app_order_tracker');
         }
         
@@ -474,7 +524,6 @@ class OrderController extends AbstractController
         ]);
     }
 
-    // NEW ROUTE: Buy Now for Regular Users - Redirects back to app_order_new
     #[Route('/buy-now/{stockId}', name: 'app_buy_now', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function buyNow(
@@ -496,15 +545,13 @@ class OrderController extends AbstractController
         }
         
         if ($quantity > $stock->getStock()) {
-            $this->addFlash('error', 'Not enough stock available. Maximum available: ' . $stock->getStock());
+            $this->addFlash('error', 'Not enough stock available.');
             return $this->redirectToRoute('app_order_new');
         }
         
-        // Get customer info from session
         $session = $request->getSession();
         $checkoutInfo = $session->get('checkout_info', []);
         
-        // Create new order
         $stock->setStock($stock->getStock() - $quantity);
         
         $order = new Order();
@@ -513,45 +560,34 @@ class OrderController extends AbstractController
         $order->setUnitPrice($stock->getProduct()->getPrice());
         $order->setTotalAmount($quantity * $stock->getProduct()->getPrice());
         $order->setCustomer($user);
-        
-        // Set order status
         $order->setOrderStatus('pending');
         $order->setProcessStatus('pending');
         
-        // Set customer details if provided
-        if (isset($checkoutInfo['name'])) {
-            $order->setCustomerName($checkoutInfo['name']);
-        }
-        if (isset($checkoutInfo['email'])) {
-            $order->setCustomerEmail($checkoutInfo['email']);
-        }
-        if (isset($checkoutInfo['phone'])) {
-            $order->setCustomerPhone($checkoutInfo['phone']);
-        }
-        if (isset($checkoutInfo['delivery'])) {
-            $order->setDeliveryType($checkoutInfo['delivery']);
-        }
-        if (isset($checkoutInfo['address'])) {
-            $order->setDeliveryAddress($checkoutInfo['address']);
-        }
-        if (isset($checkoutInfo['payment'])) {
-            $order->setPaymentMethod($checkoutInfo['payment']);
-        }
+        if (isset($checkoutInfo['name'])) $order->setCustomerName($checkoutInfo['name']);
+        if (isset($checkoutInfo['email'])) $order->setCustomerEmail($checkoutInfo['email']);
+        if (isset($checkoutInfo['phone'])) $order->setCustomerPhone($checkoutInfo['phone']);
+        if (isset($checkoutInfo['delivery'])) $order->setDeliveryType($checkoutInfo['delivery']);
+        if (isset($checkoutInfo['address'])) $order->setDeliveryAddress($checkoutInfo['address']);
+        if (isset($checkoutInfo['payment'])) $order->setPaymentMethod($checkoutInfo['payment']);
         
         try {
             $entityManager->persist($stock);
             $entityManager->persist($order);
             $entityManager->flush();
             
-            // Send email notifications
             $orderService->sendOrderConfirmation($order);
             $orderService->sendAdminOrderNotification($order);
+
+            // WebSocket notification
+            $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
+            if ($customerId) {
+                $this->notifyViaWebSocket($customerId, 'order_update', 'New Order', "Your order #{$order->getId()} has been placed!");
+            }
             
-            // Clear checkout info from session
             $session->remove('checkout_info');
             
-            $this->addFlash('success', 'Order #' . $order->getId() . ' placed successfully! A confirmation email has been sent. You can track your order in the Order Tracker.');
-            return $this->redirectToRoute('app_order_new');  // Redirect back to marketplace
+            $this->addFlash('success', 'Order #' . $order->getId() . ' placed successfully!');
+            return $this->redirectToRoute('app_order_new');
         } catch (\Exception $e) {
             $this->addFlash('error', 'Error placing order: ' . $e->getMessage());
             return $this->redirectToRoute('app_order_new');
