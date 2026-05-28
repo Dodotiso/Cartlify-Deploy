@@ -15,22 +15,39 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Post(),
-        new Get(),
-        new Put(),
-        new Patch(),
-        new Delete(),
-    ],
-    normalizationContext: [
-        'groups' => ['product:read']
-    ],
-    denormalizationContext: [
-        'groups' => ['product:write']
+        new GetCollection(
+            normalizationContext: ['groups' => ['product:read']]
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['product:read']]
+        ),
+        new Post(
+            security: "is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN')",
+            securityMessage: 'Only staff or admins can create products.',
+            normalizationContext:   ['groups' => ['product:read']],
+            denormalizationContext: ['groups' => ['product:write']],
+        ),
+        new Put(
+            security: "is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN')",
+            securityMessage: 'Only staff or admins can edit products.',
+            normalizationContext:   ['groups' => ['product:read']],
+            denormalizationContext: ['groups' => ['product:write']],
+        ),
+        new Patch(
+            security: "is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN')",
+            securityMessage: 'Only staff or admins can edit products.',
+            normalizationContext:   ['groups' => ['product:read']],
+            denormalizationContext: ['groups' => ['product:write']],
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')",
+            securityMessage: 'Only admins can delete products.',
+        ),
     ]
 )]
 class Product
@@ -43,14 +60,24 @@ class Product
 
     #[ORM\Column(length: 255)]
     #[Groups(['product:read', 'product:write'])]
+    #[Assert\NotBlank(message: 'Product name is required.')]
+    #[Assert\Length(max: 255, maxMessage: 'Name cannot exceed 255 characters.')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['product:read', 'product:write'])]
+    #[Assert\NotBlank(message: 'Description is required.')]
+    #[Assert\Regex(
+        pattern: '/\d/',
+        match: false,
+        message: 'Numbers are not allowed in the description.'
+    )]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Groups(['product:read', 'product:write'])]
+    #[Assert\NotNull(message: 'Price is required.')]
+    #[Assert\Positive(message: 'Price must be greater than 0.')]
     private ?float $price = null;
 
     #[ORM\Column]
@@ -61,8 +88,10 @@ class Product
     #[Groups(['product:read', 'product:write'])]
     private ?string $image = null;
 
+    // ── Write category by IRI e.g. "/api/categories/3" ──
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[Groups(['product:read', 'product:write'])]
+    #[Assert\NotNull(message: 'Category is required.')]
     private ?Category $category = null;
 
     /**
@@ -79,8 +108,8 @@ class Product
 
     public function __construct()
     {
-        $this->stocks = new ArrayCollection();
-        $this->orders = new ArrayCollection();
+        $this->stocks  = new ArrayCollection();
+        $this->orders  = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -155,14 +184,14 @@ class Product
         return $this;
     }
 
-    // ✅ Returns category name as string
+    // ── Exposes category name as a flat string in GET responses ──
     #[Groups(['product:read'])]
     public function getCategoryName(): ?string
     {
         return $this->category ? $this->category->getCategory() : null;
     }
 
-    // ✅ Returns total stock across all stock entries
+    // ── Exposes total stock across all stock entries ──
     #[Groups(['product:read'])]
     public function getTotalStock(): int
     {

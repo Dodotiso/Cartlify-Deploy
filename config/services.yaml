@@ -28,6 +28,6 @@ services:
     # please note that last definitions always *replace* previous ones
     
     # Explicitly register the ActivityLogSubscriber
-    App\EventSubscriber\ActivityLogSubscriber:
+    App\EventListener\ActivityLogListener:
         tags:
             - { name: kernel.event_subscriber }

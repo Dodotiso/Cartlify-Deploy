@@ -56,16 +56,22 @@ class ActivityLog
     }
 
     public function getId(): ?int { return $this->id; }
+    
     public function getUserId(): ?int { return $this->userId; }
     public function setUserId(?int $userId): static { $this->userId = $userId; return $this; }
+    
     public function getUsername(): string { return $this->username; }
     public function setUsername(string $username): static { $this->username = $username; return $this; }
+    
     public function getRole(): string { return $this->role; }
     public function setRole(string $role): static { $this->role = $role; return $this; }
+    
     public function getAction(): string { return $this->action; }
     public function setAction(string $action): static { $this->action = $action; return $this; }
+    
     public function getTarget(): string { return $this->target; }
     public function setTarget(string $target): static { $this->target = $target; return $this; }
+    
     public function getCreatedAt(): \DateTimeInterface { return $this->createdAt; }
     public function setCreatedAt(\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
 }
