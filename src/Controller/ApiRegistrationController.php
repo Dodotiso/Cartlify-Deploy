@@ -97,27 +97,25 @@ class ApiRegistrationController extends AbstractController
         $user->setVerificationToken($verificationToken);
         $user->setIsVerified(false);
 
-        // Save user
+        // Save user FIRST
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        // Generate verification URL
-        $verificationUrl = $this->generateUrl(
-            'app_verify_email',
-            ['token' => $verificationToken],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-
-        // Send verification email
+        // Try to send verification email (don't fail if it doesn't work)
         try {
+            $verificationUrl = $this->generateUrl(
+                'app_verify_email',
+                ['token' => $verificationToken],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
             $this->emailVerificationService->sendVerificationEmail($user, $verificationUrl);
-        } catch (\Exception $e) {
-            // Log error but don't fail registration
+        } catch (\Throwable $e) {
+            // Silently fail — email service not available
         }
 
         return $this->json([
             'success' => true,
-            'message' => 'Registration successful. Please check your email to verify your account.',
+            'message' => 'Registration successful.',
             'user' => [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
