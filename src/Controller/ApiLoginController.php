@@ -8,12 +8,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class ApiLoginController extends AbstractController
 {
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(Request $request, UserRepository $userRepository): JsonResponse
-    {
+    public function login(
+        Request $request, 
+        UserRepository $userRepository,
+        JWTTokenManagerInterface $jwtManager
+    ): JsonResponse {
         try {
             $data = json_decode($request->getContent(), true);
             
@@ -32,36 +36,31 @@ class ApiLoginController extends AbstractController
                 ], Response::HTTP_BAD_REQUEST);
             }
 
-            error_log("Attempting login for username: " . $username);
-            
             $user = $userRepository->findOneBy(['username' => $username]);
             
             if (!$user) {
-                error_log('User not found: ' . $username);
                 return new JsonResponse([
                     'message' => 'User not found'
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            error_log('User found, verifying password');
-            
             if (!password_verify($password, $user->getPassword())) {
-                error_log('Invalid password for user: ' . $username);
                 return new JsonResponse([
                     'message' => 'Invalid password'
                 ], Response::HTTP_UNAUTHORIZED);
             }
 
-            error_log('Login successful for: ' . $username);
-            
-            // Return the exact format your React Native app expects
+            // Generate JWT token
+            $token = $jwtManager->create($user);
+
             return new JsonResponse([
-                'message' => 'Login successful',
+                'token' => $token,
                 'user' => [
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
                     'email' => $user->getEmail(),
                     'roles' => $user->getRoles(),
+                    'verified' => $user->isVerified(),
                     'profilePicture' => $user->getProfilePicture(),
                 ]
             ], Response::HTTP_OK);
