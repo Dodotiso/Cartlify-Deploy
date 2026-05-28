@@ -28,7 +28,6 @@ class ApiRegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        // Validate required fields
         if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
             return $this->json([
                 'success' => false,
@@ -36,7 +35,6 @@ class ApiRegistrationController extends AbstractController
             ], 400);
         }
 
-        // Basic validation
         if (strlen($data['username']) < 3) {
             return $this->json([
                 'success' => false,
@@ -58,7 +56,6 @@ class ApiRegistrationController extends AbstractController
             ], 400);
         }
 
-        // Check if username already exists
         $existingUser = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['username' => $data['username']]);
@@ -70,7 +67,6 @@ class ApiRegistrationController extends AbstractController
             ], 409);
         }
 
-        // Check if email already exists
         $existingEmail = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => $data['email']]);
@@ -82,7 +78,6 @@ class ApiRegistrationController extends AbstractController
             ], 409);
         }
 
-        // Create new user
         $user = new User();
         $user->setUsername($data['username']);
         $user->setEmail($data['email']);
@@ -92,26 +87,15 @@ class ApiRegistrationController extends AbstractController
         $user->setRoles(['ROLE_USER']);
         $user->setCreatedAt(new \DateTimeImmutable());
 
-        // Generate verification token
         $verificationToken = $this->emailVerificationService->generateVerificationToken();
         $user->setVerificationToken($verificationToken);
         $user->setIsVerified(false);
 
-        // Save user FIRST
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        // Try to send verification email (don't fail if it doesn't work)
-        try {
-            $verificationUrl = $this->generateUrl(
-                'app_verify_email',
-                ['token' => $verificationToken],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            $this->emailVerificationService->sendVerificationEmail($user, $verificationUrl);
-        } catch (\Throwable $e) {
-            // Silently fail — email service not available
-        }
+        // Email verification disabled on Railway (causes timeout)
+        // $this->emailVerificationService->sendVerificationEmail($user, $verificationUrl);
 
         return $this->json([
             'success' => true,
