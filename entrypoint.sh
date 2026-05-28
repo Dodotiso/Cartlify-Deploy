@@ -29,14 +29,8 @@ ENVEOF
 
 echo ".env file created successfully"
 
-# Generate JWT keys if missing
-if [ ! -f /app/config/jwt/private.pem ]; then
-    echo "Generating JWT keys..."
-    mkdir -p /app/config/jwt
-    openssl genrsa -out /app/config/jwt/private.pem 4096
-    openssl rsa -pubout -in /app/config/jwt/private.pem -out /app/config/jwt/public.pem
-    chmod 644 /app/config/jwt/*.pem
-fi
+# JWT keys are already provided in config/jwt/ — skip generation
+echo "JWT keys already provided — skipping generation"
 
 # Clear and warmup cache for production
 echo "Clearing and warming cache..."
