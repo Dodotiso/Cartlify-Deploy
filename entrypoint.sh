@@ -29,8 +29,15 @@ ENVEOF
 
 echo ".env file created successfully"
 
-# JWT keys are already provided in config/jwt/ — skip generation
-echo "JWT keys already provided — skipping generation"
+# FORCE regenerate JWT keys with Railway passphrase
+echo "Generating fresh JWT keys..."
+rm -rf /app/config/jwt
+mkdir -p /app/config/jwt
+openssl genrsa -out /app/config/jwt/private.pem 4096
+openssl rsa -pubout -in /app/config/jwt/private.pem -out /app/config/jwt/public.pem
+chmod 644 /app/config/jwt/*.pem
+chown -R www-data:www-data /app/config/jwt
+echo "JWT keys generated successfully"
 
 # Clear and warmup cache for production
 echo "Clearing and warming cache..."
@@ -61,13 +68,11 @@ if [ ! -z "$MYSQLHOST" ]; then
                 echo "All migrations completed successfully!"
             else
                 echo "Some migrations failed. Skipping problematic migration..."
-                # Mark the broken migration as executed and continue
                 php /app/bin/console doctrine:migrations:version 'DoctrineMigrations\Version20260318094426' --add --no-interaction --env=prod 2>&1 || true
                 echo "Continuing with remaining migrations..."
                 php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
             fi
             
-            # Fix permissions after migrations
             echo "Fixing permissions after migrations..."
             chown -R www-data:www-data /app/var
             chmod -R 775 /app/var
@@ -89,7 +94,6 @@ sed -i "s/\${PORT}/$PORT/g" /etc/nginx/conf.d/default.conf
 echo "Starting PHP-FPM..."
 php-fpm -D
 
-# Wait and verify PHP-FPM started
 sleep 2
 if ps aux | grep -v grep | grep php-fpm > /dev/null; then
     echo "PHP-FPM is running"
