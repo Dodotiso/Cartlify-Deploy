@@ -92,6 +92,7 @@ class ApiGoogleAuthController extends AbstractController
             $email = $payload['email'] ?? null;
             $googleId = $payload['sub'] ?? null;
             $name = $payload['name'] ?? ($email ? explode('@', $email)[0] : 'User');
+            $picture = $payload['picture'] ?? null;
 
             if (!$email || !$googleId) {
                 return new JsonResponse([
@@ -123,13 +124,19 @@ class ApiGoogleAuthController extends AbstractController
                 $user->setRoles(['ROLE_STAFF']);
                 $user->setCreatedAt(new \DateTimeImmutable());
                 
-                // DO NOT save Google picture URL - leave profilePicture as NULL
-                // The avatar will show the first letter instead
+                // Save Google profile picture
+                if ($picture) {
+                    $user->setProfilePicture($picture);
+                }
                 
                 $this->entityManager->persist($user);
             } else {
                 if (!$user->getGoogleId()) {
                     $user->setGoogleId($googleId);
+                }
+                // Update profile picture if not set
+                if (!$user->getProfilePicture() && $picture) {
+                    $user->setProfilePicture($picture);
                 }
             }
 
@@ -144,7 +151,7 @@ class ApiGoogleAuthController extends AbstractController
                     'username' => $user->getUsername(),
                     'email' => $user->getEmail(),
                     'roles' => $user->getRoles(),
-                    'profilePicture' => $user->getProfilePicture(), // Will be null, so app shows letter
+                    'profilePicture' => $user->getProfilePicture(),
                 ]
             ], Response::HTTP_OK);
 
