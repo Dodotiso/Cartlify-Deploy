@@ -9,6 +9,7 @@ echo "=== End images check ==="
 
 # Create .env file from Railway environment variables
 echo "Creating .env from environment variables..."
+echo "MAILER_DSN value: '${MAILER_DSN}'"
 cat > /app/.env << ENVEOF
 APP_ENV=prod
 APP_SECRET=${APP_SECRET}
@@ -18,7 +19,7 @@ CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-MAILER_DSN=smtp://a57e73001@smtp-brevo.com:xsmtpsib-9b53c4f9365e24ead3862ab8212abb3604c904678d29d57a0a953d39be06a3dc-85uWUA2mllP6wx0h@smtp-relay.brevo.com:587
+MAILER_DSN=${MAILER_DSN}
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=${JWT_PASSPHRASE}
