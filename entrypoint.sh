@@ -9,6 +9,7 @@ echo "=== End images check ==="
 
 # Create .env file from Railway environment variables
 echo "Creating .env from environment variables..."
+echo "MAILER_DSN value: '${MAILER_DSN}'"
 cat > /app/.env << ENVEOF
 APP_ENV=prod
 APP_SECRET=${APP_SECRET}
@@ -25,6 +26,7 @@ JWT_PASSPHRASE=${JWT_PASSPHRASE}
 MERCURE_URL=${MERCURE_URL}
 MERCURE_PUBLIC_URL=${MERCURE_PUBLIC_URL}
 MERCURE_JWT_SECRET=${MERCURE_JWT_SECRET}
+WEBSOCKET_URL=${WEBSOCKET_URL}
 ENVEOF
 
 echo ".env file created successfully"
@@ -61,7 +63,7 @@ if [ ! -z "$MYSQLHOST" ]; then
         } catch (Exception \$e) { exit(1); }
         " 2>/dev/null; then
             echo "Database connected!"
-            
+
             # Try running migrations normally
             echo "Running migrations..."
             if php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1; then
@@ -72,7 +74,7 @@ if [ ! -z "$MYSQLHOST" ]; then
                 echo "Continuing with remaining migrations..."
                 php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>&1 || true
             fi
-            
+
             echo "Fixing permissions after migrations..."
             chown -R www-data:www-data /app/var
             chmod -R 775 /app/var
