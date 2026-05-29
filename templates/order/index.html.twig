@@ -46,9 +46,7 @@
         transition: transform 0.2s ease;
     }
 
-    .sidebar .logo img:hover {
-        transform: scale(1.05);
-    }
+    .sidebar .logo img:hover { transform: scale(1.05); }
 
     .sidebar .nav-section {
         padding: 0 20px 8px 20px;
@@ -89,21 +87,10 @@
         gap: 14px;
     }
 
-    .sidebar a i {
-        width: 20px;
-        font-size: 18px;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-
+    .sidebar a i { width: 20px; font-size: 18px; text-align: center; transition: transform 0.2s ease; }
     .sidebar a span { white-space: nowrap; opacity: 0.9; }
 
-    .sidebar a:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: #f1f5f9;
-        transform: translateX(2px);
-    }
-
+    .sidebar a:hover { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; transform: translateX(2px); }
     .sidebar a:hover i { transform: scale(1.1); }
 
     .sidebar a.active {
@@ -135,7 +122,6 @@
     .sidebar .logout-section a { color: #ef4444; }
     .sidebar .logout-section a:hover { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
 
-    /* Mobile Sidebar */
     .menu-toggle {
         display: none;
         background: none;
@@ -170,7 +156,6 @@
 
     .sidebar-overlay.active { display: block; }
 
-    /* --- Header --- */
     .header {
         position: fixed;
         top: 0;
@@ -200,14 +185,8 @@
         letter-spacing: -0.3px;
     }
 
-    .header-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-    }
+    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-    /* Icon Styles - TIGHTER SPACING */
     .tracker-icon-link, .cart-icon-link {
         position: relative;
         text-decoration: none;
@@ -221,16 +200,9 @@
     }
 
     .tracker-icon-link:hover, .cart-icon-link:hover { background: #f1f5f9; }
-
-    .tracker-icon-link i, .cart-icon-link i, .notification-icon i {
-        font-size: 20px;
-        color: #64748b;
-        transition: color 0.2s ease;
-    }
-
+    .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 20px; color: #64748b; transition: color 0.2s ease; }
     .tracker-icon-link:hover i, .cart-icon-link:hover i, .notification-icon:hover i { color: #3b82f6; }
 
-    /* Badge Styles */
     .tracker-badge, .cart-badge, .notification-badge {
         position: absolute;
         top: -4px;
@@ -252,22 +224,11 @@
     }
 
     .tracker-badge.show, .cart-badge.show, .notification-badge.show { display: flex; }
-
     .notification-badge.show, .tracker-badge.show { animation: pulse 0.5s ease; }
 
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.25); }
-        100% { transform: scale(1); }
-    }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
 
-    /* Notification */
-    .notification-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+    .notification-wrapper { position: relative; display: flex; align-items: center; justify-content: center; }
 
     .notification-icon {
         background: none;
@@ -285,7 +246,6 @@
     }
 
     .notification-icon:hover { background: #f1f5f9; }
-
     .notification-icon i { font-size: 20px; color: #64748b; }
 
     .notification-dropdown {
@@ -303,15 +263,9 @@
         border: 1px solid #e2e8f0;
     }
 
-    .notification-dropdown.show {
-        display: block;
-        animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .notification-dropdown.show { display: block; animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-12px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
 
     .notification-header {
         padding: 16px 20px;
@@ -326,20 +280,9 @@
         letter-spacing: -0.2px;
     }
 
-    .notification-item {
-        padding: 14px 20px;
-        border-bottom: 1px solid #f8fafc;
-        cursor: pointer;
-        transition: background 0.2s ease;
-    }
-
+    .notification-item { padding: 14px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; transition: background 0.2s ease; }
     .notification-item:hover { background: #f8fafc; }
-
-    .notification-item.unread {
-        background: #eff6ff;
-        border-left: 3px solid #3b82f6;
-    }
-
+    .notification-item.unread { background: #eff6ff; border-left: 3px solid #3b82f6; }
     .notification-title { font-weight: 600; font-size: 13px; color: #0f172a; margin-bottom: 4px; }
     .notification-message { font-size: 12px; color: #64748b; margin-bottom: 4px; line-height: 1.5; }
     .notification-time { font-size: 11px; color: #94a3b8; font-weight: 500; }
@@ -360,7 +303,6 @@
     .view-all-link { background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 13px; font-weight: 500; text-decoration: none; }
     .view-all-link:hover { text-decoration: underline; }
 
-    /* Profile Dropdown - CIRCULAR AVATAR */
     .profile-wrapper { position: relative; margin-left: 12px; }
 
     .profile-header {
@@ -421,17 +363,7 @@
         letter-spacing: 0.5px;
     }
 
-    .dropdown-item {
-        padding: 12px 18px;
-        text-decoration: none;
-        color: #0f172a;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: background 0.2s ease;
-    }
-
+    .dropdown-item { padding: 12px 18px; text-decoration: none; color: #0f172a; font-size: 14px; display: flex; align-items: center; gap: 12px; transition: background 0.2s ease; }
     .dropdown-item i { width: 18px; color: #64748b; font-size: 16px; }
     .dropdown-item:hover { background: #f8fafc; color: #3b82f6; }
     .dropdown-item:hover i { color: #3b82f6; }
@@ -439,13 +371,7 @@
     .logout-item { color: #ef4444; }
     .logout-item:hover { background: #fef2f2; color: #dc2626; }
 
-    /* Toast Notifications */
-    .toast-container {
-        position: fixed;
-        top: 88px;
-        right: 24px;
-        z-index: 9999;
-    }
+    .toast-container { position: fixed; top: 88px; right: 24px; z-index: 9999; }
 
     .toast {
         background: white;
@@ -467,430 +393,120 @@
     .toast-error { border-left-color: #ef4444; background: #fef2f2; }
     .toast-warning { border-left-color: #f59e0b; background: #fffbeb; }
     .toast-info { border-left-color: #3b82f6; background: #eff6ff; }
-
     .toast-icon { font-size: 20px; font-weight: bold; }
     .toast-success .toast-icon { color: #10b981; }
     .toast-error .toast-icon { color: #ef4444; }
     .toast-warning .toast-icon { color: #f59e0b; }
     .toast-info .toast-icon { color: #3b82f6; }
-
     .toast-content { flex: 1; color: #0f172a; font-size: 14px; font-weight: 500; }
-
-    .toast-progress {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 3px;
-        background: rgba(0, 0, 0, 0.08);
-        width: 100%;
-        animation: progress 3s linear forwards;
-    }
+    .toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: rgba(0, 0, 0, 0.08); width: 100%; animation: progress 3s linear forwards; }
 
     @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     @keyframes progress { from { width: 100%; } to { width: 0%; } }
 
-    /* Upload Modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
-    }
-
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
     .modal.show { display: flex; }
-
-    .modal-content {
-        background: white;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 440px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-        animation: slideDown 0.3s ease;
-    }
-
-    .modal-header {
-        padding: 24px;
-        border-bottom: 1px solid #f1f5f9;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
+    .modal-content { background: white; border-radius: 20px; width: 90%; max-width: 440px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); animation: slideDown 0.3s ease; }
+    .modal-header { padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
     .modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
-
-    .close-modal {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #94a3b8;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
-
+    .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
     .close-modal:hover { background: #f1f5f9; color: #0f172a; }
     .modal-body { padding: 24px; }
-
-    .upload-area {
-        border: 2px dashed #e2e8f0;
-        border-radius: 12px;
-        padding: 40px 24px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
+    .upload-area { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
     .upload-area:hover { border-color: #3b82f6; background: #f8fafc; }
     .upload-area i { font-size: 48px; color: #94a3b8; margin-bottom: 12px; }
     .upload-area p { margin: 0; color: #64748b; font-weight: 500; }
     .upload-area small { color: #94a3b8; font-size: 12px; margin-top: 4px; display: block; }
-
     .image-preview { margin-top: 20px; text-align: center; }
     .image-preview img { max-width: 100%; max-height: 200px; border-radius: 12px; }
-
     .upload-progress { margin-top: 20px; text-align: center; }
     .progress-bar { width: 100%; height: 6px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
     .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s ease; border-radius: 6px; }
     #progressText { font-size: 13px; color: #64748b; font-weight: 500; }
-
     .modal-footer { padding: 20px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; }
-
-    .btn-primary-modal {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        background: #3b82f6;
-        color: white;
-    }
-
+    .btn-primary-modal { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; background: #3b82f6; color: white; }
     .btn-primary-modal:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
     .btn-primary-modal:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-secondary-modal {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        background: #f1f5f9;
-        color: #64748b;
-    }
-
+    .btn-secondary-modal { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; background: #f1f5f9; color: #64748b; }
     .btn-secondary-modal:hover { background: #e2e8f0; }
 
-    /* Main Content */
-    .main-content {
-        margin-left: 260px;
-        padding: 32px;
-        transition: margin-left 0.3s ease;
-        min-height: calc(100vh - 72px);
-    }
+    .main-content { margin-left: 260px; padding: 32px; transition: margin-left 0.3s ease; min-height: calc(100vh - 72px); }
 
-    /* Search & Filter Section */
-    .search-section {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 28px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        border: 1px solid #f1f5f9;
-    }
-
-    .search-container {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
+    .search-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 28px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); border: 1px solid #f1f5f9; }
+    .search-container { display: flex; justify-content: flex-start; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
     .search-form-wrapper { display: flex; gap: 12px; align-items: center; }
     .search-form { display: flex; gap: 12px; align-items: center; }
-
-    .search-form input {
-        padding: 10px 16px;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        width: 320px;
-        font-size: 14px;
-        font-family: 'Inter', sans-serif;
-        transition: all 0.2s ease;
-    }
-
+    .search-form input { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; width: 320px; font-size: 14px; font-family: 'Inter', sans-serif; transition: all 0.2s ease; }
     .search-form input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-
-    .search-form button {
-        padding: 10px 20px;
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-
+    .search-form button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-weight: 600; transition: all 0.2s ease; }
     .search-form button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
-
-    .clear-btn {
-        padding: 10px 20px;
-        background: #64748b;
-        color: white;
-        text-decoration: none;
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-
+    .clear-btn { padding: 10px 20px; background: #64748b; color: white; text-decoration: none; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-weight: 600; transition: all 0.2s ease; }
     .clear-btn:hover { background: #475569; transform: translateY(-1px); text-decoration: none; color: white; }
-
-    .filter-container {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-        flex-wrap: wrap;
-        border-top: 1px solid #f1f5f9;
-        padding-top: 20px;
-    }
-
+    .filter-container { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; border-top: 1px solid #f1f5f9; padding-top: 20px; }
     .filter-group { display: flex; align-items: center; gap: 10px; }
     .filter-group label { font-weight: 600; color: #0f172a; font-size: 14px; }
-
-    .filter-group select {
-        padding: 8px 14px;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        background: white;
-        cursor: pointer;
-        font-size: 14px;
-        font-family: 'Inter', sans-serif;
-    }
-
-    .filter-reset {
-        padding: 8px 18px;
-        background: #ef4444;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 13px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-
+    .filter-group select { padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; font-family: 'Inter', sans-serif; }
+    .filter-reset { padding: 8px 18px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; transition: all 0.2s ease; }
     .filter-reset:hover { background: #dc2626; transform: translateY(-1px); }
 
-    /* Table Styles */
     .table-view { display: block; }
-
-    .table-container {
-        overflow-x: auto;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        border: 1px solid #f1f5f9;
-    }
-
+    .table-container { overflow-x: auto; background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); border: 1px solid #f1f5f9; }
     table { width: 100%; border-collapse: collapse; min-width: 1200px; }
-
-    th {
-        background: #0f172a;
-        color: white;
-        padding: 14px 16px;
-        text-align: left;
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    td {
-        padding: 14px 16px;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
-        font-size: 13px;
-    }
-
+    th { background: #0f172a; color: white; padding: 14px 16px; text-align: left; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; font-size: 13px; }
     tr:hover { background: #f8fafc; }
+    .thumbnail { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
 
-    .thumbnail {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-
-    /* Status Badges */
-    .status-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-    }
-
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
     .status-pending { background: #fef3c7; color: #92400e; }
     .status-complete { background: #d1fae5; color: #065f46; }
     .status-cancelled { background: #fee2e2; color: #991b1b; }
     .status-accepted { background: #dbeafe; color: #1e40af; }
     .status-rejected { background: #fee2e2; color: #991b1b; }
-
     .delivery-pickup { color: #3b82f6; font-weight: 600; }
     .delivery-shipping { color: #f59e0b; font-weight: 600; }
 
-    /* Button Styles */
-    .btn {
-        padding: 6px 14px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.2s ease;
-        min-width: 80px;
-    }
-
+    .btn { padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; min-width: 80px; }
     .btn-sm { padding: 5px 12px; font-size: 11px; min-width: 70px; }
-
     .btn-success { background: #10b981; color: white; }
     .btn-success:hover:not(:disabled) { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-
     .btn-danger { background: #ef4444; color: white; }
     .btn-danger:hover:not(:disabled) { background: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-
     .btn-warning { background: #f59e0b; color: #0f172a; }
     .btn-warning:hover:not(:disabled) { background: #d97706; }
-
     .btn-secondary { background: #64748b; color: white; }
     .btn-secondary:hover:not(:disabled) { background: #475569; }
-
     .btn-info { background: #06b6d4; color: white; }
     .btn-info:hover:not(:disabled) { background: #0891b2; }
-
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
     .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    .process-select {
-        padding: 6px 10px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        font-size: 12px;
-        background: white;
-    }
-
+    .process-select { padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; background: white; }
     .process-select:disabled { background: #f1f5f9; cursor: not-allowed; opacity: 0.7; }
     .process-select:not(:disabled) { background: #fff; cursor: pointer; }
-
     tr.disabled-row { opacity: 0.7; background-color: #f8fafc; }
     tr.disabled-row:hover { background-color: #f8fafc; }
 
-    /* Card View for Mobile */
     .order-cards-view { display: none; gap: 20px; flex-direction: column; }
-
-    .order-card {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 1px solid #f1f5f9;
-    }
-
+    .order-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; border: 1px solid #f1f5f9; }
     .order-card.disabled-card { opacity: 0.7; background-color: #f8fafc; }
-
     .order-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
-
-    .order-card-image {
-        width: 100%;
-        height: 180px;
-        background: #f8fafc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-
+    .order-card-image { width: 100%; height: 180px; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .order-card-image img { width: 100%; height: 100%; object-fit: cover; }
-
     .order-card-content { padding: 20px; }
-
-    .order-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
+    .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
     .order-card-id { font-weight: 700; color: #3b82f6; font-size: 15px; }
     .order-card-date { font-size: 12px; color: #64748b; }
-
     .order-card-product { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-
-    .order-card-details {
-        display: flex;
-        justify-content: space-between;
-        margin: 12px 0;
-        padding: 12px 0;
-        border-top: 1px solid #f1f5f9;
-        border-bottom: 1px solid #f1f5f9;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
+    .order-card-details { display: flex; justify-content: space-between; margin: 12px 0; padding: 12px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px; }
     .order-card-total { font-size: 20px; font-weight: 700; color: #10b981; }
-
     .order-card-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .order-card-actions .btn { flex: 1; justify-content: center; min-width: auto; }
-
     .empty-state { text-align: center; padding: 80px 20px; }
     .empty-state i { font-size: 64px; color: #94a3b8; margin-bottom: 20px; }
     .empty-state p { color: #64748b; margin-bottom: 20px; }
 
-    /* Responsive */
-    @media (max-width: 992px) {
-        .table-view { display: none; }
-        .order-cards-view { display: flex; }
-    }
-
+    @media (max-width: 992px) { .table-view { display: none; } .order-cards-view { display: flex; } }
     @media (max-width: 768px) {
         body { padding-top: 64px; }
         .menu-toggle { display: flex; }
@@ -901,13 +517,11 @@
         .sidebar.mobile-open { transform: translateX(0); }
         .sidebar .logo img { height: 100px; }
         .main-content { margin-left: 0 !important; padding: 20px; }
-        
         .tracker-icon-link i, .cart-icon-link i, .notification-icon i { font-size: 18px; }
         .tracker-icon-link, .cart-icon-link { width: 36px; height: 36px; }
         .notification-icon { width: 36px; height: 36px; }
         .profile-avatar { width: 36px; height: 36px; font-size: 16px; }
         .profile-wrapper { margin-left: 8px; }
-        
         .search-section { padding: 16px; }
         .search-container { flex-direction: column; align-items: stretch; gap: 12px; }
         .search-form-wrapper { flex-direction: column; width: 100%; }
@@ -918,13 +532,11 @@
         .filter-container { flex-direction: column; align-items: stretch; gap: 10px; }
         .filter-group { justify-content: space-between; }
         .filter-reset { width: 100%; justify-content: center; }
-        
         .toast-container { top: 76px; right: 12px; left: 12px; }
         .toast { min-width: auto; width: 100%; }
         .notification-dropdown { position: fixed; top: 64px; left: 12px; right: 12px; width: auto; max-width: none; border-radius: 16px; }
         .profile-dropdown { position: fixed; top: 64px; right: 12px; left: 12px; width: auto; max-width: none; }
     }
-
     @media (max-width: 576px) {
         body { padding-top: 56px; }
         .header { height: 56px; padding: 0 12px; }
@@ -942,7 +554,6 @@
         .notification-dropdown { top: 56px; }
         .profile-dropdown { top: 56px; }
     }
-
     @media (min-width: 769px) {
         .sidebar { transform: translateX(0) !important; }
         .menu-toggle { display: none !important; }
@@ -950,60 +561,41 @@
     }
 </style>
 
-<!-- ============================================ -->
-<!-- SIDEBAR -->
-<!-- ============================================ -->
 {% if is_granted('ROLE_ADMIN') %}
 <div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
-    </div>
-    
+    <div class="logo"><img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo"></div>
     <nav>
         <div class="nav-section"><span>Main Menu</span></div>
-        
         <a href="{{ path('app_dashboard') }}"><i class="fas fa-home"></i><span>Dashboard</span></a>
         <a href="{{ path('app_product_index') }}"><i class="fas fa-shopping-bag"></i><span>Products</span></a>
         <a href="{{ path('app_stock_index') }}"><i class="fas fa-boxes"></i><span>Stocks</span></a>
         <a href="{{ path('app_order_new') }}"><i class="fas fa-shopping-cart"></i><span>Shop</span></a>
         <a href="{{ path('app_order_index') }}" class="active"><i class="fas fa-receipt"></i><span>Orders</span></a>
-        
         <div class="nav-section"><span>Management</span></div>
-        
         <a href="{{ path('app_customer_management_index') }}"><i class="fas fa-users"></i><span>Customers</span></a>
         <a href="{{ path('app_user_index') }}"><i class="fas fa-user-tie"></i><span>Staff Management</span></a>
         <a href="{{ path('app_activity_log_index') }}"><i class="fas fa-clipboard-list"></i><span>Activity Logs</span></a>
-        
         <div class="nav-section"><span>Account</span></div>
-        
         <a href="{{ path('app_profile_index') }}"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
-    
     <div class="logout-section">
         <a href="{{ path('app_logout') }}"><i class="fas fa-power-off"></i><span>Logout</span></a>
     </div>
 </div>
 {% elseif is_granted('ROLE_STAFF') %}
 <div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo">
-    </div>
-    
+    <div class="logo"><img src="{{ asset('images/cart1.png') }}" alt="Cartlify Logo"></div>
     <nav>
         <div class="nav-section"><span>Main Menu</span></div>
-        
         <a href="{{ path('app_dashboard') }}"><i class="fas fa-home"></i><span>Dashboard</span></a>
         <a href="{{ path('app_product_index') }}"><i class="fas fa-shopping-bag"></i><span>Products</span></a>
         <a href="{{ path('app_stock_index') }}"><i class="fas fa-boxes"></i><span>Stocks</span></a>
         <a href="{{ path('app_order_new') }}"><i class="fas fa-shopping-cart"></i><span>Shop</span></a>
         <a href="{{ path('app_order_index') }}" class="active"><i class="fas fa-receipt"></i><span>Orders</span></a>
         <a href="{{ path('app_customer_management_index') }}"><i class="fas fa-users"></i><span>Customers</span></a>
-        
         <div class="nav-section"><span>Account</span></div>
-        
         <a href="{{ path('app_profile_index') }}"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
-    
     <div class="logout-section">
         <a href="{{ path('app_logout') }}"><i class="fas fa-power-off"></i><span>Logout</span></a>
     </div>
@@ -1012,23 +604,16 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- ============================================ -->
-<!-- PROFILE VARIABLES -->
-<!-- ============================================ -->
 {% set role = app.user.roles[0] ?? 'ROLE_USER' %}
 {% set hasProfilePic = app.user.profilePicture is defined and app.user.profilePicture is not null %}
 {% set userRoleName = role == 'ROLE_ADMIN' ? 'Administrator' : (role == 'ROLE_STAFF' ? 'Staff Member' : 'Customer') %}
 {% set userRoleIcon = role == 'ROLE_ADMIN' ? 'crown' : (role == 'ROLE_STAFF' ? 'user-tie' : 'user') %}
 
-<!-- ============================================ -->
-<!-- HEADER -->
-<!-- ============================================ -->
 <div class="header">
     <h1>
         <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
         <i class="fas fa-receipt"></i> Order Management
     </h1>
-
     <div class="header-right">
         <a href="{{ path('app_order_tracker') }}" class="tracker-icon-link" title="My Orders Tracker">
             <i class="fas fa-box"></i>
@@ -1052,7 +637,6 @@
                 </div>
             </div>
         </div>
-        <!-- Profile Dropdown - CIRCULAR AVATAR -->
         <div class="profile-wrapper">
             <div class="profile-header" id="profileHeader">
                 <div class="profile-avatar">
@@ -1079,11 +663,7 @@
 </form>
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ============================================ -->
-<!-- MAIN CONTENT -->
-<!-- ============================================ -->
 <div class="main-content">
-    <!-- Search Section -->
     <div class="search-section">
         <div class="search-container">
             <div class="search-form-wrapper">
@@ -1094,7 +674,6 @@
                 {% if search %}<a href="{{ path('app_order_index') }}" class="clear-btn"><i class="fas fa-times"></i> Clear</a>{% endif %}
             </div>
         </div>
-
         <div class="filter-container">
             <div class="filter-group">
                 <label><i class="fas fa-filter"></i> Filter by Status:</label>
@@ -1142,7 +721,7 @@
                                 {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
                                     {% set imagePath = '/uploads/' ~ imagePath %}
                                 {% endif %}
-                                <img src="{{ imagePath }}" class="thumbnail" alt="{{ order.stock.product.name }}" onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                                <img src="{{ imagePath }}" class="thumbnail" alt="{{ order.stock.product.name }}" onerror="this.style.display='none'">
                             {% else %}
                                 <span class="status-badge" style="background: #f1f5f9;">No Image</span>
                             {% endif %}
@@ -1183,7 +762,7 @@
                         <td>
                             <div class="action-buttons">
                                 {% if order.orderStatus == 'pending' %}
-                                    <form method="post" action="{{ path('app_order_accept', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Accept this order? You will be able to update process status after acceptance.')">
+                                    <form method="post" action="{{ path('app_order_accept', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Accept this order?')">
                                         <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Accept</button>
                                     </form>
                                     <form method="post" action="{{ path('app_order_reject', {'id': order.id}) }}" style="display: inline-block;" onsubmit="return confirm('Reject this order? Stock will be restored.')">
@@ -1243,7 +822,7 @@
                     {% if not (imagePath starts with 'http' or imagePath starts with '/') %}
                         {% set imagePath = '/uploads/' ~ imagePath %}
                     {% endif %}
-                    <img src="{{ imagePath }}" alt="{{ order.stock.product.name }}" onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                    <img src="{{ imagePath }}" alt="{{ order.stock.product.name }}" onerror="this.style.display='none'">
                 {% else %}
                     <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f8fafc;"><i class="fas fa-image" style="font-size:48px;color:#94a3b8;"></i></div>
                 {% endif %}
@@ -1283,7 +862,7 @@
                 </div>
                 <div class="order-card-actions">
                     {% if order.orderStatus == 'pending' %}
-                        <form method="post" action="{{ path('app_order_accept', {'id': order.id}) }}" onsubmit="return confirm('Accept this order? You will be able to update process status after acceptance.')">
+                        <form method="post" action="{{ path('app_order_accept', {'id': order.id}) }}" onsubmit="return confirm('Accept this order?')">
                             <button type="submit" class="btn btn-success">Accept</button>
                         </form>
                         <form method="post" action="{{ path('app_order_reject', {'id': order.id}) }}" onsubmit="return confirm('Reject this order?')">
@@ -1293,7 +872,7 @@
                         <form method="post" action="{{ path('app_order_complete', {'id': order.id}) }}" onsubmit="return confirmComplete(this, '{{ order.deliveryType }}', '{{ order.processStatus }}')">
                             <button type="submit" class="btn btn-success">Complete</button>
                         </form>
-                        <form method="post" action="{{ path('app_order_cancel_by_admin', {'id': order.id}) }}" onsubmit="return confirm('Cancel this order? Stock will be restored.')">
+                        <form method="post" action="{{ path('app_order_cancel_by_admin', {'id': order.id}) }}" onsubmit="return confirm('Cancel this order?')">
                             <button type="submit" class="btn btn-warning">Cancel</button>
                         </form>
                     {% elseif order.orderStatus == 'completed' %}
@@ -1338,12 +917,12 @@
     function confirmComplete(formElement, deliveryType, processStatus) {
         if (deliveryType === 'pickup') {
             if (processStatus !== 'ready_for_pickup' && processStatus !== 'delivered') {
-                alert('⚠️ For pickup orders, you must update the Process Status to "Ready for Pickup" or "Delivered" before completing the order.');
+                alert('⚠️ For pickup orders, please update Process Status to "Ready for Pickup" first.');
                 return false;
             }
         } else {
             if (processStatus !== 'delivered') {
-                alert('⚠️ For shipping/delivery orders, you must update the Process Status to "Delivered" before completing the order.');
+                alert('⚠️ For shipping orders, please update Process Status to "Delivered" first.');
                 return false;
             }
         }
@@ -1353,10 +932,10 @@
     function confirmUpdateProcess(formElement) {
         return confirm('Are you sure you want to update the process status?');
     }
-    
+
     function checkProcessStatusChange(selectElement, orderStatus) {
         if (orderStatus !== 'accepted') {
-            alert('⚠️ You must ACCEPT the order first before updating the process status!\n\nPlease click the "Accept" button for this order first.');
+            alert('⚠️ You must ACCEPT the order first before updating process status.');
             selectElement.value = selectElement.getAttribute('data-original-value') || 'pending';
             return false;
         }
@@ -1365,7 +944,7 @@
         }
         const newValue = selectElement.value;
         const optionText = selectElement.options[selectElement.selectedIndex]?.text || newValue;
-        if (confirm(`Update process status to "${optionText}" for this order?`)) {
+        if (confirm(`Update process status to "${optionText}"?`)) {
             selectElement.form.submit();
             return true;
         } else {
@@ -1375,43 +954,43 @@
         }
     }
 
+    // ✅ FIXED: Silent fail on non-200, no more shaking
     function updateCartBadge() {
-        fetch('/cart/count').then(res => res.json()).then(data => {
-            const badge = document.getElementById('cartBadge');
-            if (badge) {
-                if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); }
-                else { badge.classList.remove('show'); }
-            }
-        }).catch(e => console.log('Cart update error:', e));
+        fetch('/cart/count')
+            .then(res => { if (!res.ok) return null; return res.json(); })
+            .then(data => {
+                if (!data) return;
+                const badge = document.getElementById('cartBadge');
+                if (badge) {
+                    if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); }
+                    else { badge.classList.remove('show'); }
+                }
+            })
+            .catch(() => {});
     }
 
+    // ✅ FIXED: Silent fail on non-200
     function updateTrackerBadge() {
-        fetch('{{ path('app_new_orders_count') }}').then(res => res.json()).then(data => {
-            const badge = document.getElementById('trackerBadge');
-            if (badge) {
-                if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); }
-                else { badge.classList.remove('show'); }
-            }
-        }).catch(e => console.log('Tracker update error:', e));
+        fetch('{{ path('app_new_orders_count') }}')
+            .then(res => { if (!res.ok) return null; return res.json(); })
+            .then(data => {
+                if (!data) return;
+                const badge = document.getElementById('trackerBadge');
+                if (badge) {
+                    if (data.count > 0) { badge.textContent = data.count > 9 ? '9+' : data.count; badge.classList.add('show'); }
+                    else { badge.classList.remove('show'); }
+                }
+            })
+            .catch(() => {});
     }
 
     function filterOrders() {
         const status = document.getElementById('statusFilter').value;
-        const rows = document.querySelectorAll('#ordersTable tbody tr');
-        const cards = document.querySelectorAll('#mobileCardsContainer .order-card');
-        rows.forEach(row => {
-            if (status === 'all') { row.style.display = ''; }
-            else {
-                const orderStatus = row.getAttribute('data-order-status');
-                row.style.display = orderStatus === status ? '' : 'none';
-            }
+        document.querySelectorAll('#ordersTable tbody tr').forEach(row => {
+            row.style.display = (status === 'all' || row.getAttribute('data-order-status') === status) ? '' : 'none';
         });
-        cards.forEach(card => {
-            if (status === 'all') { card.style.display = ''; }
-            else {
-                const orderStatus = card.getAttribute('data-order-status');
-                card.style.display = orderStatus === status ? '' : 'none';
-            }
+        document.querySelectorAll('#mobileCardsContainer .order-card').forEach(card => {
+            card.style.display = (status === 'all' || card.getAttribute('data-order-status') === status) ? '' : 'none';
         });
     }
 
@@ -1424,7 +1003,8 @@
     function showToast(message, type = 'success') {
         let container = document.getElementById('toastContainer');
         if (!container) { container = document.createElement('div'); container.id = 'toastContainer'; container.className = 'toast-container'; document.body.appendChild(container); }
-        const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
         let icon = type === 'success' ? '✓' : (type === 'error' ? '✗' : (type === 'warning' ? '⚠' : 'ℹ'));
         toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content">${message}</div><div class="toast-progress"></div>`;
         container.appendChild(toast);
@@ -1433,54 +1013,54 @@
 
     function loadNotifications() { const saved = localStorage.getItem('order_notifications'); notifications = saved ? JSON.parse(saved) : []; updateNotificationUI(); updateNotificationBadge(); }
     function saveNotifications() { localStorage.setItem('order_notifications', JSON.stringify(notifications)); updateNotificationUI(); updateNotificationBadge(); }
-    
+
     function addNotification(title, message, orderId, type) {
         const notification = { id: Date.now(), title, message, orderId, type, timestamp: new Date().toISOString(), read: false };
-        notifications.unshift(notification); if (notifications.length > 100) notifications = notifications.slice(0, 100);
+        notifications.unshift(notification);
+        if (notifications.length > 100) notifications = notifications.slice(0, 100);
         saveNotifications(); showToast(message, type); updateTrackerBadge();
     }
-    
+
     function updateNotificationBadge() {
         const unreadCount = notifications.filter(n => !n.read).length;
         const badge = document.getElementById('notificationBadge');
         if (badge) { if (unreadCount > 0) { badge.classList.add('show'); badge.textContent = unreadCount > 99 ? '99+' : unreadCount; } else { badge.classList.remove('show'); } }
     }
-    
+
     function markAllNotificationsAsRead() {
-        if (notifications.length > 0) { let hasUnread = notifications.some(n => !n.read); if (hasUnread) { notifications.forEach(n => n.read = true); saveNotifications(); updateNotificationBadge(); } }
+        if (notifications.some(n => !n.read)) { notifications.forEach(n => n.read = true); saveNotifications(); updateNotificationBadge(); }
     }
-    
+
     function markAllNotificationsAsReadBeforeRedirect() { markAllNotificationsAsRead(); window.location.href = '{{ path('app_notifications_index') }}'; }
-    
+
     function updateNotificationUI() {
         const list = document.getElementById('notificationList'); if (!list) return;
-        if (notifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>'; }
-        else {
-            const recentNotifications = notifications.slice(0, 5);
-            list.innerHTML = recentNotifications.map(n => `<div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})"><div class="notification-title">${n.title}</div><div class="notification-message">${n.message}</div><div class="notification-time">${formatTimeAgo(n.timestamp)}</div></div>`).join('');
-            if (notifications.length > 5) { list.innerHTML += '<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3b82f6;text-decoration:none;font-size:13px;font-weight:500;">View all ' + notifications.length + ' notifications →</a></div>'; }
-        }
+        if (notifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;"><i class="fas fa-bell-slash"></i> No notifications</div>'; return; }
+        const recent = notifications.slice(0, 5);
+        list.innerHTML = recent.map(n => `<div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})"><div class="notification-title">${n.title}</div><div class="notification-message">${n.message}</div><div class="notification-time">${formatTimeAgo(n.timestamp)}</div></div>`).join('');
+        if (notifications.length > 5) { list.innerHTML += `<div style="padding:10px;text-align:center;"><a href="#" onclick="markAllNotificationsAsReadBeforeRedirect(); return false;" style="color:#3b82f6;text-decoration:none;font-size:13px;font-weight:500;">View all ${notifications.length} notifications →</a></div>`; }
     }
-    
-    function markNotificationAsRead(id) { const notification = notifications.find(n => n.id === id); if (notification) { notification.read = true; saveNotifications(); } }
+
+    function markNotificationAsRead(id) { const n = notifications.find(n => n.id === id); if (n) { n.read = true; saveNotifications(); } }
     function clearAllNotifications() { if (confirm('Clear all notifications?')) { notifications = []; saveNotifications(); showToast('All notifications cleared', 'info'); } }
     function formatTimeAgo(timestamp) { const date = new Date(timestamp), now = new Date(), mins = Math.floor((now - date) / 60000), hours = Math.floor(mins / 60), days = Math.floor(hours / 24); if (mins < 1) return 'Just now'; if (mins < 60) return `${mins} min ago`; if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`; return `${days} day${days > 1 ? 's' : ''} ago`; }
     function toggleNotificationDropdown() { const dropdown = document.getElementById('notificationDropdown'); if (dropdown) { markAllNotificationsAsRead(); dropdown.classList.toggle('show'); } }
-
     function toggleProfileDropdown() { const dropdown = document.getElementById('profileDropdown'); const header = document.getElementById('profileHeader'); if (dropdown && header) { dropdown.classList.toggle('show'); header.classList.toggle('active'); } }
 
     document.addEventListener('click', function(event) {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const notificationIcon = document.getElementById('notificationIcon');
-        if (notificationDropdown && notificationIcon && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) { notificationDropdown.classList.remove('show'); }
-        const profileDropdown = document.getElementById('profileDropdown');
-        const profileHeader = document.getElementById('profileHeader');
-        if (profileDropdown && profileHeader && !profileHeader.contains(event.target) && !profileDropdown.contains(event.target)) { profileDropdown.classList.remove('show'); profileHeader.classList.remove('active'); }
+        const nd = document.getElementById('notificationDropdown'), ni = document.getElementById('notificationIcon');
+        if (nd && ni && !ni.contains(event.target) && !nd.contains(event.target)) nd.classList.remove('show');
+        const pd = document.getElementById('profileDropdown'), ph = document.getElementById('profileHeader');
+        if (pd && ph && !ph.contains(event.target) && !pd.contains(event.target)) { pd.classList.remove('show'); ph.classList.remove('active'); }
     });
 
+    // ✅ FIXED: 30s interval, silent fail
     function checkOrderUpdates() {
-        fetch('{{ path('app_order_check_updates') }}').then(res => res.json()).then(data => {
-            if (data.updates && data.updates.length > 0) { updateTrackerBadge();
+        fetch('{{ path('app_order_check_updates') }}')
+            .then(res => { if (!res.ok) return null; return res.json(); })
+            .then(data => {
+                if (!data || !data.updates || data.updates.length === 0) return;
+                updateTrackerBadge();
                 data.updates.forEach(update => {
                     let exists = notifications.find(n => n.orderId === update.orderId && n.message.includes(update.newStatus));
                     if (!exists) {
@@ -1500,8 +1080,8 @@
                         addNotification(title, message, update.orderId, type);
                     }
                 });
-            }
-        }).catch(e => console.error('Polling error:', e));
+            })
+            .catch(() => {});
     }
 
     let sidebarInit = false;
@@ -1521,8 +1101,8 @@
     function initFlashMessages() {
         {% for label, messages in app.flashes %}
             {% for message in messages %}
-                let msg = '{{ message|escape('js') }}';
-                if (!shownFlashes.includes(msg)) { shownFlashes.push(msg); showToast(msg, '{{ label }}'); }
+                let msg{{ loop.index }} = '{{ message|escape('js') }}';
+                if (!shownFlashes.includes(msg{{ loop.index }})) { shownFlashes.push(msg{{ loop.index }}); showToast(msg{{ loop.index }}, '{{ label }}'); }
             {% endfor %}
         {% endfor %}
     }
@@ -1555,12 +1135,16 @@
         modal.addEventListener('click', e => { if (e.target === modal) closeUploadModal(); });
     }
 
-    function markNotificationsAsReadOnPageLoad() { markAllNotificationsAsRead(); }
-
     function initAll() {
-        initMobileSidebar(); initFlashMessages(); initializeDropdown(); loadNotifications(); markNotificationsAsReadOnPageLoad();
-        checkOrderUpdates(); setInterval(checkOrderUpdates, 30000);
-        updateCartBadge(); setInterval(updateCartBadge, 5000);
+        initMobileSidebar();
+        initFlashMessages();
+        initializeDropdown();
+        loadNotifications();
+        markAllNotificationsAsRead();
+        checkOrderUpdates();
+        setInterval(checkOrderUpdates, 30000); // ✅ 30s not 5s
+        updateCartBadge();
+        setInterval(updateCartBadge, 30000);   // ✅ 30s not 5s
         updateTrackerBadge();
     }
 
