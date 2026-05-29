@@ -34,21 +34,11 @@ class ActivityLogSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $route = $request->attributes->get('_route');
         $method = $request->getMethod();
-        
-        // DEBUG - Log all POST requests to see what's happening
-        if ($method === 'POST') {
-            file_put_contents(__DIR__ . '/../../debug.log', date('Y-m-d H:i:s') . " - POST Route: " . $route . "\n", FILE_APPEND);
-            file_put_contents(__DIR__ . '/../../debug.log', "POST Data: " . print_r($request->request->all(), true) . "\n", FILE_APPEND);
-            file_put_contents(__DIR__ . '/../../debug.log', "Route attributes: " . print_r($request->attributes->get('_route_params', []), true) . "\n", FILE_APPEND);
-            file_put_contents(__DIR__ . '/../../debug.log', "----------------------------------------\n", FILE_APPEND);
-        }
-        
-        // Only track POST requests
+
         if ($method !== 'POST') {
             return;
         }
 
-        // Check if this is one of our monitored routes
         if (!$this->isMonitoredRoute($route)) {
             return;
         }
@@ -58,7 +48,6 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Store log data
         $this->pendingLogs[] = [
             'user' => $user,
             'request' => $request,
@@ -79,7 +68,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
                 $logData['route']
             );
         }
-        
+
         $this->pendingLogs = [];
     }
 
@@ -87,11 +76,8 @@ class ActivityLogSubscriber implements EventSubscriberInterface
     {
         $action = $this->determineAction($route, $user);
         $target = $this->determineTarget($request, $route, $action, $user);
-        
-        file_put_contents(__DIR__ . '/../../debug.log', "Creating log - Action: " . ($action ?? 'NULL') . " Target: " . ($target ?? 'NULL') . "\n", FILE_APPEND);
-        
+
         if (!$action || !$target) {
-            file_put_contents(__DIR__ . '/../../debug.log', "SKIPPED - No action or target\n", FILE_APPEND);
             return;
         }
 
@@ -105,79 +91,62 @@ class ActivityLogSubscriber implements EventSubscriberInterface
         try {
             $this->em->persist($log);
             $this->em->flush();
-            file_put_contents(__DIR__ . '/../../debug.log', "✅ Log saved successfully: {$action}\n", FILE_APPEND);
         } catch (\Exception $e) {
-            file_put_contents(__DIR__ . '/../../debug.log', "❌ Error saving log: " . $e->getMessage() . "\n", FILE_APPEND);
+            error_log('ActivityLog save error: ' . $e->getMessage());
         }
     }
 
     private function isMonitoredRoute(string $route): bool
     {
         $monitoredRoutes = [
-            'app_user_new', 
-            'app_user_delete', 
+            'app_user_new',
+            'app_user_delete',
             'app_user_edit',
-            'app_product_new', 
-            'app_product_edit', 
+            'app_product_new',
+            'app_product_edit',
             'app_product_delete',
-            'app_stock_new', 
-            'app_stock_edit', 
+            'app_stock_new',
+            'app_stock_edit',
             'app_stock_delete',
-            'app_order_new', 
+            'app_order_new',
             'app_order_delete',
             'app_profile_edit',
         ];
-        
-        $isMonitored = in_array($route, $monitoredRoutes);
-        
-        if (str_contains($route, 'delete')) {
-            file_put_contents(__DIR__ . '/../../debug.log', "Delete route detected: {$route} - Monitored: " . ($isMonitored ? 'YES' : 'NO') . "\n", FILE_APPEND);
-        }
-        
-        return $isMonitored;
+
+        return in_array($route, $monitoredRoutes);
     }
 
     private function determineAction(string $route, $user): ?string
     {
         $userRoles = $user->getRoles();
         $isAdmin = in_array('ROLE_ADMIN', $userRoles);
-        
-        file_put_contents(__DIR__ . '/../../debug.log', "Determining action for route: {$route}, isAdmin: " . ($isAdmin ? 'YES' : 'NO') . "\n", FILE_APPEND);
-        
-        // User management
+
         if ($route === 'app_user_new') return 'ADMIN_CREATES_USER';
         if ($route === 'app_user_delete') return 'ADMIN_DELETES_USER';
         if ($route === 'app_user_edit') return 'ADMIN_UPDATES_USER';
-        
-        // Profile edit
+
         if ($route === 'app_profile_edit') return 'USER_UPDATES_PROFILE';
-        
-        // Product actions
+
         if ($route === 'app_product_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
         if ($route === 'app_product_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
         if ($route === 'app_product_edit') return $isAdmin ? 'ADMIN_UPDATES_RECORD' : 'STAFF_EDITS_RECORD';
-        
-        // Stock actions
+
         if ($route === 'app_stock_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
         if ($route === 'app_stock_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
         if ($route === 'app_stock_edit') return $isAdmin ? 'ADMIN_UPDATES_RECORD' : 'STAFF_EDITS_RECORD';
-        
-        // Order actions
+
         if ($route === 'app_order_new') return $isAdmin ? 'ADMIN_CREATES_RECORD' : 'STAFF_CREATES_RECORD';
         if ($route === 'app_order_delete') return $isAdmin ? 'ADMIN_DELETES_RECORD' : 'STAFF_DELETES_RECORD';
-        
+
         return null;
     }
 
-    private function determineTarget(Request $request, string $route, string $action, $user): ?string
+    private function determineTarget(Request $request, string $route, ?string $action, $user): ?string
     {
         $id = $request->attributes->get('id');
         $isAdmin = in_array('ROLE_ADMIN', $user->getRoles());
         $roleLabel = $isAdmin ? 'Admin' : 'Staff';
-        
-        file_put_contents(__DIR__ . '/../../debug.log', "Determining target for route: {$route}, id: " . ($id ?? 'null') . "\n", FILE_APPEND);
-        
-        // USER delete
+
         if ($route === 'app_user_delete' && $id) {
             $targetUser = $this->em->getRepository(User::class)->find($id);
             if ($targetUser) {
@@ -185,8 +154,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             }
             return "Admin deleted user (ID: {$id})";
         }
-        
-        // USER create
+
         if ($route === 'app_user_new') {
             $formData = $request->request->all('user');
             $username = $formData['username'] ?? 'Unknown';
@@ -194,8 +162,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             $roleName = $role == 'ROLE_ADMIN' ? 'Admin' : ($role == 'ROLE_STAFF' ? 'Staff' : 'User');
             return "Admin created user: {$username} (Role: {$roleName})";
         }
-        
-        // USER edit
+
         if ($route === 'app_user_edit' && $id) {
             $targetUser = $this->em->getRepository(User::class)->find($id);
             if ($targetUser) {
@@ -211,8 +178,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
                 return "Admin updated user: {$targetUser->getUsername()}{$passwordChanged}";
             }
         }
-        
-        // PRODUCT delete
+
         if ($route === 'app_product_delete' && $id) {
             $product = $this->em->getRepository(Product::class)->find($id);
             if ($product) {
@@ -220,16 +186,14 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             }
             return "{$roleLabel} deleted product (ID: {$id})";
         }
-        
-        // PRODUCT create
+
         if ($route === 'app_product_new') {
             $formData = $request->request->all('product');
             $name = $formData['name'] ?? 'New Product';
             $price = $formData['price'] ?? '0';
             return "{$roleLabel} created product: {$name} (Price: \${$price})";
         }
-        
-        // PRODUCT edit
+
         if ($route === 'app_product_edit' && $id) {
             $product = $this->em->getRepository(Product::class)->find($id);
             if ($product) {
@@ -239,8 +203,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
                 return "{$roleLabel} edited product: {$newName} (Price: \${$newPrice})";
             }
         }
-        
-        // STOCK delete
+
         if ($route === 'app_stock_delete' && $id) {
             $stock = $this->em->getRepository(Stock::class)->find($id);
             if ($stock) {
@@ -249,8 +212,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             }
             return "{$roleLabel} deleted stock (ID: {$id})";
         }
-        
-        // STOCK create
+
         if ($route === 'app_stock_new') {
             $formData = $request->request->all('stock');
             $productId = $formData['product'] ?? null;
@@ -263,8 +225,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
             }
             return "{$roleLabel} created stock (Quantity: {$quantity})";
         }
-        
-        // STOCK edit
+
         if ($route === 'app_stock_edit' && $id) {
             $stock = $this->em->getRepository(Stock::class)->find($id);
             if ($stock) {
@@ -274,15 +235,14 @@ class ActivityLogSubscriber implements EventSubscriberInterface
                 return "{$roleLabel} edited stock: {$productName} → {$newQuantity} units";
             }
         }
-        
-        // Profile edit
+
         if ($route === 'app_profile_edit') {
             $username = $user->getUsername();
             $formData = $request->request->all('profile');
             $passwordChanged = !empty($formData['plainPassword']['first']) ? ' (Password changed)' : '';
             return "User updated their profile: {$username}{$passwordChanged}";
         }
-        
+
         return null;
     }
 
@@ -300,9 +260,8 @@ class ActivityLogSubscriber implements EventSubscriberInterface
         try {
             $this->em->persist($log);
             $this->em->flush();
-            file_put_contents(__DIR__ . '/../../debug.log', "✅ Login log saved\n", FILE_APPEND);
         } catch (\Exception $e) {
-            file_put_contents(__DIR__ . '/../../debug.log', "❌ Login error: " . $e->getMessage() . "\n", FILE_APPEND);
+            error_log('ActivityLog login error: ' . $e->getMessage());
         }
     }
 
@@ -310,7 +269,7 @@ class ActivityLogSubscriber implements EventSubscriberInterface
     {
         $token = $event->getToken();
         if (!$token) return;
-        
+
         $user = $token->getUser();
         if (!$user || !$user instanceof User) return;
 
@@ -324,9 +283,8 @@ class ActivityLogSubscriber implements EventSubscriberInterface
         try {
             $this->em->persist($log);
             $this->em->flush();
-            file_put_contents(__DIR__ . '/../../debug.log', "✅ Logout log saved\n", FILE_APPEND);
         } catch (\Exception $e) {
-            file_put_contents(__DIR__ . '/../../debug.log', "❌ Logout error: " . $e->getMessage() . "\n", FILE_APPEND);
+            error_log('ActivityLog logout error: ' . $e->getMessage());
         }
     }
 
