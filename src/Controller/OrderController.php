@@ -137,15 +137,17 @@ class OrderController extends AbstractController
                 $entityManager->persist($order);
                 $entityManager->flush();
 
-                $orderService->sendOrderConfirmation($order);
-                $orderService->sendAdminOrderNotification($order);
-
+                // ✅ WebSocket FIRST
                 $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
                 if ($customerId) {
                     $this->notifyViaWebSocket($customerId, 'order_update', 'New Order', "Your order #{$order->getId()} has been placed!");
                 }
 
-                $this->addFlash('success', 'Order placed successfully! A confirmation email has been sent.');
+                // Email after
+                try { $orderService->sendOrderConfirmation($order); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
+                try { $orderService->sendAdminOrderNotification($order); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
+
+                $this->addFlash('success', 'Order placed successfully!');
                 return $this->redirectToRoute('app_order_index');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error placing order: ' . $e->getMessage());
@@ -202,12 +204,15 @@ class OrderController extends AbstractController
             }
 
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus);
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Order Updated', "Your order #{$order->getId()} is now {$newStatus}");
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('success', 'Order status updated to: ' . ucfirst($newStatus) . ' and customer has been notified.');
         }
@@ -235,12 +240,15 @@ class OrderController extends AbstractController
         if (in_array($newStatus, $validStatuses)) {
             $order->setProcessStatus($newStatus);
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus);
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Processing Update', "Your order #{$order->getId()} is now " . str_replace('_', ' ', $newStatus));
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, $newStatus); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('success', 'Process status updated to: ' . ucfirst(str_replace('_', ' ', $newStatus)) . ' and customer has been notified.');
         }
@@ -260,12 +268,15 @@ class OrderController extends AbstractController
         if ($order->getOrderStatus() === Order::ORDER_STATUS_PENDING) {
             $order->setOrderStatus('accepted');
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, 'accepted');
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Order Accepted', "Your order #{$order->getId()} has been accepted!");
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, 'accepted'); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('success', 'Order #' . $order->getId() . ' accepted! Customer has been notified.');
         } else {
@@ -291,12 +302,15 @@ class OrderController extends AbstractController
 
             $order->setOrderStatus('rejected');
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, 'rejected');
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Order Rejected', "Your order #{$order->getId()} has been rejected.");
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, 'rejected'); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('warning', 'Order #' . $order->getId() . ' rejected. Stock restored and customer notified.');
         } else {
@@ -318,12 +332,15 @@ class OrderController extends AbstractController
         if ($order->getOrderStatus() === 'accepted') {
             $order->setOrderStatus('completed');
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, 'completed');
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Order Completed', "Your order #{$order->getId()} has been completed!");
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, 'completed'); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('success', 'Order #' . $order->getId() . ' completed! Customer has been notified.');
         } else {
@@ -349,12 +366,15 @@ class OrderController extends AbstractController
 
             $order->setOrderStatus('cancelled');
             $em->flush();
-            $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled');
 
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'Order Cancelled', "Your order #{$order->getId()} has been cancelled.");
             }
+
+            // Email after
+            try { $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled'); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $this->addFlash('warning', 'Order #' . $order->getId() . ' cancelled. Stock restored and customer notified.');
         } else {
@@ -451,19 +471,21 @@ class OrderController extends AbstractController
         }
 
         $oldStatus = $order->getOrderStatus();
-
         $stock = $order->getStock();
         $stock->setStock($stock->getStock() + $order->getQuantity());
         $em->persist($stock);
 
         $order->setOrderStatus('cancelled');
         $em->flush();
-        $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled');
 
+        // ✅ WebSocket FIRST
         $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
         if ($customerId) {
             $this->notifyViaWebSocket($customerId, 'order_update', 'Order Cancelled', "Your order #{$order->getId()} has been cancelled.");
         }
+
+        // Email after
+        try { $orderService->sendOrderStatusUpdate($order, $oldStatus, 'cancelled'); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
         $this->addFlash('success', 'Order #' . $order->getId() . ' has been cancelled successfully.');
         return $this->redirectToRoute('app_order_tracker');
@@ -575,13 +597,15 @@ class OrderController extends AbstractController
             $entityManager->persist($order);
             $entityManager->flush();
 
-            $orderService->sendOrderConfirmation($order);
-            $orderService->sendAdminOrderNotification($order);
-
+            // ✅ WebSocket FIRST
             $customerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;
             if ($customerId) {
                 $this->notifyViaWebSocket($customerId, 'order_update', 'New Order', "Your order #{$order->getId()} has been placed!");
             }
+
+            // Email after
+            try { $orderService->sendOrderConfirmation($order); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
+            try { $orderService->sendAdminOrderNotification($order); } catch (\Exception $e) { error_log('Mail error: ' . $e->getMessage()); }
 
             $session->remove('checkout_info');
 
