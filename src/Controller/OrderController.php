@@ -17,39 +17,39 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[Route('/order')]
 class OrderController extends AbstractController
 {
-    private function notifyViaWebSocket(int $userId, string $type, string $title, string $message): void
-    {
-        try {
-            $url = ($_ENV['WEBSOCKET_URL'] ?? 'https://cartlify-websocket-production.up.railway.app') . '/send-notification';
-            $data = json_encode([
-                'userId' => $userId,
-                'type' => $type,
-                'title' => $title,
-                'message' => $message
-            ]);
+private function notifyViaWebSocket(int $userId, string $type, string $title, string $message): void
+{
+    try {
+        $url = 'https://cartlify-websocket-production.up.railway.app/send-notification';
+        $data = json_encode([
+            'userId' => $userId,
+            'type' => $type,
+            'title' => $title,
+            'message' => $message
+        ]);
 
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data)
-            ]);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($data)
+        ]);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-            error_log("WebSocket notify userId={$userId} status={$httpCode} response={$response}");
+        error_log("WebSocket notify userId={$userId} status={$httpCode} response={$response}");
 
-        } catch (\Exception $e) {
-            error_log("WebSocket notify failed: " . $e->getMessage());
-        }
+    } catch (\Exception $e) {
+        error_log("WebSocket notify failed: " . $e->getMessage());
     }
+}
 
     #[Route('/', name: 'app_order_index', methods: ['GET'])]
     #[IsGranted('ROLE_STAFF')]
